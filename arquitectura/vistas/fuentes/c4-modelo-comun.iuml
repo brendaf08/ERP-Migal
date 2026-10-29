@@ -1,0 +1,213 @@
+' Modelo común de las vistas C4 de Ferre & Inversiones MIGAL.
+'
+' Este archivo no es un diagrama: se incluye desde cada vista (!include c4-modelo-comun.iuml)
+' después de la biblioteca C4. Define una sola vez los estilos, las personas, los sistemas
+' externos y los módulos de Odoo, de modo que su nombre, tecnología y descripción sean
+' idénticos en todas las vistas. Para modificar un elemento, editar su procedimiento aquí.
+'
+' Las relaciones se declaran en cada vista, porque dependen del nivel de detalle mostrado
+' (un módulo puede depender de un componente de otro contenedor).
+'
+' Fuente de las dependencias: archivos __manifest__.py de las ramas 19.0 de odoo/odoo y OCA.
+' Verificación definitiva: instancia instalada (ir.module.module.dependency_ids).
+
+' --- Parámetros del modelo ---
+!$odoo_etiqueta = "Odoo 19 Community"
+
+' --- Estilos ---
+' Se ocultan los estereotipos (etiqueta y tipo) de cada elemento; la leyenda explícita los sustituye.
+HIDE_STEREOTYPE()
+AddElementTag("seleccionada", $bgColor="#1168bd", $fontColor="#ffffff", $borderColor="#0b4884", $legendText="Aplicación seleccionada")
+AddElementTag("dependencia_tecnica", $bgColor="#e2e2e2", $fontColor="#1a1a1a", $borderColor="#9a9a9a", $legendText="Dependencia técnica")
+AddElementTag("puente", $bgColor="#fff2cc", $fontColor="#1a1a1a", $borderColor="#b8860b", $borderStyle=BoldLine(), $legendText="Módulo de enlace (auto_install)")
+AddElementTag("oca", $bgColor="#c55a11", $fontColor="#ffffff", $borderColor="#8a3d0a", $legendText="Complemento OCA")
+AddRelTag("dependencia", $textColor="#707070", $lineColor="#707070", $lineStyle=DashedLine(), $legendText="Dependencia (clave depends del manifest)")
+
+' --- Leyenda ---
+' Leyenda explícita, común a todas las vistas. Reemplaza a LAYOUT_WITH_LEGEND(), cuya leyenda
+' automática solo incluye los tipos y etiquetas que detecta como usados en cada vista. Los colores
+' base corresponden a los valores predeterminados de la biblioteca C4 y deben actualizarse aquí
+' si se modifica algún estilo.
+!procedure leyenda_colores()
+skinparam legendFontColor #1a1a1a
+skinparam legendBackgroundColor #ffffff
+skinparam legendBorderColor #9a9a9a
+legend right
+|= Color |= Significado |
+|<#08427b>   | Persona interna |
+|<#686868>   | Persona externa |
+|<#999999>   | Sistema externo |
+|<#1168bd>   | Aplicación seleccionada / sistema Odoo |
+|<#e2e2e2>   | Dependencia técnica |
+|<#fff2cc>   | Módulo de enlace (auto~_install), borde grueso dorado |
+|<#c55a11>   | Complemento OCA |
+|  | Flecha continua: flujo funcional |
+|  | Flecha punteada: dependencia (clave depends del manifest) |
+endlegend
+!endprocedure
+
+' --- Personas y sistemas externos ---
+!procedure actor_propietarios()
+Person(propietarios, "Propietarios", "Roles GER y FCO; la dueña además CMP. Autorizan descuentos, créditos, compras y ajustes.")
+!endprocedure
+
+!procedure actor_trabajadores()
+Person(trabajadores, "Trabajadores", "Roles VEN y ALM. Atienden clientes, venden y operan el almacén.")
+!endprocedure
+
+!procedure actor_administrador()
+Person(administrador, "Administrador del sistema", "Rol SIS. Administra usuarios, grupos y configuración técnica.")
+!endprocedure
+
+!procedure actor_cliente()
+Person_Ext(cliente, "Cliente", "Cliente minorista o de obra, y maestro de obra.")
+!endprocedure
+
+!procedure actor_proveedor()
+Person_Ext(proveedor, "Proveedor", "Abastece de mercadería a MIGAL.")
+!endprocedure
+
+!procedure sistema_whatsapp()
+System_Ext(whatsapp, "WhatsApp y llamadas", "Canales externos de comunicación comercial. El registro en Odoo es manual.")
+!endprocedure
+
+!procedure sistema_keyfacil()
+System_Ext(keyfacil, "KeyFacil", "Emisión de comprobantes electrónicos. Sin integración automática en el alcance inicial.")
+!endprocedure
+
+!procedure sistema_odoo()
+System(odoo, $odoo_etiqueta, "Plataforma integrada de CRM y ERP.")
+!endprocedure
+
+' --- Aplicaciones seleccionadas ---
+!procedure app_contactos()
+Container(contactos, "Contactos", "contacts", "Clientes, proveedores y personas relacionadas. Datos compartidos por CRM y ERP.", $tags="seleccionada")
+!endprocedure
+
+!procedure app_crm()
+Container(crm, "CRM", "crm", "Leads, oportunidades y seguimiento comercial.", $tags="seleccionada")
+!endprocedure
+
+!procedure app_ventas()
+Container(ventas, "Ventas", "sale_management", "Cotizaciones y pedidos de venta.", $tags="seleccionada")
+!endprocedure
+
+!procedure app_pdv()
+Container(pdv, "Punto de Venta", "point_of_sale", "Ventas de mostrador y operaciones de caja.", $tags="seleccionada")
+!endprocedure
+
+!procedure app_inventario()
+Container(inventario, "Inventario", "stock", "Existencias, ubicaciones, movimientos y despachos.", $tags="seleccionada")
+!endprocedure
+
+!procedure app_compras()
+Container(compras, "Compras", "purchase", "Solicitudes de presupuesto y órdenes de compra.", $tags="seleccionada")
+!endprocedure
+
+!procedure app_facturacion()
+Container(facturacion, "Facturación", "account + complementos OCA", "Facturas, cobros, pagos, asientos y conciliación. Base de Contabilidad y Finanzas (ADR-003).", $tags="seleccionada")
+!endprocedure
+
+' --- Módulos requeridos por las aplicaciones seleccionadas ---
+!procedure dep_sale()
+Container(sale, "Ventas (núcleo)", "sale", "Lógica base de cotizaciones y pedidos.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_sales_team()
+Container(salesTeam, "Equipos de ventas", "sales_team", "Equipos y vendedores.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_account_payment()
+Container(accountPayment, "Pagos de facturación", "account_payment", "Vincula facturas con el módulo de pagos.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_payment()
+Container(payment, "Proveedores de pago", "payment", "Infraestructura de pagos en línea.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_portal()
+Container(portal, "Portal", "portal", "Acceso de clientes externos.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_mail()
+Container(mail, "Conversaciones", "mail", "Chatter, actividades y correo; sustenta el historial de cada documento.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_utm()
+Container(utm, "Campañas UTM", "utm", "Seguimiento de origen y campañas.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_calendar()
+Container(calendar, "Calendario", "calendar", "Eventos y reuniones.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_digest()
+Container(digest, "Resúmenes periódicos", "digest", "Resúmenes de indicadores por correo.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_phone_validation()
+Container(phoneValidation, "Validación telefónica", "phone_validation", "Formato de números telefónicos.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_product()
+Container(product, "Productos", "product", "Catálogo de productos y unidades de medida.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_analytic()
+Container(analytic, "Contabilidad analítica", "analytic", "Cuentas y planes analíticos.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_barcodes()
+Container(barcodes, "Códigos de barras", "barcodes / barcodes_gs1_nomenclature", "Lectura y nomenclatura de códigos.", $tags="dependencia_tecnica")
+!endprocedure
+
+!procedure dep_board()
+Container(board, "Tableros", "board", "Tableros de indicadores. Requerido por mis_builder.", $tags="dependencia_tecnica")
+!endprocedure
+
+' --- Módulos de enlace instalados automáticamente (auto_install) ---
+!procedure puente_stock_account()
+Container(stockAccount, "Valoración de inventario", "stock_account", "Enlaza movimientos de inventario con asientos contables.", $tags="puente")
+!endprocedure
+
+!procedure puente_sale_stock()
+Container(saleStock, "Ventas e Inventario", "sale_stock", "Enlaza pedidos de venta con entregas.", $tags="puente")
+!endprocedure
+
+!procedure puente_purchase_stock()
+Container(purchaseStock, "Compras e Inventario", "purchase_stock", "Enlaza órdenes de compra con recepciones.", $tags="puente")
+!endprocedure
+
+!procedure puente_pos_sale()
+Container(posSale, "Punto de Venta y Ventas", "pos_sale", "Enlaza el punto de venta con pedidos de venta.", $tags="puente")
+!endprocedure
+
+!procedure puente_sale_crm()
+Container(saleCrm, "Ventas y CRM", "sale_crm", "Enlaza oportunidades con cotizaciones.", $tags="puente")
+!endprocedure
+
+' --- Bibliotecas OCA requeridas por los complementos ---
+!procedure oca_date_range()
+Container(dateRange, "Rangos de fechas", "date_range", "Periodos reutilizables para reportes.", $tags="oca")
+!endprocedure
+
+!procedure oca_report_xlsx()
+Container(reportXlsx, "Exportación a Excel", "report_xlsx", "Motor de reportes en formato XLSX.", $tags="oca")
+!endprocedure
+
+' --- Componentes de Facturación ---
+!procedure comp_account()
+Component(account, "Núcleo contable", "account", "Facturas, pagos, asientos y conciliación.", $tags="seleccionada")
+!endprocedure
+
+!procedure comp_account_financial_report()
+Component(accountFinancialReport, "Reportes contables", "account_financial_report", "Libro mayor, balance de comprobación y reportes asociados.", $tags="oca")
+!endprocedure
+
+!procedure comp_mis_builder()
+Component(misBuilder, "Constructor de reportes", "mis_builder", "Reportes e indicadores definidos mediante plantillas.", $tags="oca")
+!endprocedure
+
+!procedure comp_mis_template()
+Component(misTemplate, "Plantillas financieras", "mis_template_financial_report", "Balance general y estado de resultados. Disponibilidad en 19.0 por verificar.", $tags="oca")
+!endprocedure

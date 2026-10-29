@@ -1,0 +1,34 @@
+@startuml c4-contexto
+' Vista C4 de nivel 1: contexto del sistema.
+' Muestra los actores, los canales externos y Odoo como una única caja.
+' Definiciones de elementos: c4-modelo-comun.iuml.
+
+!include <C4/C4_Context>
+!include c4-modelo-comun.iuml
+
+LAYOUT_LEFT_RIGHT()
+
+title Ferre & Inversiones MIGAL - Contexto del sistema
+leyenda_colores()
+
+actor_propietarios()
+actor_trabajadores()
+actor_administrador()
+actor_cliente()
+actor_proveedor()
+
+sistema_whatsapp()
+sistema_keyfacil()
+sistema_odoo()
+
+Rel(cliente, whatsapp, "Envía consultas, listas y pedidos")
+Rel(trabajadores, whatsapp, "Atienden y registran manualmente en Odoo")
+Rel(propietarios, whatsapp, "Negocian y coordinan")
+
+Rel(trabajadores, odoo, "Atención, ventas y almacén (VEN, ALM)")
+Rel(propietarios, odoo, "Supervisan y autorizan (GER, CMP, FCO)")
+Rel(administrador, odoo, "Administra usuarios, grupos y módulos (SIS)")
+
+Rel(odoo, proveedor, "Genera solicitudes y órdenes de compra")
+Rel(odoo, keyfacil, "Datos para comprobantes (PEN-003)")
+@enduml

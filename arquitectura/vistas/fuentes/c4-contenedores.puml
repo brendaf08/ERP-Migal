@@ -1,0 +1,50 @@
+@startuml c4-contenedores
+' Vista C4 de nivel 2: aplicaciones seleccionadas de Odoo y sus flujos funcionales.
+' Las dependencias técnicas se muestran en c4-modulos-dependencias.puml.
+' Los flujos son ilustrativos; los procesos vigentes se documentan en procesos/.
+' Definiciones de elementos: c4-modelo-comun.iuml.
+
+!include <C4/C4_Container>
+!include c4-modelo-comun.iuml
+
+LAYOUT_LEFT_RIGHT()
+
+title Ferre & Inversiones MIGAL - Aplicaciones seleccionadas
+leyenda_colores()
+
+actor_propietarios()
+actor_trabajadores()
+actor_proveedor()
+sistema_keyfacil()
+
+System_Boundary(odoo, $odoo_etiqueta) {
+  app_contactos()
+  app_crm()
+  app_ventas()
+  app_pdv()
+  app_inventario()
+  app_compras()
+  app_facturacion()
+}
+
+Rel(trabajadores, crm, "Gestionan leads, oportunidades y cotizaciones (VEN)")
+Rel(propietarios, crm, "Supervisan y negocian precios (GER)")
+Rel(trabajadores, pdv, "Operan ventas de mostrador (VEN)")
+Rel(trabajadores, inventario, "Operan recepciones, conteos y despachos (ALM)")
+Rel(propietarios, compras, "Autorizan y confirman compras (GER, CMP)")
+Rel(propietarios, facturacion, "Gestionan cobros, pagos y contabilidad (FCO)")
+
+Rel(crm, ventas, "Cotización aceptada genera solicitud de pedido (ADR-004)")
+Rel(ventas, inventario, "Reserva y entrega de productos")
+Rel(ventas, facturacion, "Facturación de pedidos")
+Rel(pdv, inventario, "Salida de productos vendidos")
+Rel(compras, inventario, "Recepción de mercadería")
+Rel(compras, facturacion, "Facturas de proveedor")
+
+Rel(crm, contactos, "Consulta clientes y contactos")
+Rel(ventas, contactos, "Consulta clientes")
+Rel(compras, contactos, "Consulta proveedores")
+
+Rel(compras, proveedor, "Solicitudes y órdenes de compra")
+Rel(facturacion, keyfacil, "Datos para comprobantes (PEN-003)")
+@enduml
