@@ -3,10 +3,10 @@
 ' Muestra el núcleo contable, los complementos OCA y los módulos de los que dependen.
 ' Definiciones de elementos: c4-modelo-comun.iuml.
 '
-' Se omite el módulo digest, requerido por account, conforme a c4-modulos-dependencias.puml.
+' Se omite el módulo digest, requerido por account, conforme a ../c4-modulos-dependencias.puml.
 
 !include <C4/C4_Component>
-!include c4-estilos-y-leyenda.iuml
+!include ../c4-estilos-y-leyenda.iuml
 
 LAYOUT_TOP_DOWN()
 

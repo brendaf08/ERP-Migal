@@ -100,9 +100,9 @@ Principales lecturas:
 
 ### 3.4. Componentes de Facturación
 
-![Componentes de Facturación](render/c4-componentes-facturacion.svg)
+![Componentes de Facturación](render/componentes/c4-componentes-facturacion.svg)
 
-**Fuente:** [c4-componentes-facturacion.puml](fuentes/c4-componentes-facturacion.puml)
+**Fuente:** [c4-componentes-facturacion.puml](fuentes/componentes/c4-componentes-facturacion.puml)
 
 Detalla la estructura interna de Facturación:
 
