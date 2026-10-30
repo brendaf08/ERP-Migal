@@ -1,70 +1,74 @@
-# Alcance del sistema de información
+# Alcance del sistema de información ERP-MIGAL
 
-Este documento define el alcance del sistema de información propuesto para **Ferre & Inversiones MIGAL**, basado en **Odoo 18 Community**, estableciendo los sistemas, aplicaciones, procesos empresariales y límites considerados dentro del proyecto.
+Este documento delimita los procesos, operaciones, participantes y necesidades de **Ferre & Inversiones MIGAL** que serán abordados por el proyecto, estableciendo sus límites funcionales y las actividades excluidas de la implementación inicial.
 
-La solución busca integrar la gestión comercial, ventas, inventario, compras, facturación y finanzas, centralizando la información y mejorando la trazabilidad de las operaciones.
+## 1. Objetivo y ámbito del proyecto
 
-El alcance corresponde a la solución propuesta (TO-BE) y no implica que todas sus funcionalidades se encuentren implementadas.
+El proyecto busca mejorar la gestión integrada de las operaciones comerciales, logísticas y administrativas de MIGAL, reduciendo la dependencia de registros manuales, consultas informales e información dispersa.
 
-## 1. Sistemas comprendidos
+El alcance comprende las operaciones de la empresa en:
 
-La solución utiliza **Odoo 18 Community** como plataforma principal, integrando las funciones de CRM y ERP dentro de un mismo entorno.
+- **Tienda física:** atención, ventas y operaciones comerciales.
+- **Almacén 1 y Almacén 2:** almacenamiento, control de existencias y movimientos de productos.
+- **Gestión administrativa:** compras, proveedores, documentos comerciales, cobranzas, pagos y supervisión.
 
-| Sistema o componente    | Alcance                                                                       |
-| ----------------------- | ----------------------------------------------------------------------------- |
-| **CRM de Odoo**         | Gestión de relaciones comerciales, clientes potenciales y oportunidades.      |
-| **ERP de Odoo**         | Gestión de ventas, inventario, compras, facturación y finanzas.               |
-| **KeyFacil**            | Sistema externo que se mantiene para la emisión de comprobantes electrónicos. |
-| **WhatsApp y llamadas** | Canales externos de comunicación comercial.                                   |
+Participan los propietarios, trabajadores, clientes, maestros de obra y proveedores, según su intervención en los procesos.
 
-## 2. Aplicaciones incluidas
+El proyecto aborda la **gestión interna de las operaciones de MIGAL**, sin extenderse a la administración de las obras o actividades propias de sus clientes.
 
-El proyecto contempla las siguientes aplicaciones de Odoo 18 Community:
+## 2. Procesos y capacidades incluidos
 
-| Área      | Aplicación     | Funcionalidades principales                                                       |
-| --------- | -------------- | --------------------------------------------------------------------------------- |
-| CRM       | CRM            | Leads, oportunidades y seguimiento comercial.                                     |
-| CRM / ERP | Contactos      | Clientes, proveedores y contactos comerciales.                                    |
-| ERP       | Ventas         | Cotizaciones, pedidos y condiciones comerciales.                                  |
-| ERP       | Punto de Venta | Ventas de mostrador y operaciones de caja.                                        |
-| ERP       | Inventario     | Existencias, ubicaciones, movimientos y despachos.                                |
-| ERP       | Compras        | Cotizaciones de proveedores, órdenes de compra y abastecimiento.                  |
-| ERP       | Facturación    | Facturas, cobros, pagos, cuentas pendientes, contabilidad y reportes financieros. |
+### 2.1. Macroprocesos principales
 
-Se contempla la incorporación de los módulos técnicos y complementos necesarios para cubrir las funcionalidades definidas. Su identificación y dependencias se documentan en `modulos-y-dependencias.md`.
+| Macroproceso | Inicio y fin | Capacidades comprendidas |
+|---|---|---|
+| **Order to Cash (O2C)** | Desde la consulta o intención de compra hasta la atención del pedido, el registro del cobro y el cierre de la operación. | Gestión comercial, clientes, oportunidades, cotizaciones, pedidos, ventas de mostrador, preparación y entrega, comprobantes relacionados, créditos y cobranzas. |
+| **Procure to Pay (P2P)** | Desde la identificación de una necesidad de abastecimiento hasta la recepción y el pago al proveedor. | Gestión de proveedores, solicitudes de cotización, órdenes de compra, recepción de productos, verificación de documentos y seguimiento de pagos. |
 
-## 3. Procesos empresariales incluidos
+Ambos macroprocesos incluyen el tratamiento de sus excepciones, autorizaciones y registros necesarios para mantener la trazabilidad.
 
-El proyecto comprende dos macroprocesos principales:
+Los procedimientos, actividades y reglas específicas se definen en los documentos de procesos correspondientes.
 
-| Macroproceso             | Alcance                                                                                                                                         |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Order to Cash (O2C)**  | Gestión del ciclo comercial, desde la captación del cliente hasta la atención del pedido, entrega, facturación y cobro.                         |
-| **Procure to Pay (P2P)** | Gestión del abastecimiento, desde la identificación de la necesidad de compra hasta la recepción de productos, facturación y pago al proveedor. |
+### 2.2. Operaciones de soporte incluidas
 
-Adicionalmente, se considera **Gestión de Inventario como proceso de apoyo**, limitado a transferencias internas, conteos físicos, ajustes de existencias y control de pérdidas o productos dañados.
+| Ámbito | Capacidades comprendidas |
+|---|---|
+| **Inventario y almacenes** | Registro de existencias por ubicación, recepciones, transferencias, salidas, conteos y ajustes justificados. |
+| **Datos maestros** | Organización de productos y variantes, clientes, proveedores y demás datos necesarios para los procesos incluidos. |
+| **Gestión de precios** | Consulta, mantenimiento y autorización de precios y descuentos, conforme a las decisiones de los propietarios. |
+| **Administración financiera operativa** | Registro y seguimiento de documentos comerciales, pagos, cobranzas, saldos pendientes y conciliaciones aplicables. |
+| **Control y trazabilidad** | Identificación de responsables, autorizaciones, cambios relevantes y evidencias de operaciones sensibles. |
 
-Los procedimientos, reglas de negocio, responsabilidades y flujos detallados se desarrollan en la documentación de procesos correspondiente.
+El **inventario es una operación de soporte transversal a O2C y P2P**, no un tercer macroproceso principal.
 
-## 4. Límites y exclusiones
+La incorporación de estas capacidades podrá realizarse progresivamente. Su inclusión en el alcance no implica que todas estén implementadas o validadas.
 
-### 4.1. Límites de integración
+## 3. Límites de la solución
 
-- **CRM y ERP:** forman parte de una misma plataforma Odoo, con una frontera funcional definida en su documentación específica.
-- **KeyFacil:** permanece como sistema externo de emisión fiscal. Su integración automática con Odoo no forma parte del alcance inicial.
-- **WhatsApp y llamadas:** se mantienen como canales externos; el registro de la información relevante en Odoo será manual.
-- **Operaciones físicas:** la solución contempla el registro y seguimiento de las actividades de almacén y despacho, sin automatizar el transporte físico.
+### 3.1. Canales y sistemas existentes
 
-### 4.2. Funcionalidades excluidas
+| Elemento | Tratamiento dentro del alcance |
+|---|---|
+| **Atención presencial** | Incluida como canal de consultas, cotizaciones y ventas. |
+| **Teléfono y WhatsApp** | Incluidos como canales de comunicación comercial, con registro de la información pertinente mediante procedimientos manuales. |
+| **KeyFacil** | Se mantiene la emisión de comprobantes mediante el sistema existente y se contempla su registro relacionado y conciliación con las operaciones administradas por el proyecto. |
+| **Proveedores y servicios de transporte** | Participan como actores externos cuando intervienen en compras, abastecimiento o entregas. |
 
-No se contempla inicialmente:
+Las responsabilidades sobre los datos y los mecanismos de intercambio entre sistemas se especifican en los documentos de integración.
 
-- Comercio electrónico (*e-commerce*).
-- Automatización de campañas mediante aplicaciones especializadas de marketing.
-- Integración automática con WhatsApp.
-- Sustitución de KeyFacil como sistema de emisión fiscal.
-- Sistemas de recursos humanos y planillas.
-- Sistemas especializados de gestión de flotas, GPS u optimización de rutas.
-- Desarrollo de funcionalidades adicionales que no correspondan a los requerimientos definidos para MIGAL.
+### 3.2. Actividades fuera del alcance inicial
 
-Las exclusiones podrán revisarse si se presentan nuevos requerimientos y se aprueban los cambios correspondientes.
+| Exclusión | Límite establecido |
+|---|---|
+| **Integración automática con WhatsApp** | No se desarrollará una conexión que registre o responda automáticamente conversaciones. |
+| **Integración automática con KeyFacil** | No se implementará inicialmente sincronización mediante API u otro conector automático. |
+| **Sustitución inmediata del sistema de comprobantes** | La emisión tributaria mediante una nueva plataforma no se considera comprometida en esta etapa. |
+| **Contabilidad tributaria integral automatizada** | No se garantiza generar desde la solución todos los libros, declaraciones o reportes fiscales oficiales sin validar previamente sus capacidades y requisitos. |
+| **Comercio electrónico** | No se contempla implementar una tienda virtual para clientes. |
+| **Campañas y automatización de marketing** | No se implementarán inicialmente campañas automatizadas ni herramientas de marketing especializadas. |
+| **Gestión de obras de clientes** | No incluye presupuestos integrales, cronogramas ni seguimiento de ejecución de construcciones. |
+| **Recursos humanos y planillas** | No se abordará la administración de nóminas y procesos laborales. |
+| **Gestión especializada de transporte** | No se contempla desarrollar seguimiento de vehículos, rutas optimizadas o administración de flotas. |
+| **Fijación completamente automática de precios** | No se delegarán decisiones de precios o descuentos excepcionales a reglas automáticas no aprobadas por Gerencia. |
+
+Estas exclusiones delimitan la implementación inicial y podrán revisarse si cambian las necesidades de MIGAL mediante una decisión documentada.
