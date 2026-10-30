@@ -12,7 +12,7 @@ Las vistas siguen el modelo C4, que describe un sistema en niveles sucesivos de 
 |---|---|---|
 | 1. Contexto | Sistema y su entorno | Odoo como una única caja, junto con las personas y sistemas externos con los que interactúa. |
 | 2. Contenedores | Aplicaciones y módulos | Cada aplicación o módulo de Odoo, identificado por su nombre técnico. |
-| 3. Componentes | Estructura interna de un contenedor | Las partes que conforman una aplicación. Se utiliza únicamente para Facturación. |
+| 3. Componentes | Estructura interna de un contenedor | Las partes que conforman una aplicación. Se dispone de una vista por aplicación. |
 
 El nivel de código no se utiliza.
 
@@ -21,7 +21,7 @@ El nivel de código no se utiliza.
 | Término | Significado |
 |---|---|
 | **Contenedor** | Aplicación o módulo de Odoo. Por ejemplo, CRM (`crm`) o Conversaciones (`mail`). |
-| **Componente** | Parte interna de un contenedor. Por ejemplo, el núcleo contable y los complementos que conforman Facturación. |
+| **Componente** | Parte interna de un contenedor. Por ejemplo, el núcleo contable y los complementos que conforman Facturación. Las aplicaciones de un solo módulo se representan con un único componente. |
 | **Relación** | Flecha entre dos elementos. Puede representar un flujo funcional o una dependencia técnica. |
 | **Dependencia** | Tipo de relación, no un elemento. Indica que un módulo requiere a otro para funcionar y se origina en la clave `depends` de su manifiesto. |
 | **Módulo de enlace** | Módulo que se instala automáticamente (`auto_install`) cuando coinciden sus dos dependencias y conecta ambas aplicaciones. |
@@ -98,11 +98,37 @@ Principales lecturas:
 - **Los módulos de enlace conectan aplicaciones** como Ventas con Inventario, o CRM con Ventas, y añaden comportamiento que debe contrastarse con las fronteras definidas.
 - **Se omiten por su baja relevancia** el módulo de resúmenes periódicos y los módulos de apoyo menores, como se indica en el archivo fuente.
 
-### 3.4. Componentes de Facturación
+### 3.4. Componentes por aplicación
+
+Se dispone de una vista de componentes por cada aplicación seleccionada, agrupadas en la subcarpeta `componentes/`. Cada vista encierra en un recuadro el módulo de la aplicación y muestra a su alrededor los módulos de los que depende y los módulos de enlace que la conectan con otras aplicaciones. Una flecha hacia el recuadro indica que otro módulo requiere a la aplicación.
+
+Excepto Facturación, las aplicaciones corresponden a un solo módulo de Odoo, por lo que su recuadro contiene un único componente. Su utilidad es mostrar, para cada aplicación, qué requiere y qué otros módulos se instalan junto con ella. Se omiten el módulo de resúmenes periódicos y los módulos de apoyo menores, como se indica en cada archivo fuente.
+
+| Aplicación | Qué muestra | Fuente |
+|---|---|---|
+| CRM | Dependencia de Contactos, Conversaciones, Equipos de ventas, Campañas UTM, Calendario y Validación telefónica, y el módulo de enlace con Ventas. | [c4-componentes-crm.puml](fuentes/componentes/c4-componentes-crm.puml) |
+| Contactos | Dependencia de Conversaciones y la aplicación que la requiere, CRM. | [c4-componentes-contactos.puml](fuentes/componentes/c4-componentes-contactos.puml) |
+| Ventas | El módulo base de ventas, del que depende la aplicación, sus dependencias y los tres módulos de enlace que lo conectan con Inventario, CRM y Punto de Venta. | [c4-componentes-ventas.puml](fuentes/componentes/c4-componentes-ventas.puml) |
+| Punto de Venta | Dependencia de Valoración de inventario, que arrastra Inventario y Facturación, además de Códigos de barras y Validación telefónica. | [c4-componentes-punto-de-venta.puml](fuentes/componentes/c4-componentes-punto-de-venta.puml) |
+| Inventario | Dependencia de Productos y Códigos de barras, y el módulo de enlace con Facturación. | [c4-componentes-inventario.puml](fuentes/componentes/c4-componentes-inventario.puml) |
+| Compras | Dependencia de Facturación y los módulos de enlace con Inventario. | [c4-componentes-compras.puml](fuentes/componentes/c4-componentes-compras.puml) |
+| Facturación | Estructura interna con componentes (apartado siguiente). | [c4-componentes-facturacion.puml](fuentes/componentes/c4-componentes-facturacion.puml) |
+
+![Componentes de CRM](render/componentes/c4-componentes-crm.svg)
+
+![Componentes de Contactos](render/componentes/c4-componentes-contactos.svg)
+
+![Componentes de Ventas](render/componentes/c4-componentes-ventas.svg)
+
+![Componentes de Punto de Venta](render/componentes/c4-componentes-punto-de-venta.svg)
+
+![Componentes de Inventario](render/componentes/c4-componentes-inventario.svg)
+
+![Componentes de Compras](render/componentes/c4-componentes-compras.svg)
+
+#### Componentes de Facturación
 
 ![Componentes de Facturación](render/componentes/c4-componentes-facturacion.svg)
-
-**Fuente:** [c4-componentes-facturacion.puml](fuentes/componentes/c4-componentes-facturacion.puml)
 
 Detalla la estructura interna de Facturación:
 
@@ -119,7 +145,7 @@ Las vistas avanzan de lo general a lo específico:
 1. El **contexto** identifica quién interactúa con Odoo.
 2. Las **aplicaciones seleccionadas** muestran qué funciones ofrece Odoo y cómo se relacionan.
 3. Los **módulos y dependencias** revelan qué requiere cada aplicación para funcionar.
-4. Los **componentes de Facturación** detallan la aplicación con más dependencias y complementos externos.
+4. Los **componentes por aplicación** detallan, para cada una, lo que requiere y lo que se instala junto con ella. Facturación, la aplicación con más dependencias y complementos externos, cuenta con una estructura interna propia.
 
 Los elementos se definen una sola vez en el archivo común de definiciones, por lo que su nombre, tecnología y descripción son iguales en todas las vistas.
 
