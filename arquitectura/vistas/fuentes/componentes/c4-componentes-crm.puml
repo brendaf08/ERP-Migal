@@ -1,0 +1,36 @@
+@startuml c4-componentes-crm
+' Vista C4 de nivel 3: componentes de la aplicación CRM.
+' Muestra el módulo de CRM, los módulos de los que depende y el módulo de enlace que lo conecta con Ventas.
+' Definiciones de elementos: c4-estilos-y-leyenda.iuml.
+'
+' Se omite el módulo digest, requerido por crm, conforme a ../c4-modulos-dependencias.puml.
+
+!include <C4/C4_Component>
+!include ../c4-estilos-y-leyenda.iuml
+
+LAYOUT_TOP_DOWN()
+
+title Ferre & Inversiones MIGAL - Componentes de CRM
+leyenda_colores()
+
+Container_Boundary(crm, "CRM") {
+  comp_crm()
+}
+
+app_contactos()
+dep_sales_team()
+dep_mail()
+dep_utm()
+dep_calendar()
+dep_phone_validation()
+puente_sale_crm()
+
+Rel(crmMod, contactos, "depende de", $tags="dependencia")
+Rel(crmMod, salesTeam, "depende de", $tags="dependencia")
+Rel(crmMod, mail, "depende de", $tags="dependencia")
+Rel(crmMod, utm, "depende de", $tags="dependencia")
+Rel(crmMod, calendar, "depende de", $tags="dependencia")
+Rel(crmMod, phoneValidation, "depende de", $tags="dependencia")
+
+Rel(saleCrm, crmMod, "auto_install", $tags="dependencia")
+@enduml

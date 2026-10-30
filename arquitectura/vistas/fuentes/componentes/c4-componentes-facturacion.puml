@@ -1,0 +1,54 @@
+@startuml c4-componentes-facturacion
+' Vista C4 de nivel 3: componentes de la aplicación Facturación.
+' Muestra el núcleo contable, los complementos OCA y los módulos de los que dependen.
+' Definiciones de elementos: c4-modelo-comun.iuml.
+'
+' Se omite el módulo digest, requerido por account, conforme a ../c4-modulos-dependencias.puml.
+
+!include <C4/C4_Component>
+!include ../c4-estilos-y-leyenda.iuml
+
+LAYOUT_TOP_DOWN()
+
+title Ferre & Inversiones MIGAL - Componentes de Facturación
+leyenda_colores()
+
+' Elementos externos a Facturación que dependen de su núcleo
+app_compras()
+dep_account_payment()
+puente_stock_account()
+
+Container_Boundary(facturacion, "Facturación") {
+  comp_account()
+  comp_account_financial_report()
+  comp_mis_builder()
+  comp_mis_template()
+}
+
+' Módulos de los que depende Facturación
+dep_product()
+dep_analytic()
+dep_portal()
+dep_board()
+oca_date_range()
+oca_report_xlsx()
+
+Rel(compras, account, "depende de", $tags="dependencia")
+Rel(accountPayment, account, "depende de", $tags="dependencia")
+Rel(stockAccount, account, "depende de", $tags="dependencia")
+
+Rel(account, product, "depende de", $tags="dependencia")
+Rel(account, analytic, "depende de", $tags="dependencia")
+Rel(account, portal, "depende de", $tags="dependencia")
+
+Rel(accountFinancialReport, account, "depende de", $tags="dependencia")
+Rel(accountFinancialReport, dateRange, "depende de", $tags="dependencia")
+Rel(accountFinancialReport, reportXlsx, "depende de", $tags="dependencia")
+
+Rel(misBuilder, account, "depende de", $tags="dependencia")
+Rel(misBuilder, board, "depende de", $tags="dependencia")
+Rel(misBuilder, reportXlsx, "depende de", $tags="dependencia")
+Rel(misBuilder, dateRange, "depende de", $tags="dependencia")
+
+Rel(misTemplate, misBuilder, "depende de", $tags="dependencia")
+@enduml

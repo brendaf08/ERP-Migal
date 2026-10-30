@@ -1,0 +1,105 @@
+@startuml c4-modulos-dependencias
+' Vista C4 de nivel 2: aplicaciones, módulos requeridos, módulos de enlace y complementos OCA.
+' Cada flecha punteada corresponde a una entrada de la clave "depends" del manifest (rama 19.0).
+' Los módulos de enlace se instalan automáticamente cuando coinciden sus dos dependencias.
+' Definiciones de elementos: c4-modelo-comun.iuml.
+'
+' Omisiones deliberadas, por su baja relevancia y alta cantidad de relaciones: el módulo digest
+' (resúmenes periódicos, requerido por crm, sale_management, stock, point_of_sale y account) y los
+' módulos de apoyo menores web_tour, base_setup, onboarding, resource, html_editor, iot_base y
+' partner_autocomplete. Su procedimiento permanece definido en c4-modelo-comun.iuml.
+
+!include <C4/C4_Container>
+!include c4-estilos-y-leyenda.iuml
+
+LAYOUT_TOP_DOWN()
+
+title Ferre & Inversiones MIGAL - Módulos de Odoo y sus dependencias
+leyenda_colores()
+
+System_Boundary(odoo, $odoo_etiqueta) {
+  ' Aplicaciones seleccionadas
+  app_contactos()
+  app_crm()
+  app_ventas()
+  app_pdv()
+  app_inventario()
+  app_compras()
+  app_facturacion()
+
+  ' Módulos requeridos
+  dep_sale()
+  dep_sales_team()
+  dep_account_payment()
+  dep_payment()
+  dep_portal()
+  dep_mail()
+  dep_utm()
+  dep_calendar()
+  dep_phone_validation()
+  dep_product()
+  dep_analytic()
+  dep_barcodes()
+  dep_board()
+
+  ' Módulos de enlace
+  puente_stock_account()
+  puente_sale_stock()
+  puente_purchase_stock()
+  puente_pos_sale()
+  puente_sale_crm()
+
+  ' Bibliotecas OCA
+  oca_date_range()
+  oca_report_xlsx()
+}
+
+' CRM
+Rel(crm, contactos, "depende de", $tags="dependencia")
+Rel(crm, salesTeam, "depende de", $tags="dependencia")
+Rel(crm, mail, "depende de", $tags="dependencia")
+Rel(crm, utm, "depende de", $tags="dependencia")
+Rel(crm, calendar, "depende de", $tags="dependencia")
+Rel(crm, phoneValidation, "depende de", $tags="dependencia")
+Rel(contactos, mail, "depende de", $tags="dependencia")
+Rel(salesTeam, mail, "depende de", $tags="dependencia")
+
+' Ventas
+Rel(ventas, sale, "depende de", $tags="dependencia")
+Rel(sale, salesTeam, "depende de", $tags="dependencia")
+Rel(sale, utm, "depende de", $tags="dependencia")
+Rel(sale, accountPayment, "depende de", $tags="dependencia")
+Rel(accountPayment, facturacion, "depende de", $tags="dependencia")
+Rel(accountPayment, payment, "depende de", $tags="dependencia")
+Rel(payment, portal, "depende de", $tags="dependencia")
+
+' Inventario y Punto de Venta
+Rel(inventario, product, "depende de", $tags="dependencia")
+Rel(inventario, barcodes, "depende de", $tags="dependencia")
+Rel(pdv, stockAccount, "depende de", $tags="dependencia")
+Rel(pdv, barcodes, "depende de", $tags="dependencia")
+Rel(pdv, phoneValidation, "depende de", $tags="dependencia")
+Rel(stockAccount, inventario, "depende de", $tags="dependencia")
+Rel(stockAccount, facturacion, "depende de", $tags="dependencia")
+
+' Compras
+Rel(compras, facturacion, "depende de", $tags="dependencia")
+
+' Facturación y complementos OCA (el detalle por componente está en c4-componentes-facturacion.puml)
+Rel(facturacion, product, "depende de", $tags="dependencia")
+Rel(facturacion, analytic, "depende de", $tags="dependencia")
+Rel(facturacion, portal, "depende de", $tags="dependencia")
+Rel(facturacion, dateRange, "depende de", $tags="dependencia")
+Rel(facturacion, reportXlsx, "depende de", $tags="dependencia")
+Rel(facturacion, board, "depende de", $tags="dependencia")
+
+' Módulos de enlace (auto_install)
+Rel(saleStock, sale, "auto_install", $tags="dependencia")
+Rel(saleStock, stockAccount, "auto_install", $tags="dependencia")
+Rel(purchaseStock, compras, "auto_install", $tags="dependencia")
+Rel(purchaseStock, stockAccount, "auto_install", $tags="dependencia")
+Rel(posSale, pdv, "auto_install", $tags="dependencia")
+Rel(posSale, ventas, "auto_install", $tags="dependencia")
+Rel(saleCrm, sale, "auto_install", $tags="dependencia")
+Rel(saleCrm, crm, "auto_install", $tags="dependencia")
+@enduml
