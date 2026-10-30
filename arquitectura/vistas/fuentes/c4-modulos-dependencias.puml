@@ -10,7 +10,7 @@
 ' partner_autocomplete. Su procedimiento permanece definido en c4-modelo-comun.iuml.
 
 !include <C4/C4_Container>
-!include c4-modelo-comun.iuml
+!include c4-estilos-y-leyenda.iuml
 
 LAYOUT_TOP_DOWN()
 

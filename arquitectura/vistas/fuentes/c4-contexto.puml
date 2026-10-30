@@ -4,7 +4,7 @@
 ' Definiciones de elementos: c4-modelo-comun.iuml.
 
 !include <C4/C4_Context>
-!include c4-modelo-comun.iuml
+!include c4-estilos-y-leyenda.iuml
 
 LAYOUT_LEFT_RIGHT()
 
