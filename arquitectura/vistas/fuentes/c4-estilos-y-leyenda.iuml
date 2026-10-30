@@ -195,6 +195,32 @@ Container(dateRange, "Rangos de fechas", "date_range", "Periodos reutilizables p
 Container(reportXlsx, "Exportación a Excel", "report_xlsx", "Motor de reportes en formato XLSX.", $tags="oca")
 !endprocedure
 
+' --- Componentes de las demás aplicaciones ---
+' Cada aplicación de un solo módulo se representa con un componente que lleva su nombre técnico.
+!procedure comp_crm()
+Component(crmMod, "CRM", "crm", "Leads, oportunidades y seguimiento comercial.", $tags="seleccionada")
+!endprocedure
+
+!procedure comp_contactos()
+Component(contactosMod, "Contactos", "contacts", "Clientes, proveedores y personas relacionadas. Datos compartidos por CRM y ERP.", $tags="seleccionada")
+!endprocedure
+
+!procedure comp_ventas()
+Component(ventasMod, "Ventas", "sale_management", "Cotizaciones y pedidos de venta.", $tags="seleccionada")
+!endprocedure
+
+!procedure comp_pdv()
+Component(pdvMod, "Punto de Venta", "point_of_sale", "Ventas de mostrador y operaciones de caja.", $tags="seleccionada")
+!endprocedure
+
+!procedure comp_inventario()
+Component(inventarioMod, "Inventario", "stock", "Existencias, ubicaciones, movimientos y despachos.", $tags="seleccionada")
+!endprocedure
+
+!procedure comp_compras()
+Component(comprasMod, "Compras", "purchase", "Solicitudes de presupuesto y órdenes de compra.", $tags="seleccionada")
+!endprocedure
+
 ' --- Componentes de Facturación ---
 !procedure comp_account()
 Component(account, "Núcleo contable", "account", "Facturas, pagos, asientos y conciliación.", $tags="seleccionada")
