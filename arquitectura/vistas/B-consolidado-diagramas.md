@@ -154,21 +154,29 @@ Los elementos se definen una sola vez en el archivo común de definiciones, por 
 ```
 arquitectura/vistas/
 ├── fuentes/
-│   ├── c4-modelo-comun.iuml
+│   ├── c4-estilos-y-leyenda.iuml
 │   ├── c4-contexto.puml
 │   ├── c4-contenedores.puml
 │   ├── c4-modulos-dependencias.puml
-│   └── c4-componentes-facturacion.puml
+│   └── componentes/
+│       ├── c4-componentes-crm.puml
+│       ├── c4-componentes-contactos.puml
+│       ├── c4-componentes-ventas.puml
+│       ├── c4-componentes-punto-de-venta.puml
+│       ├── c4-componentes-inventario.puml
+│       ├── c4-componentes-compras.puml
+│       └── c4-componentes-facturacion.puml
 └── render/
     ├── c4-contexto.svg
     ├── c4-contenedores.svg
     ├── c4-modulos-dependencias.svg
-    └── c4-componentes-facturacion.svg
+    └── componentes/
+        └── (un .svg por cada .puml de fuentes/componentes/)
 ```
 
-- `c4-modelo-comun.iuml` es un archivo de inclusión: define estilos, elementos y leyenda. No es un diagrama y no tiene render.
+- `c4-estilos-y-leyenda.iuml` es un archivo de inclusión: define estilos, elementos y leyenda. No es un diagrama y no tiene render.
 - Cada archivo `.puml` tiene un render `.svg` con el mismo nombre en `render/`. La estructura de carpetas de `render/` replica la de `fuentes/`.
-- Cuando una misma categoría reúna varios diagramas de componentes, agruparlos en una subcarpeta `componentes/`, tanto en `fuentes/` como en `render/`.
+- Los diagramas de componentes se agrupan en la subcarpeta `componentes/`, tanto en `fuentes/` como en `render/`. Los diagramas de ese nivel incluyen el archivo común con la ruta `../c4-estilos-y-leyenda.iuml`.
 - Todo cambio en una fuente se versiona junto con su render, y viceversa, como control del riesgo [RSK-008](../riesgos-y-controles.md).
 
 ### Regeneración de los renders
@@ -176,14 +184,20 @@ arquitectura/vistas/
 Desde la carpeta `fuentes/`, ejecutar PlantUML con la salida dirigida a `../render`:
 
 ```
-java -jar plantuml.jar -tsvg -charset UTF-8 -o ../render c4-contexto.puml c4-contenedores.puml c4-modulos-dependencias.puml c4-componentes-facturacion.puml
+java -jar plantuml.jar -tsvg -charset UTF-8 -o ../render c4-contexto.puml c4-contenedores.puml c4-modulos-dependencias.puml
+```
+
+Desde la carpeta `fuentes/componentes/`, dirigir la salida a `../../render/componentes`:
+
+```
+java -jar plantuml.jar -tsvg -charset UTF-8 -o ../../render/componentes c4-componentes-*.puml
 ```
 
 Los renders versionados se generaron con el motor de diseño interno de PlantUML (`-Playout=smetana`), por no disponer de Graphviz. Con Graphviz instalado, la disposición de los elementos puede diferir sin alterar su contenido.
 
 ### Modificación del modelo
 
-- Para cambiar un elemento, editar su procedimiento en `c4-modelo-comun.iuml`.
+- Para cambiar un elemento, editar su procedimiento en `c4-estilos-y-leyenda.iuml`.
 - Para cambiar la versión de Odoo mostrada, editar la variable `$odoo_etiqueta` del mismo archivo.
 - Las relaciones se declaran en cada vista, porque dependen del nivel de detalle.
 
