@@ -196,6 +196,14 @@ Se requiere comprobar en la instancia de Odoo:
 
 **Pendientes relacionados:** [PEN-004](../../producto/registro-pendientes.md) y [PEN-005](../../producto/registro-pendientes.md), sobre permisos, y [PEN-009](../../producto/registro-pendientes.md), sobre programación, entrega y conformidad.
 
+### Documentos por actualizar
+
+La especificación de esta integración aún no se refleja en los siguientes documentos, que requieren actualización:
+
+- [Diccionario de datos](../../datos/diccionario-datos.md): datos intercambiados y estados de la solicitud (apartados 4 y 5).
+- [Catálogo de reglas](../../procesos/catalogo-reglas.md): reglas, controles y excepciones de la integración (apartado 6).
+- [Plan de trazabilidad y auditoría](../../datos/trazabilidad/plan-trazabilidad-auditoria.md): eventos y cadena de documentos que deben registrarse (apartado 8).
+
 ### Asuntos abiertos propios de la integración
 
 Estos asuntos se trasladan al [registro de pendientes](../../producto/registro-pendientes.md) para su seguimiento.
