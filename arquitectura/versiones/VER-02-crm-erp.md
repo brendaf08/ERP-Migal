@@ -20,7 +20,7 @@ El CRM se incorpora para gestionar leads, oportunidades, cotizaciones y su segui
 |---|---|
 | Aplicaciones | Se incorpora **CRM**. Contactos pasa a ser un dato compartido por CRM y ERP. |
 | Gestión comercial | Las consultas se registran como leads y oportunidades. Las cotizaciones se originan en la oportunidad. |
-| Frontera funcional | Se establece la solicitud de pedido, generada desde una cotización aceptada y evaluada por el ERP (ADR-004). |
+| Frontera funcional | Se establece la solicitud de orden de venta, registrada a partir de una cotización aceptada y evaluada por el ERP (ADR-004). |
 | Integración | Se documenta la transición entre CRM y ERP en INT-01: eventos, información, estados y responsables. |
 | Roles | El rol de Atención y Ventas (VEN) incorpora la gestión de CRM. Se identifican las autorizaciones de GER sobre la evaluación. |
 | Dependencias técnicas | CRM requiere módulos adicionales, como Conversaciones, Calendario y Equipos de ventas. Se instala automáticamente el módulo de enlace `sale_crm`. |
@@ -31,7 +31,7 @@ El CRM se incorpora para gestionar leads, oportunidades, cotizaciones y su segui
 |---|---|
 | CRM | Leads, oportunidades y seguimiento comercial. |
 | Contactos | Clientes, proveedores y contactos comerciales. |
-| Ventas | Cotizaciones, pedidos y condiciones comerciales. |
+| Ventas | Cotizaciones, órdenes de venta y condiciones comerciales. |
 | Punto de Venta | Ventas de mostrador y operaciones de caja. |
 | Inventario | Existencias, ubicaciones, movimientos y despachos. |
 | Compras | Solicitudes de presupuesto, órdenes de compra y abastecimiento. |
@@ -39,12 +39,12 @@ El CRM se incorpora para gestionar leads, oportunidades, cotizaciones y su segui
 
 ## 4. Frontera entre CRM y ERP
 
-La frontera se establece mediante una **solicitud de pedido**, generada a partir de una cotización aceptada por el cliente.
+La frontera se establece mediante una **solicitud de orden de venta**, registrada por VEN a partir de una cotización aceptada por el cliente.
 
 - **CRM:** gestiona el proceso comercial hasta la aceptación de las condiciones por el cliente.
-- **ERP:** evalúa la viabilidad operativa de las condiciones aceptadas y gestiona los pedidos confirmados, el inventario, las compras, las entregas, la facturación y las finanzas.
+- **ERP:** evalúa la viabilidad operativa de las condiciones aceptadas y gestiona las órdenes de venta confirmadas, el inventario, las compras, las entregas, la facturación y las finanzas.
 
-Si la solicitud es aceptada, se habilita la confirmación del pedido de venta. Si es condicionada o rechazada, la gestión retorna al ámbito comercial.
+Si la solicitud es aceptada, se habilita la confirmación de la orden de venta. Si es condicionada o rechazada, la gestión retorna al ámbito comercial.
 
 El detalle de eventos, información intercambiada, estados y responsabilidades se encuentra en [INT-01](../integraciones/INT-01-CRM-ERP.md).
 
@@ -54,7 +54,7 @@ Las aplicaciones seleccionadas requieren otros módulos de Odoo. Algunos, como F
 
 ## 6. Limitaciones y riesgos
 
-- La versión corresponde a un diseño. El mecanismo de representación de la solicitud de pedido y los controles de transición requieren validación en la instancia de Odoo.
+- La versión corresponde a un diseño. El mecanismo de representación de la solicitud de orden de venta y los controles de transición requieren validación en la instancia de Odoo.
 - KeyFacil y WhatsApp permanecen como sistemas externos, sin integración automática.
 - Riesgos relacionados, registrados en [riesgos y controles](../riesgos-y-controles.md): RSK-002 (Facturación como núcleo obligatorio), RSK-003 (módulos de enlace), RSK-004 (módulos instalados sin uso previsto) y RSK-005 (historial dependiente de Conversaciones).
 

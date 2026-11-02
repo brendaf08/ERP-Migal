@@ -21,9 +21,9 @@ Cada versión se documenta en un archivo propio, identificado como `VER-XX`. Los
 
 | Aspecto | VER-01 | VER-02 |
 |---|---|---|
-| Gestión comercial | Cotizaciones y pedidos en Ventas, sin gestión de leads ni oportunidades. | CRM para leads, oportunidades y seguimiento comercial. |
+| Gestión comercial | Cotizaciones y órdenes de venta en Ventas, sin gestión de leads ni oportunidades. | CRM para leads, oportunidades y seguimiento comercial. |
 | Aplicaciones | Contactos, Ventas, Punto de Venta, Inventario, Compras y Facturación. | Las anteriores y CRM. |
-| Frontera entre áreas | No existe una frontera diferenciada entre la aceptación comercial y la ejecución. | Solicitud de pedido evaluada por el ERP ([INT-01](../integraciones/INT-01-CRM-ERP.md)). |
+| Frontera entre áreas | No existe una frontera diferenciada entre la aceptación comercial y la ejecución. | Solicitud de orden de venta evaluada por el ERP ([INT-01](../integraciones/INT-01-CRM-ERP.md)). |
 | Decisiones principales | [ADR-001](../decisiones/ADR-001-seleccion-erp.md), [ADR-002](../decisiones/ADR-002-version-y-edicion.md) y [ADR-003](../decisiones/ADR-003-contabilidad.md). | Las anteriores y [ADR-004](../decisiones/ADR-004-odoo-community-fronteras-crm-erp.md). |
 
 ## 4. Relación con otros documentos

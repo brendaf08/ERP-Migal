@@ -12,7 +12,7 @@ La versión establece una base operativa que centraliza las ventas, el inventari
 
 Los procesos comprendidos son:
 
-- **Order to Cash (O2C):** desde la cotización y el pedido de venta hasta la entrega, la facturación y el cobro.
+- **Order to Cash (O2C):** desde la cotización y la orden de venta hasta la entrega, la facturación y el cobro.
 - **Procure to Pay (P2P):** desde la necesidad de compra hasta la recepción, la facturación y el pago al proveedor.
 - **Gestión de inventario:** transferencias internas, conteos físicos, ajustes de existencias y control de pérdidas o productos dañados.
 
@@ -21,7 +21,7 @@ Los procesos comprendidos son:
 | Aplicación | Funcionalidades principales |
 |---|---|
 | Contactos | Clientes, proveedores y contactos comerciales. |
-| Ventas | Cotizaciones, pedidos y condiciones comerciales. |
+| Ventas | Cotizaciones, órdenes de venta y condiciones comerciales. |
 | Punto de Venta | Ventas de mostrador y operaciones de caja. |
 | Inventario | Existencias, ubicaciones, movimientos y despachos. |
 | Compras | Solicitudes de presupuesto, órdenes de compra y abastecimiento. |
@@ -38,10 +38,10 @@ El tratamiento de la contabilidad y de los reportes financieros se desarrolla en
 
 ## 4. Limitaciones
 
-- No existe gestión de leads ni de oportunidades comerciales. Las consultas se registran directamente como cotizaciones o pedidos.
+- No existe gestión de leads ni de oportunidades comerciales. Las consultas se registran directamente como cotizaciones u órdenes de venta.
 - No se dispone de seguimiento estructurado de las cotizaciones enviadas, situación señalada en el [contexto de la empresa](../contexto-empresa.md).
-- La cotización y el pedido se gestionan en la misma aplicación, por lo que no se distingue la aceptación comercial de la confirmación operativa.
-- Las decisiones sobre precios, descuentos y créditos dependen de los propietarios, sin una etapa diferenciada de evaluación previa a la confirmación del pedido.
+- La cotización y la orden de venta se gestionan en la misma aplicación, como un único registro de Odoo que cambia de estado, por lo que no se distingue la aceptación comercial de la confirmación operativa.
+- Las decisiones sobre precios, descuentos y créditos dependen de los propietarios, sin una etapa diferenciada de evaluación previa a la confirmación de la orden de venta.
 
 ## 5. Representación
 
