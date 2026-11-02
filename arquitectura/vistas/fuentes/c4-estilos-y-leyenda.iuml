@@ -89,7 +89,7 @@ Container(crm, "CRM", "crm", "Leads, oportunidades y seguimiento comercial.", $t
 !endprocedure
 
 !procedure app_ventas()
-Container(ventas, "Ventas", "sale_management", "Cotizaciones y pedidos de venta.", $tags="seleccionada")
+Container(ventas, "Ventas", "sale_management", "Cotizaciones y órdenes de venta.", $tags="seleccionada")
 !endprocedure
 
 !procedure app_pdv()
@@ -110,7 +110,7 @@ Container(facturacion, "Facturación", "account + complementos OCA", "Facturas, 
 
 ' --- Módulos requeridos por las aplicaciones seleccionadas ---
 !procedure dep_sale()
-Container(sale, "Ventas (núcleo)", "sale", "Lógica base de cotizaciones y pedidos.", $tags="dependencia_tecnica")
+Container(sale, "Ventas (núcleo)", "sale", "Lógica base de cotizaciones y órdenes de venta.", $tags="dependencia_tecnica")
 !endprocedure
 
 !procedure dep_sales_team()
@@ -171,7 +171,7 @@ Container(stockAccount, "Valoración de inventario", "stock_account", "Enlaza mo
 !endprocedure
 
 !procedure puente_sale_stock()
-Container(saleStock, "Ventas e Inventario", "sale_stock", "Enlaza pedidos de venta con entregas.", $tags="puente")
+Container(saleStock, "Ventas e Inventario", "sale_stock", "Enlaza órdenes de venta con entregas.", $tags="puente")
 !endprocedure
 
 !procedure puente_purchase_stock()
@@ -179,7 +179,7 @@ Container(purchaseStock, "Compras e Inventario", "purchase_stock", "Enlaza órde
 !endprocedure
 
 !procedure puente_pos_sale()
-Container(posSale, "Punto de Venta y Ventas", "pos_sale", "Enlaza el punto de venta con pedidos de venta.", $tags="puente")
+Container(posSale, "Punto de Venta y Ventas", "pos_sale", "Enlaza el punto de venta con órdenes de venta.", $tags="puente")
 !endprocedure
 
 !procedure puente_sale_crm()
@@ -206,7 +206,7 @@ Component(contactosMod, "Contactos", "contacts", "Clientes, proveedores y person
 !endprocedure
 
 !procedure comp_ventas()
-Component(ventasMod, "Ventas", "sale_management", "Cotizaciones y pedidos de venta.", $tags="seleccionada")
+Component(ventasMod, "Ventas", "sale_management", "Cotizaciones y órdenes de venta.", $tags="seleccionada")
 !endprocedure
 
 !procedure comp_pdv()
