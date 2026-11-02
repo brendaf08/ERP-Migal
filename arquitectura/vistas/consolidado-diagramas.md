@@ -67,9 +67,9 @@ Muestra Odoo dentro de su entorno:
 
 Muestra las siete aplicaciones elegidas por el proyecto y los flujos entre ellas:
 
-- **CRM hacia Ventas:** la cotización aceptada genera una solicitud de pedido, frontera definida en [INT-01](../integraciones/INT-01-CRM-ERP.md).
+- **CRM hacia Ventas:** tras la aceptación de la cotización, VEN registra la solicitud de orden de venta, frontera definida en [INT-01](../integraciones/INT-01-CRM-ERP.md).
 - **Ventas, Punto de Venta y Compras hacia Inventario:** reserva y entrega, salida de mostrador y recepción de mercadería.
-- **Ventas y Compras hacia Facturación:** facturación de pedidos y facturas de proveedor.
+- **Ventas y Compras hacia Facturación:** facturación de órdenes de venta y facturas de proveedor.
 - **CRM, Ventas y Compras hacia Contactos:** consulta de los clientes y proveedores compartidos.
 - **Facturación hacia KeyFacil:** datos para comprobantes.
 
