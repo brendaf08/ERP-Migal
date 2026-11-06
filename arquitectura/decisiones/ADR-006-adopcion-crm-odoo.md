@@ -2,7 +2,6 @@
 
 - **Fecha:** 2026-10-28
 - **Estado:** Aceptado
-- **Procedencia:** documento ADR-004 de PR #4, renumerado como ADR-006. La renumeración conserva la decisión y no constituye una nueva aprobación arquitectónica.
 - **Responsable de la decisión:** Equipo ERP-MIGAL
 
 ## 1. Contexto y problema

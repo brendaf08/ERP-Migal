@@ -50,7 +50,7 @@ El detalle de eventos, información intercambiada, estados y responsabilidades s
 
 ## 5. Módulos y dependencias
 
-Las aplicaciones seleccionadas requieren otros módulos de Odoo. Algunos, como Facturación, resultan obligatorios para el funcionamiento de varias aplicaciones, y otros amplían los menús y permisos por revisar. Estas relaciones se representan en la vista [Módulos de Odoo y sus dependencias](../vistas/fuentes/c4-modulos-dependencias.puml) y se analizan en módulos y dependencias (pendiente de Etapa B).
+Las aplicaciones seleccionadas requieren otros módulos de Odoo. Algunos, como Facturación, resultan obligatorios para el funcionamiento de varias aplicaciones, y otros amplían los menús y permisos por revisar. Estas relaciones se representan en la vista [Módulos de Odoo y sus dependencias](../vistas/fuentes/c4-modulos-dependencias.puml); su análisis detallado en el documento de módulos y dependencias está pendiente de documentación.
 
 ## 6. Limitaciones y riesgos
 

@@ -82,4 +82,4 @@ La adopción de Odoo se considera una **decisión arquitectónica aceptada**, mi
 
 ## Nota complementaria posterior
 
-La comparación ampliada de alternativas se incorpora en [Comparación de sistemas ERP](../comparacion-erp.md), procedente de PR #4. Esta adición amplía la evidencia disponible, pero no sustituye ni modifica la decisión original de adoptar Odoo como plataforma ERP. La versión concreta se documenta por separado en ADR-002 y su actualización en ADR-005.
+La [comparación de sistemas ERP](../comparacion-erp.md) amplía los criterios de evaluación de alternativas. La decisión de adoptar Odoo como plataforma se mantiene en este ADR; la selección inicial de versión se documenta en [ADR-002](ADR-002-version-y-edicion.md) y su actualización en [ADR-005](ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md).

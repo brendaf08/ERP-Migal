@@ -57,7 +57,7 @@ Los eventos describen hechos de negocio. No presuponen un mecanismo técnico det
 
 ### Correspondencia con el catálogo central de eventos
 
-La tabla anterior conserva los identificadores originales de INT-01 como referencias históricas de esta especificación. El catálogo de `procesos/catalogo-eventos.md` es la fuente central de identificadores EV. Las correspondencias siguientes no renumeran ni modifican ese catálogo.
+Los códigos EV-01 a EV-07 de la tabla describen hechos de esta transición funcional. El [catálogo de eventos](../../procesos/catalogo-eventos.md) es la fuente central para definir los eventos de negocio del proyecto. Las correspondencias siguientes se basan en el significado de cada hecho y señalan las diferencias que requieren validación.
 
 | Código de INT-01 | Candidato del catálogo | Estado y tratamiento |
 |---|---|---|
@@ -69,11 +69,11 @@ La tabla anterior conserva los identificadores originales de INT-01 como referen
 | EV-06 — Orden de venta confirmada | EV-018 | Correspondencia semántica confirmada, sujeta a la precondición de evaluación aceptada. |
 | EV-07 — Condiciones renegociadas | EV-016 | Correspondencia semántica confirmada; conservar el reinicio del flujo. |
 
-Las equivalencias pendientes requieren decisión humana. No se asignan códigos nuevos ni se alteran los significados del catálogo.
+Las equivalencias pendientes requieren una decisión funcional antes de aplicarse en otros procesos. Los resultados aceptado, condicionado y rechazado mantienen significados distintos.
 
 ## 4. Información intercambiada
 
-Las definiciones de cada dato se conservan en el diccionario de datos (pendiente de Etapa B).
+Las definiciones de estos datos deberán incorporarse al diccionario de datos (pendiente de documentación).
 
 | Dato | Origen | Destino | Obligatorio | Observaciones |
 |---|---|---|---|---|
@@ -123,7 +123,7 @@ Los estados constituyen una propuesta funcional. No presuponen un campo, un obje
 
 ## 6. Reglas, controles y excepciones
 
-Las reglas, controles y excepciones de la integración se incorporan al catálogo de reglas (pendiente de Etapa B), responsable de sus identificadores. Hasta su incorporación, se referencian por su descripción.
+Las reglas, controles y excepciones de la integración deberán incorporarse al catálogo de reglas (pendiente de documentación), responsable de sus identificadores. Hasta entonces, se referencian por su descripción.
 
 | Condición o control | Aplicación en la integración |
 |---|---|
@@ -166,7 +166,7 @@ Los propietarios acumulan los roles GER, VEN y ALM. Cuando una misma persona pre
 - **Registro de eventos:** cada evento deja constancia del usuario, la fecha y el resultado en el historial de la oportunidad, la cotización o la orden de venta.
 - **Relación entre documentos:** se conserva la cadena oportunidad, cotización, solicitud de orden de venta y orden de venta, de modo que cada registro pueda reconstruirse desde cualquiera de los demás.
 - **Decisiones:** la evaluación conserva el responsable, la fecha, el resultado y, cuando corresponda, el motivo y las condiciones requeridas.
-- **Referencia:** plan de trazabilidad y auditoría (pendiente de Etapa B).
+- **Referencia:** plan de trazabilidad y auditoría (pendiente de documentación).
 
 El historial depende del módulo Conversaciones (`mail`). Su configuración y el hábito de registrar las acciones en Odoo se consideran en el riesgo [RSK-005](../riesgos-y-controles.md).
 
@@ -218,9 +218,9 @@ Se requiere comprobar en la instancia de Odoo:
 
 La especificación de esta integración aún no se refleja en los siguientes documentos, que requieren actualización:
 
-- diccionario de datos (pendiente de Etapa B): datos intercambiados y estados de la solicitud (apartados 4 y 5).
-- catálogo de reglas (pendiente de Etapa B): reglas, controles y excepciones de la integración (apartado 6).
-- plan de trazabilidad y auditoría (pendiente de Etapa B): eventos y cadena de documentos que deben registrarse (apartado 8).
+- diccionario de datos (pendiente de documentación): datos intercambiados y estados de la solicitud (apartados 4 y 5).
+- catálogo de reglas (pendiente de documentación): reglas, controles y excepciones de la integración (apartado 6).
+- plan de trazabilidad y auditoría (pendiente de documentación): eventos y cadena de documentos que deben registrarse (apartado 8).
 
 ### Asuntos abiertos propios de la integración
 

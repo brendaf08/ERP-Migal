@@ -38,23 +38,20 @@ Los identificadores se asignan consecutivamente y no se reutilizan. Antes de inc
 | **RSK-024** | **Incompatibilidad con dispositivos periféricos.** Impresoras de tickets, lectores de códigos de barras u otros equipos no funcionan adecuadamente con el POS. | Interrupciones en caja, atención lenta y trabajo manual adicional. | Verificar compatibilidad antes de adquirir o utilizar dispositivos y probar impresión, lectura, conectividad y recuperación ante fallas. |
 | **RSK-025** | **Precios de venta desactualizados o inconsistentes.** Existen diferencias entre precios registrados, costos de reposición y precios indicados por los propietarios. | Pérdida de margen, ventas con importes incorrectos y dependencia de consultas manuales. | Establecer un procedimiento de revisión de precios ante cambios relevantes de costos y validar las modificaciones con los responsables correspondientes. |
 | **RSK-026** | **Dependencia de servicios y componentes externos.** Cambios de condiciones, suspensión de servicios, abandono de complementos o pérdida de soporte. | Costos imprevistos, funcionalidades indisponibles y dificultades de mantenimiento. | Mantener un inventario de dependencias externas, revisar condiciones de servicio y soporte, y prever alternativas para los servicios críticos. |
+| **RSK-027** | **Propagación de cambios del modelo común C4.** Una modificación de `c4-estilos-y-leyenda.iuml` puede afectar las diez vistas que lo incluyen. | Fuentes y renders `.svg` desactualizados o inconsistentes, con interpretaciones erróneas de la arquitectura. | Regenerar y revisar los diez renders cuando cambie el archivo común; comprobar su coherencia con las fuentes. |
 
-Los identificadores se asignan consecutivamente y no se reutilizan. Todo nuevo riesgo identificado durante el desarrollo del proyecto deberá incorporarse a este documento, previa verificación de que no se encuentre registrado. Los nuevos riesgos recibirán el siguiente identificador disponible, manteniendo un único registro centralizado y evitando duplicidades.
+## 3. Precisiones técnicas y verificaciones pendientes
 
-## 3. Detalles técnicos complementarios procedentes de PR #3
+Las precisiones siguientes amplían los controles de la matriz de riesgos. Son comprobaciones propuestas y no acreditan resultados en una instancia de Odoo.
 
-La matriz de PR #4 conserva la base de 26 riesgos. Las precisiones siguientes recuperan controles y contexto técnico de PR #3; no se presentan como validaciones realizadas en una instancia.
-
-| Riesgo base | Detalle técnico recuperado de PR #3 | Verificación pendiente |
+| Riesgo | Precisión técnica | Verificación pendiente |
 |---|---|---|
-| RSK-001 | El análisis de PR #3 identificó `mis_template_financial_report` en la rama 18.0 de OCA y consideró evaluar adaptación o plantillas propias con `mis_builder`. | Confirmar repositorio, versión compatible y alternativa aplicable; el hallazgo de PR #4 sobre ausencia de versión 19.0 prevalece como estado documentado. |
+| RSK-001 | `mis_template_financial_report` se identificó en la rama 18.0 de OCA; podría requerir adaptación o plantillas propias con `mis_builder` para Odoo 19. | Confirmar repositorio, versión compatible y alternativa aplicable; no se ha confirmado una versión 19.0 del complemento. |
 | RSK-002 | Precisar la cadena de dependencia: Ventas mediante `sale`, Compras directamente y Punto de Venta mediante `stock_account`; revisar la posibilidad de desinstalar `account` mientras dependan de él las aplicaciones seleccionadas. | Contrastar con los manifiestos y la instalación de MIGAL. |
 | RSK-003 | Revisar específicamente `sale_stock`, `purchase_stock`, `pos_sale` y `sale_crm` y su relación con las fronteras CRM–ERP. | Verificar módulos y comportamiento en la instancia. |
 | RSK-004 | Incluir la revisión de acceso a `payment`, `portal`, `board` y `calendar` cuando se incorporen como dependencias, según los roles reales. | Contrastar grupos efectivos y asignaciones; el diagrama no demuestra permisos. |
-| RSK-005 | PR #3 señaló la dependencia del historial en `mail` y la necesidad de comprobar la configuración de correo saliente y el registro de autorizaciones. | Confirmar configuración y trazabilidad efectiva. |
+| RSK-005 | El historial depende de `mail`; deben comprobarse la configuración del correo saliente y el registro de autorizaciones. | Confirmar configuración y trazabilidad efectiva. |
 | RSK-006 | Mantener inventario explícito de `date_range`, `report_xlsx`, `mis_builder` y `account_financial_report`, con versiones y dependencias. | Registrar versión instalada y compatibilidad probada. |
-| RSK-007 | PR #3 propuso comparar manifiestos de la rama 19.0 y contrastar con `ir.module.module.dependency_ids`. | Ejecutar la consulta solo en una instancia autorizada; aún pendiente. |
+| RSK-007 | Comparar los manifiestos de la rama 19.0 con `ir.module.module.dependency_ids` en la instalación. | Ejecutar la consulta solo en una instancia autorizada; aún pendiente. |
 | RSK-008 | Exigir cambios coordinados entre cada `.puml` y su `.svg`. | Revisar los pares afectados en cada cambio. |
-| RSK-027 | Los cambios al archivo común `c4-estilos-y-leyenda.iuml` pueden afectar las diez vistas que lo incluyen y dejar renders `.svg` desactualizados. | Confirmar código libre al iniciar; regenerar y revisar todos los renders afectados cuando se modifique la fuente común. |
-
-RSK-027 recupera el riesgo RSK-009 de PR #3. En PR #4, RSK-009 conserva el significado de ampliación no controlada del alcance. Los identificadores no se reutilizan ni se sobrescriben.
+| RSK-027 | Los cambios al archivo común `c4-estilos-y-leyenda.iuml` pueden afectar las diez vistas que lo incluyen y dejar renders `.svg` desactualizados. | Regenerar y revisar todos los renders afectados cuando se modifique la fuente común. |
