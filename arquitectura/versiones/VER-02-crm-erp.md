@@ -3,7 +3,7 @@
 - **Estado:** Vigente (diseño), sujeta a validación técnica
 - **Responsable(s):** Equipo ERP-MIGAL
 - **Versión anterior:** [VER-01](VER-01-erp.md)
-- **Decisiones relacionadas:** [ADR-003](../decisiones/ADR-003-contabilidad.md) y [ADR-004](../decisiones/ADR-004-odoo-community-fronteras-crm-erp.md)
+- **Decisiones relacionadas:** [ADR-003](../decisiones/ADR-003-contabilidad.md), [ADR-004](../decisiones/ADR-004-odoo-community-fronteras-crm-erp.md) (frontera funcional), [ADR-005](../decisiones/ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md) (versión vigente) y [ADR-006](../decisiones/ADR-006-adopcion-crm-odoo.md) (adopción de CRM)
 - **Integración relacionada:** [INT-01](../integraciones/INT-01-CRM-ERP.md)
 
 Esta versión incorpora el CRM a la arquitectura de **Ferre & Inversiones MIGAL** y lo integra con las aplicaciones de ERP. Representa un diseño propuesto y no acredita su implementación en Odoo.

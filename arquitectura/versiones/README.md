@@ -24,7 +24,7 @@ Cada versión se documenta en un archivo propio, identificado como `VER-XX`. Los
 | Gestión comercial | Cotizaciones y órdenes de venta en Ventas, sin gestión de leads ni oportunidades. | CRM para leads, oportunidades y seguimiento comercial. |
 | Aplicaciones | Contactos, Ventas, Punto de Venta, Inventario, Compras y Facturación. | Las anteriores y CRM. |
 | Frontera entre áreas | No existe una frontera diferenciada entre la aceptación comercial y la ejecución. | Solicitud de orden de venta evaluada por el ERP ([INT-01](../integraciones/INT-01-CRM-ERP.md)). |
-| Decisiones principales | [ADR-001](../decisiones/ADR-001-seleccion-erp.md), [ADR-002](../decisiones/ADR-002-version-y-edicion.md) y [ADR-003](../decisiones/ADR-003-contabilidad.md). | Las anteriores y [ADR-004](../decisiones/ADR-004-odoo-community-fronteras-crm-erp.md). |
+| Decisiones principales | [ADR-001](../decisiones/ADR-001-seleccion-erp.md), [ADR-002](../decisiones/ADR-002-version-y-edicion.md) y [ADR-003](../decisiones/ADR-003-contabilidad.md). | Las anteriores; [ADR-004](../decisiones/ADR-004-odoo-community-fronteras-crm-erp.md) establece la frontera, [ADR-005](../decisiones/ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md) documenta la versión y [ADR-006](../decisiones/ADR-006-adopcion-crm-odoo.md) la adopción de CRM. |
 
 ## 4. Relación con otros documentos
 
