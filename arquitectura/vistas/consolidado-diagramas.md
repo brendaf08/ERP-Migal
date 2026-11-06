@@ -198,7 +198,7 @@ Los renders versionados se generaron con el motor de diseño interno de PlantUML
 ### Modificación del modelo
 
 - Para cambiar un elemento, editar su procedimiento en `c4-estilos-y-leyenda.iuml`.
-- Importante: `c4-estilos-y-leyenda.iuml` es compartido por todas las vistas. Toda modificación puede afectar a los diez diagramas, por lo que se deben regenerar y revisar todos los renders ([RSK-009](../riesgos-y-controles.md)).
+- Importante: `c4-estilos-y-leyenda.iuml` es compartido por todas las vistas. Toda modificación puede afectar a los diez diagramas, por lo que se deben regenerar y revisar todos los renders ([RSK-027](../riesgos-y-controles.md)).
 - Para cambiar la versión de Odoo mostrada, editar la variable `$odoo_etiqueta` del mismo archivo.
 - Las relaciones se declaran en cada vista, porque dependen del nivel de detalle.
 
