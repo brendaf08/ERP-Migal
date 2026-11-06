@@ -218,4 +218,4 @@ La definición de la solución propuesta, sus objetivos y los límites del proye
 
 La evolución de la arquitectura y los sistemas incorporados se documenta en [Versiones de arquitectura](versiones/README.md).
 
-Los supuestos, vacíos de información y aspectos que requieren validación se registran en [Supuestos y vacíos](../fuentes/supuestos-y-vacios.md), con seguimiento de las acciones correspondientes en el [Registro de pendientes](../producto/registro-pendientes.md).
+Los supuestos, vacíos de información y aspectos que requieren validación deberán documentarse en el registro de supuestos y vacíos (pendiente de documentación). Las acciones correspondientes se siguen en el [Registro de pendientes](../producto/registro-pendientes.md).

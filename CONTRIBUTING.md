@@ -226,7 +226,7 @@ Antes de realizar commits, es obligatorio revisar los archivos preparados para c
 
 Las fuentes externas deben poder identificarse y contrastarse.
 
-El uso de herramientas de IA debe declararse conforme a declaración de uso de IA (pendiente de Etapa B), indicando su propósito y las limitaciones correspondientes.
+El uso de herramientas de IA debe declararse en la declaración de uso de IA (pendiente de documentación), indicando su propósito y las limitaciones correspondientes.
 
 La revisión y aprobación del contenido generado con apoyo de IA son responsabilidad del equipo.
 
