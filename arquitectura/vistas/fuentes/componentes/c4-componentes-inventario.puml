@@ -1,0 +1,28 @@
+@startuml c4-componentes-inventario
+' Vista C4 de nivel 3: componentes de la aplicación Inventario.
+' Muestra el módulo de Inventario, sus dependencias y el módulo de enlace que lo vincula con Facturación.
+' Definiciones de elementos: c4-estilos-y-leyenda.iuml.
+'
+' Se omite el módulo digest, requerido por stock, conforme a ../c4-modulos-dependencias.puml.
+
+!include <C4/C4_Component>
+!include ../c4-estilos-y-leyenda.iuml
+
+LAYOUT_TOP_DOWN()
+
+title Ferre & Inversiones MIGAL - Componentes de Inventario
+leyenda_colores()
+
+Container_Boundary(inventario, "Inventario") {
+  comp_inventario()
+}
+
+dep_product()
+dep_barcodes()
+puente_stock_account()
+
+Rel(inventarioMod, product, "depende de", $tags="dependencia")
+Rel(inventarioMod, barcodes, "depende de", $tags="dependencia")
+
+Rel(stockAccount, inventarioMod, "depende de", $tags="dependencia")
+@enduml
