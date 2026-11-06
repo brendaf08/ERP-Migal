@@ -1,0 +1,36 @@
+@startuml c4-componentes-punto-de-venta
+' Vista C4 de nivel 3: componentes de la aplicación Punto de Venta.
+' Muestra el módulo de Punto de Venta, sus dependencias y las aplicaciones que arrastra mediante stock_account.
+' Definiciones de elementos: c4-estilos-y-leyenda.iuml.
+'
+' Se omiten por su baja relevancia el módulo digest y los módulos de apoyo resource, html_editor, iot_base,
+' partner_autocomplete y google_address_autocomplete, requeridos por point_of_sale.
+
+!include <C4/C4_Component>
+!include ../c4-estilos-y-leyenda.iuml
+
+LAYOUT_TOP_DOWN()
+
+title Ferre & Inversiones MIGAL - Componentes de Punto de Venta
+leyenda_colores()
+
+Container_Boundary(pdv, "Punto de Venta") {
+  comp_pdv()
+}
+
+puente_stock_account()
+dep_barcodes()
+dep_phone_validation()
+puente_pos_sale()
+app_inventario()
+app_facturacion()
+
+Rel(pdvMod, stockAccount, "depende de", $tags="dependencia")
+Rel(pdvMod, barcodes, "depende de", $tags="dependencia")
+Rel(pdvMod, phoneValidation, "depende de", $tags="dependencia")
+
+Rel(stockAccount, inventario, "depende de", $tags="dependencia")
+Rel(stockAccount, facturacion, "depende de", $tags="dependencia")
+
+Rel(posSale, pdvMod, "auto_install", $tags="dependencia")
+@enduml

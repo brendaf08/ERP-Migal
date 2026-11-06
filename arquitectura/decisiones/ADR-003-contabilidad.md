@@ -77,3 +77,11 @@ Las pruebas realizadas respaldan la utilización de Facturación para las operac
 - Los permisos y restricciones de acceso aplicables a los roles GER y FCO.
 
 La decisión se considera **aceptada a nivel arquitectónico**, aunque su implementación y validación integral continúan pendientes.
+
+## Nota complementaria posterior: versión vigente y validación
+
+Las pruebas citadas en esta decisión se realizaron en Odoo 18 Community. La adopción de Odoo 19 Community se documenta en [ADR-005](ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md) y requiere comprobar nuevamente el comportamiento contable.
+
+ADR-005 registra la disponibilidad reportada de versiones 19.0 de `account_financial_report` y `mis_builder`. No se ha confirmado una versión 19.0 de `mis_template_financial_report`. La instalación, compatibilidad y operación de estos complementos en MIGAL siguen pendientes de pruebas.
+
+Continúan pendientes las validaciones de operaciones contables, integración con Ventas, Punto de Venta, Compras e Inventario, reportes financieros, configuración peruana, permisos de GER/FCO y conciliación con KeyFacil. KeyFacil conserva la emisión fiscal y no se presume integración automática. Los riesgos técnicos se detallan en [riesgos y controles](../riesgos-y-controles.md) y el seguimiento complementario en PEN-017.

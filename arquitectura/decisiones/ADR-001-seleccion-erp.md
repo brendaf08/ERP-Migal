@@ -79,3 +79,7 @@ Para confirmar la viabilidad de la solución seleccionada se requiere:
 - Realizar pruebas funcionales con escenarios representativos de MIGAL.
 
 La adopción de Odoo se considera una **decisión arquitectónica aceptada**, mientras que la implementación y validación integral de sus componentes se desarrollará progresivamente.
+
+## Nota complementaria posterior
+
+La [comparación de sistemas ERP](../comparacion-erp.md) amplía los criterios de evaluación de alternativas. La decisión de adoptar Odoo como plataforma se mantiene en este ADR; la selección inicial de versión se documenta en [ADR-002](ADR-002-version-y-edicion.md) y su actualización en [ADR-005](ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md).

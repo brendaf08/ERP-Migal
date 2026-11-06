@@ -1,8 +1,10 @@
 # ADR-002: Adoptar Odoo 18 Community como versión y edición
 
 - **Fecha:** 2026-09-25
-- **Estado:** Aceptado
+- **Estado:** Superado por ADR-005
 - **Responsable de la decisión:** Gabriel Martínez
+
+> Esta decisión fue superada por [ADR-005](ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md) (migración a Odoo 19 Community). Se conserva como registro histórico.
 
 ## 1. Contexto y problema
 

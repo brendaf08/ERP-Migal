@@ -1,0 +1,37 @@
+@startuml c4-componentes-ventas
+' Vista C4 de nivel 3: componentes de la aplicación Ventas.
+' El módulo sale_management extiende al módulo base sale, que se representa como dependencia junto con
+' sus propias dependencias y los módulos de enlace que lo conectan con otras aplicaciones.
+' Definiciones de elementos: c4-estilos-y-leyenda.iuml.
+'
+' Se omite el módulo digest, requerido por sale_management, conforme a ../c4-modulos-dependencias.puml.
+
+!include <C4/C4_Component>
+!include ../c4-estilos-y-leyenda.iuml
+
+LAYOUT_TOP_DOWN()
+
+title Ferre & Inversiones MIGAL - Componentes de Ventas
+leyenda_colores()
+
+Container_Boundary(ventas, "Ventas") {
+  comp_ventas()
+}
+
+dep_sale()
+dep_sales_team()
+dep_utm()
+dep_account_payment()
+puente_sale_stock()
+puente_sale_crm()
+puente_pos_sale()
+
+Rel(ventasMod, sale, "depende de", $tags="dependencia")
+Rel(sale, salesTeam, "depende de", $tags="dependencia")
+Rel(sale, utm, "depende de", $tags="dependencia")
+Rel(sale, accountPayment, "depende de", $tags="dependencia")
+
+Rel(saleStock, sale, "auto_install", $tags="dependencia")
+Rel(saleCrm, sale, "auto_install", $tags="dependencia")
+Rel(posSale, ventasMod, "auto_install", $tags="dependencia")
+@enduml

@@ -2,7 +2,7 @@
 
 Este documento define los roles funcionales y administrativos propuestos para el sistema de información de **Ferre & Inversiones MIGAL**, sus responsabilidades, permisos generales y restricciones de acceso. Su finalidad es establecer quién puede realizar, consultar y autorizar las operaciones del sistema, de acuerdo con las necesidades del negocio y los principios de seguridad y segregación de funciones.
 
-El modelo contempla las aplicaciones de **CRM, Contactos, Ventas, Punto de Venta, Inventario, Compras y Facturación** de Odoo 18 Community.&#x20;
+El modelo contempla las aplicaciones de **CRM, Contactos, Ventas, Punto de Venta, Inventario, Compras y Facturación** de Odoo 19 Community.&#x20;
 
 Constituye la base funcional para la configuración de usuarios y grupos de acceso, así como para la elaboración de la matriz detallada de permisos.
 
@@ -150,7 +150,7 @@ La combinación de roles no debe servir para eludir controles de autorización; 
 
 ## 6. Implementación y validación
 
-El modelo deberá contrastarse con los grupos de seguridad y mecanismos de control de acceso disponibles en Odoo 18 Community.
+El modelo deberá contrastarse con los grupos de seguridad y mecanismos de control de acceso disponibles en Odoo 19 Community.
 
 La acumulación de grupos puede ampliar los permisos de un usuario, y ciertas restricciones ,incluida la separación entre gestión y aprobación de compras, podrían requerir configuración o personalización adicional.
 
@@ -163,7 +163,7 @@ En el ámbito de Facturación, Contabilidad y Finanzas, deberá comprobarse part
 - Que los reportes financieros sean accesibles únicamente a los usuarios autorizados.
 - Que los permisos se verifiquen con usuarios representativos, no solamente con un administrador de pruebas.
 
-Los permisos específicos por aplicación, operación y tipo de acceso se detallarán en [matriz-permisos.xlsx](matriz-permisos.xlsx).
+Los permisos específicos por aplicación, operación y tipo de acceso se detallarán en matriz de permisos (pendiente de elaboración).
 
 Las cuestiones abiertas y las pruebas por realizar se seguirán en el [registro de pendientes](../../producto/registro-pendientes.md), incluida la definición del intercambio de información entre Odoo y KeyFacil.
 

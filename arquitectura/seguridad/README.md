@@ -1,6 +1,6 @@
 # Seguridad y autorización
 
-Esta carpeta contiene la documentación de **seguridad, roles funcionales, autorización y control de acceso** del sistema de información de **Ferre & Inversiones MIGAL**, basado en Odoo 18 Community.
+Esta carpeta contiene la documentación de **seguridad, roles funcionales, autorización y control de acceso** del sistema de información de **Ferre & Inversiones MIGAL**, basado en Odoo 19 Community.
 
 Su propósito es establecer las responsabilidades de los usuarios, los permisos previstos y las restricciones necesarias para proteger las operaciones comerciales, operativas, contables y financieras de la empresa.
 
@@ -11,8 +11,8 @@ Los documentos representan un diseño funcional y técnico sujeto a validación.
 | Archivo                                                        | Descripción                                                                                                                |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | [modelo-autorizacion.md](modelo-autorizacion.md)               | Define los roles, permisos generales, restricciones, autorizaciones y asignación funcional de usuarios.                    |
-| [revision-roles-funcionales.md](revision-roles-funcionales.md) | Analiza las responsabilidades operativas por actividad, diferenciando preparación, autorización, ejecución y verificación. |
-| [matriz-permisos.xlsx](matriz-permisos.xlsx)                   | Documento previsto para detallar los permisos específicos por usuario o rol, aplicación, operación y tipo de acceso.       |
+| [analisis-roles-funcionales.md](analisis-roles-funcionales.md) | Analiza las responsabilidades operativas por actividad, diferenciando preparación, autorización, ejecución y verificación. |
+| matriz de permisos (pendiente de elaboración)                   | Documento previsto para detallar los permisos específicos por usuario o rol, aplicación, operación y tipo de acceso.       |
 
 ## 2. Alcance funcional de seguridad
 
@@ -45,9 +45,9 @@ La asignación de varios roles a una misma persona no elimina la necesidad de co
 
 El [modelo de autorización](modelo-autorizacion.md) constituye la referencia principal para establecer quién puede consultar, ejecutar y autorizar las operaciones.
 
-La [revisión de roles funcionales](revision-roles-funcionales.md) desarrolla estas responsabilidades por actividad y permite identificar posibles conflictos entre preparación, ejecución, autorización y verificación.
+El [análisis de roles funcionales](analisis-roles-funcionales.md) desarrolla estas responsabilidades por actividad y permite identificar posibles conflictos entre preparación, ejecución, autorización y verificación.
 
-La [matriz de permisos](matriz-permisos.xlsx) deberá traducir esas definiciones a permisos específicos y servir como referencia para las pruebas de seguridad.
+La matriz de permisos (pendiente de elaboración) deberá traducir esas definiciones a permisos específicos y servir como referencia para las pruebas de seguridad.
 
 Las decisiones sobre selección de aplicaciones, módulos técnicos y complementos de Odoo se documentan en la arquitectura del sistema, no en esta carpeta.
 
@@ -57,7 +57,7 @@ La definición documental de los roles no implica que los permisos estén config
 
 Antes de considerar implementado el modelo de seguridad, se deberá:
 
-- Contrastar los roles propuestos con los grupos de acceso reales de Odoo 18 Community.
+- Contrastar los roles propuestos con los grupos de acceso reales de Odoo 19 Community.
 - Verificar los permisos por aplicación y operación.
 - Comprobar las restricciones relacionadas con compras, descuentos, créditos, inventario y operaciones financieras.
 - Evaluar los efectos de combinar varios roles en un mismo usuario.

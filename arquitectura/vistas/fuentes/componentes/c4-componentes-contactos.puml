@@ -1,0 +1,23 @@
+@startuml c4-componentes-contactos
+' Vista C4 de nivel 3: componentes de la aplicación Contactos.
+' Muestra el módulo de Contactos, el módulo del que depende y la aplicación que lo requiere.
+' Definiciones de elementos: c4-estilos-y-leyenda.iuml.
+
+!include <C4/C4_Component>
+!include ../c4-estilos-y-leyenda.iuml
+
+LAYOUT_TOP_DOWN()
+
+title Ferre & Inversiones MIGAL - Componentes de Contactos
+leyenda_colores()
+
+Container_Boundary(contactos, "Contactos") {
+  comp_contactos()
+}
+
+app_crm()
+dep_mail()
+
+Rel(contactosMod, mail, "depende de", $tags="dependencia")
+Rel(crm, contactosMod, "depende de", $tags="dependencia")
+@enduml
