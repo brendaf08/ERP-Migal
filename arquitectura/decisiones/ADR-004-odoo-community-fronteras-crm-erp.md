@@ -4,6 +4,8 @@
 - **Estado:** Aceptado
 - **Responsable de la decisión:** Equipo ERP-MIGAL
 
+> **Nota complementaria:** ADR-004 conserva la decisión histórica sobre fronteras funcionales CRM–ERP. La adopción de Odoo CRM se documenta por separado en [ADR-006](ADR-006-adopcion-crm-odoo.md), y la versión vigente se actualiza mediante [ADR-005](ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md). Esta nota no altera la decisión original.
+
 ## 1. Contexto y problema
 
 **Ferre & Inversiones MIGAL** necesita integrar la gestión de relaciones comerciales con la ejecución de sus operaciones empresariales, manteniendo la continuidad de la información desde la atención inicial del cliente hasta la venta y su correspondiente cobro.

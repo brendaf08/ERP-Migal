@@ -226,7 +226,7 @@ Antes de realizar commits, es obligatorio revisar los archivos preparados para c
 
 Las fuentes externas deben poder identificarse y contrastarse.
 
-El uso de herramientas de IA debe declararse conforme a [fuentes/uso-ia.md](fuentes/uso-ia.md), indicando su propósito y las limitaciones correspondientes.
+El uso de herramientas de IA debe declararse conforme a declaración de uso de IA (pendiente de Etapa B), indicando su propósito y las limitaciones correspondientes.
 
 La revisión y aprobación del contenido generado con apoyo de IA son responsabilidad del equipo.
 
@@ -239,7 +239,8 @@ Antes de crear un código nuevo, verificar que no esté asignado y que correspon
 | Prefijo | Significado | Documento responsable |
 |---|---|---|
 | `RN`, `CT`, `EXC` | Reglas, controles y excepciones | `procesos/catalogo-reglas.md` |
-| `INT`, `EV`, `F` | Integraciones, eventos y fronteras | `arquitectura/integraciones/INT-01-CRM-ERP.md` |
+| `INT`, `F` | Integraciones y fronteras | `arquitectura/integraciones/INT-01-CRM-ERP.md` |
+| `EV` | Eventos de negocio | `procesos/catalogo-eventos.md` |
 | `ADR` | Decisiones arquitectónicas | `arquitectura/decisiones/` |
 | `VER` | Versiones de arquitectura | `arquitectura/versiones/` |
 | `RSK` | Riesgos | `arquitectura/riesgos-y-controles.md` |
@@ -248,6 +249,8 @@ Antes de crear un código nuevo, verificar que no esté asignado y que correspon
 | `TR` | Trazabilidad y auditoría | `datos/trazabilidad/plan-trazabilidad-auditoria.md` |
 | `CP` | Casos de prueba | `pruebas/` |
 | `O2C-K`, `P2P-K` | Indicadores de procesos | `procesos/o2c/indicadores.md` y `procesos/p2p/indicadores.md` |
+
+El catálogo `procesos/catalogo-eventos.md` es la fuente central de asignación y definición de identificadores `EV`. Las integraciones los referencian y documentan correspondencias; no crean, renumeran ni redefinen eventos. Las referencias históricas a códigos anteriores conservan su significado y deben señalarse como tales.
 
 Los demás identificadores existentes deben conservarse en sus documentos especializados.
 

@@ -4,7 +4,7 @@ Este documento analiza la distribución de responsabilidades entre los roles fun
 
 Su objetivo es identificar quién prepara, autoriza, ejecuta y verifica las operaciones, evitando concentrar decisiones sensibles en usuarios que no cuentan con la responsabilidad correspondiente.
 
-El análisis constituye una propuesta funcional para la implementación de **Odoo 18 Community**. No implica que los permisos hayan sido configurados ni que todas las restricciones propuestas puedan aplicarse directamente sin ajustes adicionales.
+El análisis constituye una propuesta funcional para la implementación de **Odoo 19 Community**. No implica que los permisos hayan sido configurados ni que todas las restricciones propuestas puedan aplicarse directamente sin ajustes adicionales.
 
 ## 1. Roles funcionales considerados
 
@@ -142,7 +142,7 @@ Una persona puede desempeñar varios roles, pero esta acumulación debe evaluars
 
 La distribución anterior representa el diseño funcional previsto. Para su aplicación se requiere:
 
-- Verificar los grupos de acceso disponibles en Odoo 18 Community.
+- Verificar los grupos de acceso disponibles en Odoo 19 Community.
 - Validar los permisos efectivos de GER, VEN, ALM, CMP, FCO y SIS.
 - Comprobar qué operaciones financieras puede realizar FCO sin facultades de administración técnica.
 - Verificar las autorizaciones de compras, descuentos, créditos, anulaciones y ajustes extraordinarios.

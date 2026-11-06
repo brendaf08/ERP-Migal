@@ -11,7 +11,7 @@ Ferre & Inversiones MIGAL es una empresa del sector ferretero dedicada a la come
 
 Actualmente, parte de la información del negocio se encuentra distribuida entre registros manuales, conocimiento de los propietarios y sistemas no integrados. Esta situación dificulta el seguimiento de pedidos, inventarios, precios, entregas y cobros.
 
-Como respuesta, se propone utilizar **Odoo 18 Community** como plataforma integrada, diferenciando dos responsabilidades funcionales:
+Como respuesta, se propone utilizar **Odoo 19 Community** como plataforma integrada, diferenciando dos responsabilidades funcionales:
 
 - **CRM:** gestión de interesados, oportunidades, cotizaciones, negociación y seguimiento comercial.
 - **ERP:** validación y confirmación de pedidos, inventario, abastecimiento documental, entregas y registros económicos.
@@ -61,10 +61,10 @@ El repositorio se organiza conforme a las áreas documentales establecidas para 
 | Decisiones arquitectónicas | [ADR](arquitectura/decisiones/) |
 | Diagramas y vistas | [Vistas](arquitectura/vistas/) |
 | Transición CRM–ERP | [INT-01](arquitectura/integraciones/INT-01-CRM-ERP.md) |
-| Flujo comercial | [CRM](procesos/comercial-crm/flujo-comercial.md) |
-| Proceso Order to Cash | [O2C](procesos/o2c/flujo.md) |
-| Reglas y controles | [Catálogo de reglas](procesos/catalogo-reglas.md) |
-| Diccionario de datos | [Datos](datos/diccionario-datos.md) |
+| Flujo comercial | CRM (flujo detallado pendiente de Etapa B) |
+| Proceso Order to Cash | O2C (pendiente de Etapa B) |
+| Reglas y controles | Catálogo de reglas (pendiente de Etapa B) |
+| Diccionario de datos | Diccionario de datos (pendiente de Etapa B) |
 | Casos de prueba | [Pruebas](pruebas/) |
 | Bibliografía y uso de IA | [Fuentes](fuentes/) |
 

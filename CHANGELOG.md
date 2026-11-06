@@ -39,7 +39,7 @@ Sin entradas documentadas por ahora.
 
 Se fortaleció la consistencia entre el alcance funcional propuesto y las dependencias técnicas de Odoo, sin acreditar todavía su implementación o configuración.
 
-**Referencias:** [Módulos y dependencias](arquitectura/modulos-y-dependencias.md) · [VER-01](arquitectura/versiones/VER-01-erp-base.md).
+**Referencias:** Módulos y dependencias (pendiente de Etapa B) · [VER-01](arquitectura/versiones/VER-01-erp.md).
 
 ## 2026-10-17 — Consolidación documental e integración CRM–ERP
 
@@ -90,4 +90,12 @@ Asimismo, se amplió el alcance del ERP base hacia la gestión comercial y se fo
 
 Algunos documentos iniciales de PC2 fueron posteriormente consolidados en otros archivos; sus nombres históricos no deben interpretarse como rutas vigentes.
 
-**Referencias:** [Flujo comercial](procesos/comercial-crm/flujo-comercial.md) · [Plan de trazabilidad](datos/trazabilidad/plan-trazabilidad-auditoria.md).
+**Referencias:** Flujo comercial (pendiente de Etapa B) · Plan de trazabilidad (pendiente de Etapa B).
+
+
+## 2026-11-06 — Consolidación selectiva de PR #3 y PR #4
+
+- Se incorporaron los artefactos arquitectónicos exclusivos de PR #3 y las aportaciones compatibles de PR #4.
+- Se conservaron los 54 placeholders originales y los cuerpos históricos de ADR-001, ADR-003 y ADR-004.
+- Se mantuvo el catálogo de eventos de PR #4 sin cambios; las equivalencias ambiguas de INT-01 quedan pendientes de validación humana.
+- La procedencia, las exclusiones y las correspondencias se registran en [Consolidación Etapa A](arquitectura/consolidacion-etapa-a.md).
