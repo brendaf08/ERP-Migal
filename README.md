@@ -69,7 +69,7 @@ El repositorio se organiza conforme a las áreas documentales establecidas para 
 | Reglas, controles y excepciones | [Catálogo de reglas](procesos/catalogo-reglas.md) |
 | Eventos de negocio | [Catálogo de eventos](procesos/catalogo-eventos.md) |
 | Datos y trazabilidad | [Diccionario de datos](datos/diccionario-datos.md) · [Plan de trazabilidad](datos/trazabilidad/plan-trazabilidad-auditoria.md) |
-| Casos de prueba | [CP-01](pruebas/CP-01-caso-normal.md) · [CP-02](pruebas/CP-02-caso-excepcion.md) |
+| Casos de prueba | [CP-01](pruebas/CP-01-caso-normal.md) · [CP-02](pruebas/CP-02-caso-excepcion.md) · [CP-03](pruebas/CP-03-solicitud-aceptada.md) · [CP-04](pruebas/CP-04-solicitud-condicionada-rechazada.md) |
 | Fuentes y supuestos | [Fuentes del negocio](fuentes/fuentes-negocio.md) · [Supuestos y vacíos](fuentes/supuestos-y-vacios.md) |
 | Uso de IA | [Declaración de uso de IA](fuentes/uso-ia.md) |
 | Pendientes | [Registro de pendientes](producto/registro-pendientes.md) |
