@@ -18,15 +18,15 @@ Gran parte del conocimiento sobre precios, proveedores, descuentos, inventario y
 
 La empresa dispone de los siguientes recursos:
 
-| Recurso            | Cantidad | Uso principal                                        |
-| ------------------ | -------- | ---------------------------------------------------- |
-| Tienda principal   | 1        | Atención al cliente y comercialización de productos. |
-| Almacenes          | 2        | Almacenamiento de mercadería y materiales.           |
-| Camiones           | 2        | Transporte y despacho de materiales.                 |
-| Montacargas        | 1        | Apoyo en las operaciones de despacho.                |
-| Vehículo eléctrico | 1        | Apoyo en las operaciones de despacho.                |
+| Recurso            | Cantidad | Uso principal                                        | Respaldo                             |
+| ------------------ | -------- | ---------------------------------------------------- | ------------------------------------ |
+| Tienda principal   | 1        | Atención al cliente y comercialización de productos. | FN-01                                |
+| Almacenes          | 2        | Almacenamiento de mercadería y materiales.           | FN-01                                |
+| Camiones           | 2        | Transporte y despacho de materiales.                 | FN-01                                |
+| Montacargas        | 1        | Apoyo en las operaciones de despacho.                | FN-02, pendiente de corroboración    |
+| Vehículo eléctrico | 1        | Apoyo en las operaciones de despacho.                | FN-02, pendiente de corroboración    |
 
-Estos recursos forman parte de la infraestructura operativa actual de MIGAL.
+Los recursos respaldados por FN-01 forman parte de la infraestructura operativa documentada de MIGAL. El montacargas y el vehículo eléctrico dependen de afirmaciones atribuidas a FN-02 y permanecen pendientes de corroboración con los propietarios, según el registro de [fuentes del negocio](../fuentes/fuentes-negocio.md) y [supuestos y vacíos](../fuentes/supuestos-y-vacios.md).
 
 ### 1.2. Recursos tecnológicos
 
@@ -218,4 +218,4 @@ La definición de la solución propuesta, sus objetivos y los límites del proye
 
 La evolución de la arquitectura y los sistemas incorporados se documenta en [Versiones de arquitectura](versiones/README.md).
 
-Los supuestos, vacíos de información y aspectos que requieren validación deberán documentarse en el registro de supuestos y vacíos (pendiente de documentación). Las acciones correspondientes se siguen en el [Registro de pendientes](../producto/registro-pendientes.md).
+Los supuestos, vacíos de información y aspectos que requieren validación se documentan en el registro de [supuestos y vacíos](../fuentes/supuestos-y-vacios.md). Las acciones correspondientes se siguen en el [Registro de pendientes](../producto/registro-pendientes.md).

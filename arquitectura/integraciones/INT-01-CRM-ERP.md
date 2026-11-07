@@ -73,7 +73,7 @@ Las equivalencias pendientes requieren una decisión funcional antes de aplicars
 
 ## 4. Información intercambiada
 
-Las definiciones de estos datos deberán incorporarse al diccionario de datos (pendiente de documentación).
+Las definiciones funcionales de estos datos se recogen en el [diccionario de datos](../../datos/diccionario-datos.md), apartado 3.
 
 | Dato | Origen | Destino | Obligatorio | Observaciones |
 |---|---|---|---|---|
@@ -123,7 +123,7 @@ Los estados constituyen una propuesta funcional. No presuponen un campo, un obje
 
 ## 6. Reglas, controles y excepciones
 
-Las reglas, controles y excepciones de la integración deberán incorporarse al catálogo de reglas (pendiente de documentación), responsable de sus identificadores. Hasta entonces, se referencian por su descripción.
+El [catálogo de reglas](../../procesos/catalogo-reglas.md) es el responsable de los identificadores de las reglas, controles y excepciones de esta integración; principalmente RN-003 a RN-006, RN-015, CT-003, EXC-001, EXC-002 y EXC-004. Las tablas siguientes conservan su descripción funcional.
 
 | Condición o control | Aplicación en la integración |
 |---|---|
@@ -166,7 +166,7 @@ Los propietarios acumulan los roles GER, VEN y ALM. Cuando una misma persona pre
 - **Registro de eventos:** cada evento deja constancia del usuario, la fecha y el resultado en el historial de la oportunidad, la cotización o la orden de venta.
 - **Relación entre documentos:** se conserva la cadena oportunidad, cotización, solicitud de orden de venta y orden de venta, de modo que cada registro pueda reconstruirse desde cualquiera de los demás.
 - **Decisiones:** la evaluación conserva el responsable, la fecha, el resultado y, cuando corresponda, el motivo y las condiciones requeridas.
-- **Referencia:** plan de trazabilidad y auditoría (pendiente de documentación).
+- **Referencia:** [plan de trazabilidad y auditoría](../../datos/trazabilidad/plan-trazabilidad-auditoria.md), requisitos TR-14 a TR-18.
 
 El historial depende del módulo Conversaciones (`mail`). Su configuración y el hábito de registrar las acciones en Odoo se consideran en el riesgo [RSK-005](../riesgos-y-controles.md).
 
@@ -214,25 +214,25 @@ Se requiere comprobar en la instancia de Odoo:
 
 **Pendientes relacionados:** [PEN-004](../../producto/registro-pendientes.md) y [PEN-005](../../producto/registro-pendientes.md), sobre permisos, y [PEN-009](../../producto/registro-pendientes.md), sobre programación, entrega y conformidad.
 
-### Documentos por actualizar
+### Documentos relacionados
 
-La especificación de esta integración aún no se refleja en los siguientes documentos, que requieren actualización:
+La especificación de esta integración se refleja en los siguientes documentos:
 
-- diccionario de datos (pendiente de documentación): datos intercambiados y estados de la solicitud (apartados 4 y 5).
-- catálogo de reglas (pendiente de documentación): reglas, controles y excepciones de la integración (apartado 6).
-- plan de trazabilidad y auditoría (pendiente de documentación): eventos y cadena de documentos que deben registrarse (apartado 8).
+- [Diccionario de datos](../../datos/diccionario-datos.md), apartado 3: datos intercambiados, solicitud, evaluaciones y respuesta (apartados 4 y 5 de este documento).
+- [Catálogo de reglas](../../procesos/catalogo-reglas.md): RN-005, RN-006, CT-003 y EXC-001, entre otras (apartado 6).
+- [Plan de trazabilidad y auditoría](../../datos/trazabilidad/plan-trazabilidad-auditoria.md): TR-14 a TR-18 (apartado 8).
 
 ### Asuntos abiertos propios de la integración
 
 Estos asuntos se trasladan al [registro de pendientes](../../producto/registro-pendientes.md) para su seguimiento.
 
-| Asunto | Criterio de cierre |
-|---|---|
-| Responsable de ejecutar la evaluación de la solicitud. | Rol designado y reflejado en el modelo de autorización y en el flujo comercial. |
-| Responsable de autorizar la confirmación de la orden de venta. | Rol designado, con la verificación previa de viabilidad operativa. |
-| Criterios que distinguen una solicitud condicionada de una rechazada. | Criterios documentados y validados con los propietarios. |
-| Vigencia de las cotizaciones previa a la solicitud. | Criterio definido y reflejado en las reglas comerciales. |
-| Política de otorgamiento de créditos. | Criterios confirmados con los propietarios. |
-| Mecanismo de representación de la solicitud en Odoo. | Alternativa validada en la instancia y registrada en este documento. |
+| Asunto | Criterio de cierre | Seguimiento |
+|---|---|---|
+| Responsable de ejecutar la evaluación de la solicitud. | Rol designado y reflejado en el modelo de autorización y en el flujo comercial. | PEN-018 |
+| Responsable de autorizar la confirmación de la orden de venta. | Rol designado, con la verificación previa de viabilidad operativa. | PEN-019 |
+| Criterios que distinguen una solicitud condicionada de una rechazada. | Criterios documentados y validados con los propietarios. | PEN-020 |
+| Vigencia de las cotizaciones previa a la solicitud. | Criterio definido y reflejado en las reglas comerciales. | PEN-015 |
+| Política de otorgamiento de créditos. | Criterios confirmados con los propietarios. | PEN-015 |
+| Mecanismo de representación de la solicitud en Odoo. | Alternativa validada en la instancia y registrada en este documento. | PEN-016 |
 
 Los casos de prueba que verifiquen esta integración se registran en la carpeta `pruebas/`. Deben cubrir, como mínimo, el flujo con solicitud aceptada y las excepciones con solicitud condicionada y rechazada.
