@@ -21,6 +21,19 @@ No incluir borradores ni resultados pendientes de aprobación.
 
 Sin entradas documentadas por ahora.
 
+## 2026-11-06 — Fundamentos, procesos, datos y casos de prueba de ERP-MIGAL
+
+### Agregado
+
+- **Fundamentos (PR #7):** [fuentes del negocio](fuentes/fuentes-negocio.md) y [supuestos y vacíos](fuentes/supuestos-y-vacios.md), que distinguen evidencia empresarial, interpretación y afirmaciones pendientes de corroboración; [módulos y dependencias](arquitectura/modulos-y-dependencias.md) según los manifiestos de Odoo 19, y el [mapa de procesos](procesos/mapa-procesos.md) de nivel 1.
+- **Procesos y reglas (PR #8):** flujos [comercial CRM](procesos/comercial-crm/flujo-comercial.md), [O2C](procesos/o2c/flujo.md), [P2P](procesos/p2p/flujo.md) e [inventario](procesos/inventario/flujo.md), y el [catálogo de reglas](procesos/catalogo-reglas.md) con RN-001–RN-021, CT-001–CT-009 y EXC-001–EXC-006.
+- **Datos y trazabilidad (PR #9):** [diccionario de datos](datos/diccionario-datos.md) funcional, sin campos técnicos de Odoo verificados, y [plan de trazabilidad y auditoría](datos/trazabilidad/plan-trazabilidad-auditoria.md) con 25 requisitos TR.
+- **Pruebas (PR #10):** casos [CP-01](pruebas/CP-01-caso-normal.md) y [CP-02](pruebas/CP-02-caso-excepcion.md) con datos sintéticos, en estado **No ejecutado**.
+
+### Impacto
+
+La documentación cubre procesos, reglas, datos y trazabilidad de CRM, O2C, P2P e inventario. Su implementación en Odoo 19 y la ejecución de los casos de prueba permanecen pendientes.
+
 ## 2026-11-06 — Evolución de la arquitectura y los procesos de ERP-MIGAL
 
 - Se documentó Odoo 19 Community como versión base en [ADR-005](arquitectura/decisiones/ADR-005-cambio-version-Odoo-18-Community-a-Odoo-19-Community.md) y la adopción de Odoo CRM en [ADR-006](arquitectura/decisiones/ADR-006-adopcion-crm-odoo.md), manteniendo la frontera funcional definida en ADR-004.
@@ -46,7 +59,7 @@ Sin entradas documentadas por ahora.
 
 Se fortaleció la consistencia entre el alcance funcional propuesto y las dependencias técnicas de Odoo, sin acreditar todavía su implementación o configuración.
 
-**Referencias:** Módulos y dependencias (pendiente de documentación) · [VER-01](arquitectura/versiones/VER-01-erp.md).
+**Referencias:** [Módulos y dependencias](arquitectura/modulos-y-dependencias.md) (versión vigente, actualizada a Odoo 19) · [VER-01](arquitectura/versiones/VER-01-erp.md).
 
 ## 2026-10-17 — Evolución documental e integración CRM–ERP
 
@@ -91,4 +104,4 @@ Se estableció una base documental para gestionar de forma incremental los entre
 
 Asimismo, se amplió el alcance del ERP base hacia la gestión comercial y se fortaleció la documentación de controles y evidencias.
 
-**Referencias:** Flujo comercial (pendiente de documentación) · Plan de trazabilidad (pendiente de documentación).
+**Referencias:** [Flujo comercial](procesos/comercial-crm/flujo-comercial.md) · [Plan de trazabilidad](datos/trazabilidad/plan-trazabilidad-auditoria.md) (versiones vigentes).
