@@ -1,6 +1,6 @@
 # Mapa de procesos de nivel 1 de ERP-MIGAL
 
-**Estado:** clasificación funcional propuesta. Este mapa organiza el trabajo empresarial para análisis académico; no acredita departamentos formales, procesos aprobados ni automatizaciones implementadas. Distingue el contexto documentado en [fuentes del negocio](../fuentes/fuentes-negocio.md) del diseño establecido en el [alcance](../arquitectura/alcance.md).
+**Estado:** clasificación funcional propuesta. Este mapa presenta los procesos y sus relaciones sin presuponer departamentos formales, procesos aprobados ni automatizaciones implementadas. Distingue el contexto documentado en [fuentes del negocio](../fuentes/fuentes-negocio.md) del diseño establecido en el [alcance](../arquitectura/alcance.md).
 
 ## 1. Procesos, entradas, salidas y responsabilidades
 

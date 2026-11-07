@@ -40,7 +40,7 @@ Este registro identifica condiciones que afectan el diseño de ERP-MIGAL y evita
 | Política de precios, descuentos, crédito y vigencia de cotizaciones. | Condiciones confirmadas por propietarios, sin porcentajes o plazos inferidos de material docente. | GER, con apoyo de VEN y FCO. |
 | Ubicaciones físicas y disponibilidad por producto. | Representación de tienda y almacenes; diferencia entre stock físico, disponible y reservado; prueba de movimientos. | ALM y SIS, con aprobación de GER cuando proceda. |
 | Compromisos de entrega y tratamiento de faltantes. | Momento en que puede prometerse fecha, recursos disponibles y manejo de entregas parciales o no conformes. | GER y ALM, con información de VEN. |
-| Espera máxima de 30 minutos en obra y recursos logísticos adicionales citados en documentación anterior. | Original de FN-02 y decisión explícita de los propietarios; hasta entonces, no son políticas ni recursos confirmados. | GER. |
+| Espera máxima de 30 minutos en obra y recursos logísticos adicionales por corroborar. | Fuente primaria de FN-02 y decisión explícita de los propietarios; hasta entonces, no son políticas ni recursos confirmados. | GER. |
 | Frontera entre Facturación de Odoo y KeyFacil. | Procedimiento para evitar duplicidad de comprobantes, registrar referencias y conciliar importes. | FCO y GER; definición técnica por SIS. |
 | Complementos financieros OCA. | Versiones compatibles, instalación autorizada y reportes requeridos probados. | FCO y SIS, con decisión de GER. |
 | Roles y permisos efectivos. | Comparación entre [modelo de autorización](../arquitectura/seguridad/modelo-autorizacion.md), grupos de Odoo y pruebas con usuarios representativos. | SIS y GER. |
