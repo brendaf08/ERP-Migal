@@ -1,0 +1,19 @@
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporales de editores y de Office
+*.swp
+*~
+~$*
+*.tmp
+*.bak
+
+# Configuración local de editores
+.vscode/
+.idea/
+
+# Variables de entorno y posibles secretos (CONTRIBUTING §5)
+.env
+.env.*
