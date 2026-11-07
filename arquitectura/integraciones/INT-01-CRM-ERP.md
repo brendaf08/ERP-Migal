@@ -235,4 +235,4 @@ Estos asuntos se trasladan al [registro de pendientes](../../producto/registro-p
 | Política de otorgamiento de créditos. | Criterios confirmados con los propietarios. | PEN-015 |
 | Mecanismo de representación de la solicitud en Odoo. | Alternativa validada en la instancia y registrada en este documento. | PEN-016 |
 
-Los casos de prueba que verifiquen esta integración se registran en la carpeta `pruebas/`. Deben cubrir, como mínimo, el flujo con solicitud aceptada y las excepciones con solicitud condicionada y rechazada.
+Los casos de prueba que verifiquen esta integración se registran en la carpeta `pruebas/`. Deben cubrir, como mínimo, el flujo con solicitud aceptada y las excepciones con solicitud condicionada y rechazada: [CP-03](../../pruebas/CP-03-solicitud-aceptada.md) y [CP-04](../../pruebas/CP-04-solicitud-condicionada-rechazada.md), ambos en estado No ejecutado.
