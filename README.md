@@ -34,7 +34,7 @@ La solución se documenta mediante modelos de procesos, decisiones arquitectóni
 
 **Estado actual:** diseño funcional y arquitectónico sujeto a validación técnica. La presencia de documentos, modelos o casos de prueba no acredita por sí misma una implementación operativa en Odoo.
 
-El alcance no presupone integraciones automáticas con KeyFacil o WhatsApp ni la utilización del módulo de Compras (`purchase`) de Odoo.
+El alcance no presupone integraciones automáticas con KeyFacil o WhatsApp. Compras (`purchase`) forma parte de las aplicaciones seleccionadas para P2P, según [módulos y dependencias](arquitectura/modulos-y-dependencias.md); su instalación y configuración en MIGAL están pendientes de verificación.
 
 **Referencia:** [Alcance de la solución](arquitectura/alcance.md).
 
@@ -57,16 +57,22 @@ El repositorio se organiza conforme a las áreas documentales establecidas para 
 
 | Tema | Ubicación |
 |---|---|
-| Alcance y arquitectura | [Alcance](arquitectura/alcance.md) |
+| Contexto y alcance | [Contexto de la empresa](arquitectura/contexto-empresa.md) · [Alcance](arquitectura/alcance.md) |
 | Decisiones arquitectónicas | [ADR](arquitectura/decisiones/) |
-| Diagramas y vistas | [Vistas](arquitectura/vistas/) |
+| Plataforma y dependencias | [Módulos y dependencias](arquitectura/modulos-y-dependencias.md) · [Versiones](arquitectura/versiones/README.md) |
+| Diagramas y vistas | [Vistas C4](arquitectura/vistas/consolidado-diagramas.md) |
+| Seguridad y roles | [Seguridad](arquitectura/seguridad/README.md) |
 | Transición CRM–ERP | [INT-01](arquitectura/integraciones/INT-01-CRM-ERP.md) |
-| Flujo comercial | CRM (flujo detallado pendiente de documentación) |
-| Proceso Order to Cash | O2C (pendiente de documentación) |
-| Reglas y controles | Catálogo de reglas (pendiente de documentación) |
-| Diccionario de datos | Diccionario de datos (pendiente de documentación) |
-| Casos de prueba | [Pruebas](pruebas/) |
-| Bibliografía y uso de IA | [Fuentes](fuentes/) |
+| Riesgos | [Riesgos y controles](arquitectura/riesgos-y-controles.md) |
+| Mapa de procesos | [Mapa de procesos](procesos/mapa-procesos.md) |
+| Flujos de proceso | [Comercial CRM](procesos/comercial-crm/flujo-comercial.md) · [O2C](procesos/o2c/flujo.md) · [P2P](procesos/p2p/flujo.md) · [Inventario](procesos/inventario/flujo.md) |
+| Reglas, controles y excepciones | [Catálogo de reglas](procesos/catalogo-reglas.md) |
+| Eventos de negocio | [Catálogo de eventos](procesos/catalogo-eventos.md) |
+| Datos y trazabilidad | [Diccionario de datos](datos/diccionario-datos.md) · [Plan de trazabilidad](datos/trazabilidad/plan-trazabilidad-auditoria.md) |
+| Casos de prueba | [CP-01](pruebas/CP-01-caso-normal.md) · [CP-02](pruebas/CP-02-caso-excepcion.md) |
+| Fuentes y supuestos | [Fuentes del negocio](fuentes/fuentes-negocio.md) · [Supuestos y vacíos](fuentes/supuestos-y-vacios.md) |
+| Uso de IA | [Declaración de uso de IA](fuentes/uso-ia.md) |
+| Pendientes | [Registro de pendientes](producto/registro-pendientes.md) |
 
 Cada documento desarrolla un propósito específico. Este README constituye el punto de entrada del proyecto y no sustituye la documentación especializada.
 
@@ -82,10 +88,10 @@ Para revisar la documentación y reproducir las evidencias disponibles:
 
 Los diagramas se organizan mediante dos directorios complementarios:
 
-- `.../fuentes/`: archivos editables de los diagramas, como `.puml` y `.bpm`.
-- `.../render/`: representaciones exportadas para su consulta, principalmente `.png`.
+- `.../fuentes/`: archivos editables de los diagramas (`.puml` e `.iuml`).
+- `.../render/`: representaciones exportadas para su consulta (`.svg`).
 
-Los archivos `.puml` pueden reproducirse mediante PlantUML y los `.bpm` mediante una herramienta compatible con su formato.
+Los archivos `.puml` pueden reproducirse mediante PlantUML, siguiendo las instrucciones de [vistas de arquitectura](arquitectura/vistas/consolidado-diagramas.md).
 
 La consulta de diagramas, datos sintéticos y casos documentados permite revisar el diseño propuesto, pero **no equivale a ejecutar pruebas funcionales en Odoo**.
 
