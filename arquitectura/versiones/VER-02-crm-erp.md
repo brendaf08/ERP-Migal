@@ -19,7 +19,7 @@ El CRM se incorpora para gestionar leads, oportunidades, cotizaciones y su segui
 | Aspecto | Cambio |
 |---|---|
 | Aplicaciones | Se incorpora **CRM**. Contactos pasa a ser un dato compartido por CRM y ERP. |
-| Gestión comercial | Las consultas se registran como leads y oportunidades. Las cotizaciones se originan en la oportunidad. |
+| Gestión comercial | Las consultas que requieren seguimiento se registran como oportunidades, y sus cotizaciones se originan en ellas. La venta inmediata de mostrador puede seguir el Punto de Venta sin recorrer CRM (RN-007), según el [flujo comercial](../../procesos/comercial-crm/flujo-comercial.md). |
 | Frontera funcional | Se establece la solicitud de orden de venta, registrada a partir de una cotización aceptada y evaluada por el ERP (ADR-004). |
 | Integración | Se documenta la transición entre CRM y ERP en INT-01: eventos, información, estados y responsables. |
 | Roles | El rol de Atención y Ventas (VEN) incorpora la gestión de CRM. Se identifican las autorizaciones de GER sobre la evaluación. |

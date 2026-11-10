@@ -137,7 +137,7 @@ Ejemplos:
 
 - `ADR-001-seleccion-erp.md`
 - `CP-01-caso-normal.md`
-- `VER-01-erp-base.md`
+- `VER-01-erp.md`
 
 Los nombres históricos consolidados, como `INT-01-CRM-ERP.md`, se conservarán hasta que una migración aprobada actualice tanto el archivo como todas sus referencias.
 
@@ -153,7 +153,7 @@ Los diagramas deben conservar el archivo editable y su representación exportada
 Ejemplo:
 
 - `arquitectura/vistas/fuentes/c4-contexto.puml`
-- `arquitectura/vistas/render/c4-contexto.png`
+- `arquitectura/vistas/render/c4-contexto.svg`
 
 Los archivos relacionados deben mantener nombres equivalentes. Cuando se modifique una fuente, se debe actualizar su render correspondiente.
 
@@ -244,11 +244,11 @@ Antes de crear un código nuevo, verificar que no esté asignado y que correspon
 | `ADR` | Decisiones arquitectónicas | `arquitectura/decisiones/` |
 | `VER` | Versiones de arquitectura | `arquitectura/versiones/` |
 | `RSK` | Riesgos | `arquitectura/riesgos-y-controles.md` |
-| `R`, `SOD` | Responsabilidades y segregación de funciones | `arquitectura/seguridad/modelo-autorizacion.md` |
-| `DQ` | Calidad de datos | `datos/reglas-calidad.md` |
+| `R`, `SOD` | Responsabilidades y segregación de funciones | `arquitectura/seguridad/modelo-autorizacion.md` (prefijos reservados; aún sin identificadores asignados) |
+| `DQ` | Calidad de datos | `datos/reglas-calidad.md` (previsto; hoy existe solo el placeholder `datos/B-reglas-calidad.md`) |
 | `TR` | Trazabilidad y auditoría | `datos/trazabilidad/plan-trazabilidad-auditoria.md` |
 | `CP` | Casos de prueba | `pruebas/` |
-| `O2C-K`, `P2P-K` | Indicadores de procesos | `procesos/o2c/indicadores.md` y `procesos/p2p/indicadores.md` |
+| `O2C-K`, `P2P-K` | Indicadores de procesos | `procesos/o2c/indicadores.md` y `procesos/p2p/indicadores.md` (previstos; hoy existen solo sus placeholders `B-`) |
 
 El catálogo `procesos/catalogo-eventos.md` es la fuente central de asignación y definición de identificadores `EV`. Las integraciones los referencian y documentan correspondencias; no crean, renumeran ni redefinen eventos. Las referencias históricas a códigos anteriores conservan su significado y deben señalarse como tales.
 

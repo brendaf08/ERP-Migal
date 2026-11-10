@@ -52,7 +52,7 @@ Para P2P e inventario, el mapa remite a los eventos de necesidad de abastecimien
 
 ## 4. Documentación relacionada y límites
 
-El [alcance](../arquitectura/alcance.md) delimita O2C, P2P y operaciones de apoyo. [INT-01](../arquitectura/integraciones/INT-01-CRM-ERP.md) detalla la frontera comercial; [módulos y dependencias](../arquitectura/modulos-y-dependencias.md) describe la plataforma elegida sin convertir módulos en procesos. Los flujos detallados de CRM, O2C, P2P e inventario y sus reglas permanecen **pendientes de documentación** donde todavía no existan archivos finales. [Supuestos y vacíos](../fuentes/supuestos-y-vacios.md) registra las preguntas que impiden cerrar controles o políticas.
+El [alcance](../arquitectura/alcance.md) delimita O2C, P2P y operaciones de apoyo. [INT-01](../arquitectura/integraciones/INT-01-CRM-ERP.md) detalla la frontera comercial; [módulos y dependencias](../arquitectura/modulos-y-dependencias.md) describe la plataforma elegida sin convertir módulos en procesos. Los flujos detallados de [CRM](comercial-crm/flujo-comercial.md), [O2C](o2c/flujo.md), [P2P](p2p/flujo.md) e [inventario](inventario/flujo.md) desarrollan cada proceso; sus reglas se registran en el [catálogo de reglas](catalogo-reglas.md) y sus eventos en el [catálogo de eventos](catalogo-eventos.md). [Supuestos y vacíos](../fuentes/supuestos-y-vacios.md) registra las preguntas que impiden cerrar controles o políticas.
 
 No se atribuyen a MIGAL departamentos comerciales, logísticos o informáticos separados. Tampoco se presupone comercio electrónico, automatización de WhatsApp, integración automática con KeyFacil, gestión de flota o contabilidad tributaria integral fuera del [alcance inicial](../arquitectura/alcance.md).
 

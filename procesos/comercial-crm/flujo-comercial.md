@@ -33,7 +33,7 @@ La solicitud es un **documento funcional interno**. INT-01 indica que Odoo no pr
 | Respuesta | Comunicar a VEN si la solicitud fue aceptada, condicionada o rechazada. La condicionada o rechazada retorna a CRM con motivo; si cambian las condiciones del cliente, negociar y obtener nueva conformidad. | Evaluador por designar/VEN | RN-006, EXC-001; EV-014 tiene una equivalencia semántica aún pendiente en INT-01. |
 | Confirmación | Solo tras respuesta aceptada, confirmar la orden de venta y marcar la oportunidad como «Ganada». La representación y restricción efectivas en Odoo 19 deben probarse. | Confirmador por designar; VEN actualiza CRM | EV-018; RN-006/RN-008. |
 
-Si cambian las condiciones aceptadas después de presentar una solicitud de orden de venta, se conserva la solicitud anterior y se presenta una nueva tras registrar la conformidad del cliente con las condiciones renegociadas, conforme a INT-01. Si aún no se presentó una solicitud, la primera se presenta con las condiciones actualizadas y aceptadas.
+Si cambian las condiciones aceptadas, se aplica [RN-003](../catalogo-reglas.md): se conserva el historial y, si ya se presentó una solicitud de orden de venta, la nueva queda vinculada a la anterior, conforme a INT-01.
 
 El cliente puede rechazar una cotización (EV-007) antes de que exista solicitud interna. Es diferente del rechazo de la **solicitud de orden de venta** por la evaluación operativa. Ninguno produce automáticamente una nueva cotización; esta se prepara si se negocian condiciones distintas.
 
