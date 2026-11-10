@@ -14,6 +14,8 @@ Un **evento de negocio** es un acontecimiento relevante que ocurre en la empresa
 | **Incorporaciones**   | Los nuevos eventos reciben el siguiente identificador global disponible y se ubican en la categoría correspondiente. |
 | **Retiro**            | Un identificador retirado no se reutiliza; se conserva su equivalencia cuando corresponde.                           |
 
+Los identificadores EV-011, EV-013 y EV-015 no figuran en el catálogo desde su incorporación y no existe registro de su significado. Conforme a la regla de retiro, no se reutilizan.
+
 La situación de los eventos se basa en la información empresarial disponible y en las propuestas del proyecto. Su clasificación deberá ratificarse cuando se contraste con los responsables de MIGAL.
 
 ## 2. Registro de eventos

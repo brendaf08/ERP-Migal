@@ -21,6 +21,26 @@ No incluir borradores ni resultados pendientes de aprobación.
 
 Sin entradas documentadas por ahora.
 
+## 2026-11-07 — Corrección, pruebas de frontera y cierre de la consolidación documental
+
+### Cambiado
+
+- **Corrección y cierre documental (PR #11):** el README se alinea con el alcance (Compras incluido en P2P) y enlaza todos los documentos vigentes; INT-01, VER-02, el contexto de la empresa y el CHANGELOG sustituyen referencias «pendientes» por enlaces a documentos existentes; el contexto indica el respaldo de cada recurso de infraestructura (FN-01 o FN-02 pendiente de corroboración).
+- **Registro de pendientes (PR #11):** se trasladan desde INT-01 PEN-018 a PEN-020 y se añade la verificación de criterios de cierre (§2.3), sin cerrar ningún pendiente.
+
+### Agregado
+
+- **Declaración de uso de IA (PR #11):** [fuentes/uso-ia.md](fuentes/uso-ia.md).
+- **Pruebas de la frontera CRM–ERP (PR #12):** [CP-03](pruebas/CP-03-solicitud-aceptada.md) (solicitud aceptada y confirmación posterior) y [CP-04](pruebas/CP-04-solicitud-condicionada-rechazada.md) (respuestas condicionada y rechazada), ambos en estado **No ejecutado**.
+
+### Eliminado
+
+- **Limpieza (PR #13):** 37 placeholders `B-` vacíos clasificados como cubiertos, prescindibles o sustituidos, y dos archivos `.DS_Store`. Se conservan cinco placeholders complementarios y se completa `.gitignore`.
+
+### Impacto
+
+La consolidación documental queda cerrada. La ejecución de los casos de prueba y la configuración de la frontera CRM–ERP dependen de PEN-016 y PEN-018 a PEN-020.
+
 ## 2026-11-06 — Fundamentos, procesos, datos y casos de prueba de ERP-MIGAL
 
 ### Agregado
