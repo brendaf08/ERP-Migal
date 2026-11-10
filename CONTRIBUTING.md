@@ -239,6 +239,7 @@ Antes de crear un código nuevo, verificar que no esté asignado y que correspon
 | Prefijo | Significado | Documento responsable |
 |---|---|---|
 | `RN`, `CT`, `EXC` | Reglas, controles y excepciones | `procesos/catalogo-reglas.md` |
+| `ACT` | Activos | `procesos/catalogo-activos.md` |
 | `INT`, `F` | Integraciones y fronteras | `arquitectura/integraciones/INT-01-CRM-ERP.md` |
 | `EV` | Eventos de negocio | `procesos/catalogo-eventos.md` |
 | `ADR` | Decisiones arquitectónicas | `arquitectura/decisiones/` |
