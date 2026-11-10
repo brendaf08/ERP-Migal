@@ -6,7 +6,7 @@
 
 El catálogo reúne 14 activos: 5 de criticidad alta, 6 de media y 3 de baja. Los de criticidad alta son los dos camiones, el montacargas, los teléfonos celulares de los propietarios y el servicio KeyFacil. La disponibilidad inherente de referencia varía entre 89,29 % (minicargador frontal) y 99,80 % (balanza y KeyFacil). Los tres equipos con menor disponibilidad tienen motor de combustión: el minicargador, el camión volquete y el camión de baranda.
 
-La criticidad se evalúa sobre la operación propuesta con Odoo 19 Community, no sobre el uso actual. El mantenimiento de cada activo se define en el plan de mantenimiento, pendiente de documentación, que usa este catálogo como entrada.
+La criticidad se evalúa sobre la operación propuesta con Odoo 19 Community, no sobre el uso actual. El mantenimiento de cada activo se define en el [plan de mantenimiento](plan-mantenimiento.md), que usa este catálogo como entrada.
 
 ## 2. Criterios de criticidad y cálculo de disponibilidad
 
