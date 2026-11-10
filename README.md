@@ -67,6 +67,7 @@ El repositorio se organiza conforme a las áreas documentales establecidas para 
 | Mapa de procesos | [Mapa de procesos](procesos/mapa-procesos.md) |
 | Flujos de proceso | [Comercial CRM](procesos/comercial-crm/flujo-comercial.md) · [O2C](procesos/o2c/flujo.md) · [P2P](procesos/p2p/flujo.md) · [Inventario](procesos/inventario/flujo.md) |
 | Reglas, controles y excepciones | [Catálogo de reglas](procesos/catalogo-reglas.md) |
+| Activos y disponibilidad | [Catálogo de activos](procesos/catalogo-activos.md) |
 | Eventos de negocio | [Catálogo de eventos](procesos/catalogo-eventos.md) |
 | Datos y trazabilidad | [Diccionario de datos](datos/diccionario-datos.md) · [Plan de trazabilidad](datos/trazabilidad/plan-trazabilidad-auditoria.md) |
 | Casos de prueba | [CP-01](pruebas/CP-01-caso-normal.md) · [CP-02](pruebas/CP-02-caso-excepcion.md) · [CP-03](pruebas/CP-03-solicitud-aceptada.md) · [CP-04](pruebas/CP-04-solicitud-condicionada-rechazada.md) |
