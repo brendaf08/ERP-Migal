@@ -2,9 +2,9 @@
 
 **Estado:** plan propuesto, sujeto a aprobación de GER. Asigna a cada activo del [catálogo de activos](catalogo-activos.md) un enfoque de mantenimiento, una frecuencia o disparador y una acción principal. Las frecuencias y duraciones son propuestas de planificación, no recomendaciones del fabricante: los manuales de los equipos no se han consultado. Los valores de disponibilidad provienen de supuestos de trabajo (MTBF y MTTR) y no de un historial de fallas.
 
-## 1. Diez activos con mantenimiento preventivo y cuatro con correctivo
+## 1. Diez activos con mantenimiento preventivo y seis con correctivo
 
-El plan cubre los 14 activos del catálogo, uno por fila. Aplica mantenimiento preventivo a los 5 activos de criticidad alta y a 5 de los 6 de criticidad media. Los 4 activos restantes (el terminal Culqi, la tablet, la videovigilancia y el compresor) reciben mantenimiento correctivo. No se adopta mantenimiento predictivo en esta etapa (sección 5).
+El plan cubre los 16 activos del catálogo, uno por fila. Aplica mantenimiento preventivo a los 5 activos de criticidad alta y a 5 de los 6 de criticidad media. Los 6 activos restantes (el terminal Culqi, la tablet, la videovigilancia, el compresor, el cortapernos y la escalera) reciben mantenimiento correctivo. No se adopta mantenimiento predictivo en esta etapa (sección 5).
 
 Cuatro activos no alcanzan la meta de disponibilidad propuesta: los dos camiones, el montacargas y el minicargador. El plan los atiende con inspección diaria y servicio periódico, y suma 122 h de parada planificada al año, de las cuales 88 h corresponden a esos cuatro activos (sección 4).
 
@@ -45,6 +45,8 @@ La tabla vincula cada ID del catálogo con su enfoque, su frecuencia o disparado
 | ACT-12 | Sistema de videovigilancia | Correctivo | Canal en «NO LINK» o «NO VIDEO», o cámara sin imagen. La revisión mensual de los canales en el monitor es rutina de operación. | Reconectar o reemplazar el cable o la cámara y verificar la grabación del DVR. |
 | ACT-13 | Compresor de aire Bauker | Correctivo | Falla del equipo. La purga semanal del condensado del tanque es rutina de operación. | Reparar o reponer; revisar el presostato y el manómetro antes de reutilizarlo. |
 | ACT-14 | Servicio KeyFacil | Preventivo | Verificación mensual. | Comprobar el acceso y la vigencia de las credenciales, conservar copia de los comprobantes emitidos y atender los avisos de mantenimiento del proveedor. |
+| ACT-15 | Cortapernos manual | Correctivo | Filo desgastado, mordazas desalineadas o mango roto. La revisión del filo y del pasador antes de cada uso es rutina de operación. | Afilar o reponer las mordazas, o reponer la herramienta. |
+| ACT-16 | Escalera de tijera de cuatro peldaños | Correctivo | Pata, peldaño, remache o tapón dañado. La revisión visual antes de cada uso es rutina de operación. | Retirar la escalera de uso y repararla o reponerla. |
 
 ## 4. Paradas planificadas, metas de disponibilidad y responsables
 
@@ -66,6 +68,8 @@ Las metas de disponibilidad son una propuesta por nivel de criticidad: 95 % para
 | ACT-12 | Baja | 95,42 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
 | ACT-13 | Baja | 98,94 | 90 | Cumple | No aplica | 0 | ALM opera; GER autoriza la reposición. |
 | ACT-14 | Alta | 99,80 | 95 | Cumple | No aplica | 0 (sin parada en MIGAL) | GER, como operador del servicio. |
+| ACT-15 | Baja | 99,84 | 90 | Cumple | No aplica | 0 | ALM opera; GER autoriza la reposición. |
+| ACT-16 | Baja | 99,95 | 90 | Cumple | No aplica | 0 | ALM opera; GER autoriza la reposición. |
 
 Las horas de parada planificada se restan de la disponibilidad operativa, y la disponibilidad de referencia no las descuenta. La relación entre estas horas, la mejora esperada del MTBF y la continuidad del despacho se modela en el análisis de continuidad de la cadena, pendiente de documentación. Los códigos de rol proceden del [modelo de autorización](../arquitectura/seguridad/modelo-autorizacion.md).
 
