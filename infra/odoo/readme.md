@@ -4,7 +4,19 @@ El entorno usa Odoo 19 Community y PostgreSQL 16. Las imágenes están fijadas a
 
 ## Arranque
 
-1. Desde la raíz del repositorio, entra en `infra/odoo`. Copia `.env.example` como `.env` y `odoo.conf.example` como `odoo.conf`. En macOS/Linux puedes usar estos comandos. En PowerShell, usa `Copy-Item` en lugar de `cp`.
+En Windows, inicia **Docker Desktop con WSL 2 y contenedores Linux**. Las imágenes fijadas de Odoo y PostgreSQL incluyen variantes `linux/amd64` y `linux/arm64`. Docker selecciona la que corresponde al equipo. El arranque completo y la instalación de los addons se probaron en macOS con Apple Silicon. Queda pendiente repetir la prueba en Windows. [Instalación de Docker Desktop en Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+
+1. Desde la raíz del repositorio, prepara los archivos locales con el bloque de tu sistema.
+
+   **Windows (PowerShell)**
+
+   ```powershell
+   Set-Location .\infra\odoo
+   Copy-Item .env.example .env
+   Copy-Item odoo.conf.example odoo.conf
+   ```
+
+   **macOS y Linux**
 
    ```sh
    cd infra/odoo
@@ -13,7 +25,7 @@ El entorno usa Odoo 19 Community y PostgreSQL 16. Las imágenes están fijadas a
    ```
 
 2. Abre `.env` y asigna una contraseña local a `ODOO_DB_PASSWORD`. En `odoo.conf`, reemplaza el valor de `admin_passwd` por una contraseña maestra local distinta. Conserva estos dos archivos fuera de Git.
-3. Valida la configuración y levanta el entorno desde la misma carpeta.
+3. Valida la configuración y levanta el entorno desde la misma carpeta. Los comandos de Docker son los mismos en PowerShell, macOS y Linux.
 
    ```sh
    docker compose config --quiet
