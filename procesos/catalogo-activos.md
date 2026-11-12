@@ -2,9 +2,9 @@
 
 **Estado:** catálogo de trabajo. Identifica los activos físicos y tecnológicos que sostienen [O2C](o2c/flujo.md), [P2P](p2p/flujo.md) e [inventario](inventario/flujo.md), y asigna a cada uno una criticidad y una disponibilidad de referencia. La función y la criticidad son interpretaciones del equipo. Los valores de MTBF y MTTR son **supuestos de trabajo**: MIGAL no conserva un registro de fallas que permita calcularlos. Las fotografías se declaran como [FN-04](../fuentes/fuentes-negocio.md).
 
-## 1. Catorce activos con cinco de criticidad alta
+## 1. Dieciséis activos con cinco de criticidad alta
 
-El catálogo reúne 14 activos: 5 de criticidad alta, 6 de media y 3 de baja. Los de criticidad alta son los dos camiones, el montacargas, los teléfonos celulares de los propietarios y el servicio KeyFacil. La disponibilidad inherente de referencia varía entre 89,29 % (minicargador frontal) y 99,80 % (balanza y KeyFacil). Los tres equipos con menor disponibilidad tienen motor de combustión: el minicargador, el camión volquete y el camión de baranda.
+El catálogo reúne 16 activos: 5 de criticidad alta, 6 de media y 5 de baja. Los de criticidad alta son los dos camiones, el montacargas, los teléfonos celulares de los propietarios y el servicio KeyFacil. La disponibilidad inherente de referencia varía entre 89,29 % (minicargador frontal) y 99,95 % (escalera de tijera). Los tres equipos con menor disponibilidad tienen motor de combustión: el minicargador, el camión volquete y el camión de baranda.
 
 La criticidad se evalúa sobre la operación propuesta con Odoo 19 Community, no sobre el uso actual. El mantenimiento de cada activo se define en el [plan de mantenimiento](plan-mantenimiento.md), que usa este catálogo como entrada.
 
@@ -29,6 +29,7 @@ Como no existe historial de fallas, los valores de MTBF y MTTR se fijaron por cl
 - Vehículos y maquinaria con motor de combustión: MTBF de 200 a 300 h y MTTR de 16 a 24 h.
 - Equipos de izaje y de traslado eléctricos: MTBF de 400 a 800 h y MTTR de 8 h.
 - Equipos electrónicos y de comunicaciones: MTBF de 1 000 a 4 000 h y MTTR de 4 a 48 h. El sistema de videovigilancia recibe el MTBF más bajo de su clase porque la fotografía del monitor muestra canales sin señal.
+- Herramientas y equipos de apoyo manuales: MTBF de 5 000 a 8 000 h y MTTR de 4 a 8 h.
 
 Estos valores se reemplazan por datos reales cuando los propietarios aporten el historial de fallas y reparaciones.
 
@@ -52,6 +53,8 @@ La tabla presenta, por activo, su función en el proceso, su criticidad y sus in
 | ACT-12 | Sistema de videovigilancia (cámaras, DVR de 16 canales y monitor) | Vigila la tienda y los almacenes y aporta evidencia visual ante pérdidas o incidencias. | Baja | 1 000 | 48 | 95,42 |
 | ACT-13 | Compresor de aire Bauker | Suministra aire comprimido en la tienda; el uso específico está pendiente de confirmar. | Baja | 1 500 | 16 | 98,94 |
 | ACT-14 | Servicio KeyFacil | Emite las boletas y facturas electrónicas, operado por los propietarios. | Alta | 2 000 | 4 | 99,80 |
+| ACT-15 | Cortapernos manual | Corta alambre y varillas delgadas para fraccionar la mercadería vendida por longitud; el uso específico está pendiente de confirmar. | Baja | 5 000 | 8 | 99,84 |
+| ACT-16 | Escalera de tijera de cuatro peldaños | Permite alcanzar los estantes altos de la tienda para sacar y reponer mercadería. | Baja | 8 000 | 4 | 99,95 |
 
 ## 4. Efecto de la parada y alternativa de cada activo
 
@@ -73,6 +76,8 @@ La tabla justifica la criticidad con los dos criterios de la sección 2. Las alt
 | ACT-12 | Sin efecto sobre la continuidad; reduce la seguridad y la evidencia ante pérdidas. | Revisión presencial. | Baja |
 | ACT-13 | Sin efecto sobre O2C, P2P ni inventario. | No requerida. | Baja |
 | ACT-14 | Detiene la emisión de comprobantes. | Ninguna registrada: el [alcance](../arquitectura/alcance.md) mantiene KeyFacil como único emisor. | Alta |
+| ACT-15 | Sin efecto sobre la continuidad en el corto plazo. | Otra herramienta de corte, por confirmar. | Baja |
+| ACT-16 | Sin efecto sobre la continuidad en el corto plazo. | Otro medio de acceso a los estantes, por confirmar. | Baja |
 
 ## 5. Marca, modelo y datos verificados en cada activo
 
@@ -91,9 +96,11 @@ Esta tabla separa lo que se lee en las fotografías de lo que queda por confirma
 | ACT-09 | Sin fotografía. | Descrita en el [contexto](../arquitectura/contexto-empresa.md), apartado 1.2. | Marca y modelo. |
 | ACT-10 | Sin fotografía. | Dos equipos, uno por propietario, según el contexto, apartado 1.2. | Marca y modelo de cada equipo. |
 | ACT-11 | Sin fotografía. | Descrita en el contexto, apartado 1.2. | Marca y modelo. |
-| ACT-12 | Hikvision (cámara bullet), TP-Link Tapo (cámara giratoria) y Sony (monitor), según los rótulos visibles. | Mosaico de 16 canales, con un canal en «NO LINK» y otro en «NO VIDEO». | Modelos de cámara y DVR; la Tapo parece una C200. El contexto indica unas 10 cámaras. |
+| ACT-12 | Hikvision (cámara bullet), TP-Link Tapo (cámara giratoria) y Sony (monitor), según los rótulos visibles; otras dos cámaras fijas sin marca legible. | Cuatro cámaras fotografiadas (bullet de interior, giratoria, bullet de exterior con visera deteriorada y cámara compacta sobre caja de paso) y un mosaico de 16 canales, con un canal en «NO LINK» y otro en «NO VIDEO». | Modelos de cámara y DVR; la Tapo parece una C200. El contexto indica unas 10 cámaras. |
 | ACT-13 | Bauker (rótulo visible); modelo no legible. | Tanque horizontal, motor eléctrico, dos manómetros y presostato. | Capacidad del tanque, que consta en la placa. |
 | ACT-14 | Servicio externo. | Descrito en el contexto, apartado 9.1. | Plan contratado y disponibilidad pactada. |
+| ACT-15 | No legibles. | Cortapernos de dos mangos con mordazas y empuñaduras de goma, sobre un rollo de alambre. | Longitud y capacidad de corte. |
+| ACT-16 | No legibles. | Escalera de tijera de cuatro peldaños, con tapones en las patas y barandilla superior. | Altura y capacidad de carga. |
 
 ## 6. Elementos fotografiados o previstos que no se catalogan
 
