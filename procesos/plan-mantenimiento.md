@@ -2,9 +2,9 @@
 
 **Estado:** plan propuesto, sujeto a aprobación de GER. Asigna a cada activo del [catálogo de activos](catalogo-activos.md) un enfoque de mantenimiento, una frecuencia o disparador y una acción principal. Las frecuencias y duraciones son propuestas de planificación, no recomendaciones del fabricante: los manuales de los equipos no se han consultado. Los valores de disponibilidad provienen de supuestos de trabajo (MTBF y MTTR) y no de un historial de fallas.
 
-## 1. Diez activos con mantenimiento preventivo y seis con correctivo
+## 1. Once activos con mantenimiento preventivo y once con correctivo
 
-El plan cubre los 16 activos del catálogo, uno por fila. Aplica mantenimiento preventivo a los 5 activos de criticidad alta y a 5 de los 6 de criticidad media. Los 6 activos restantes (el terminal Culqi, la tablet, la videovigilancia, el compresor, el cortapernos y la escalera) reciben mantenimiento correctivo. No se adopta mantenimiento predictivo en esta etapa (sección 5).
+El plan cubre los 22 activos del catálogo, uno por fila. Aplica mantenimiento preventivo a los 6 activos de criticidad alta y a 5 de los 6 de criticidad media. Los 11 activos restantes (el terminal Culqi, la tablet, el compresor, el cortapernos, la escalera y los seis componentes de la videovigilancia) reciben mantenimiento correctivo. No se adopta mantenimiento predictivo en esta etapa (sección 5).
 
 Cuatro activos no alcanzan la meta de disponibilidad propuesta: los dos camiones, el montacargas y el minicargador. El plan los atiende con inspección diaria y servicio periódico, y suma 122 h de parada planificada al año, de las cuales 88 h corresponden a esos cuatro activos (sección 4).
 
@@ -40,13 +40,19 @@ La tabla vincula cada ID del catálogo con su enfoque, su frecuencia o disparado
 | ACT-07 | Balanza electrónica de plataforma | Preventivo | Verificación semanal del cero; calibración cada 6 meses. | Contrastar con pesas patrón y calibrar; limpiar la plataforma; revisar el cable y la alimentación. |
 | ACT-08 | Terminal de pago Culqi | Correctivo | Falla del equipo, rechazo reiterado de transacciones o pérdida de conexión. | Solicitar al proveedor la reparación o reposición; cobrar por los demás medios vigentes mientras tanto. |
 | ACT-09 | Computadora All-in-One | Preventivo | Revisión trimestral. | Aplicar actualizaciones, verificar el respaldo y limpiar el equipo. |
-| ACT-10 | Teléfonos celulares de los propietarios (2) | Preventivo | Respaldo mensual de contactos y conversaciones; revisión trimestral de batería y almacenamiento. | Respaldar la información, actualizar el sistema, verificar la batería y mantener identificado un equipo de reemplazo. |
+| ACT-10 | Teléfono celular de la propietaria | Preventivo | Respaldo mensual de contactos y conversaciones; revisión trimestral de batería y almacenamiento. | Respaldar la información, actualizar el sistema, verificar la batería y mantener identificado un equipo de reemplazo. |
 | ACT-11 | Tablet | Correctivo | Falla del equipo. | Reparar o reponer y restablecer las aplicaciones. |
-| ACT-12 | Sistema de videovigilancia | Correctivo | Canal en «NO LINK» o «NO VIDEO», o cámara sin imagen. La revisión mensual de los canales en el monitor es rutina de operación. | Reconectar o reemplazar el cable o la cámara y verificar la grabación del DVR. |
+| ACT-12 | Grabador de video DVR | Correctivo | Falla del equipo, pérdida de las imágenes de todas las cámaras o disco sin grabación. La verificación mensual de que existe una grabación reciente es rutina de operación. | Reparar o reponer el DVR y su disco, y comprobar que se reanuda la grabación. |
 | ACT-13 | Compresor de aire Bauker | Correctivo | Falla del equipo. La purga semanal del condensado del tanque es rutina de operación. | Reparar o reponer; revisar el presostato y el manómetro antes de reutilizarlo. |
 | ACT-14 | Servicio KeyFacil | Preventivo | Verificación mensual. | Comprobar el acceso y la vigencia de las credenciales, conservar copia de los comprobantes emitidos y atender los avisos de mantenimiento del proveedor. |
 | ACT-15 | Cortapernos manual | Correctivo | Filo desgastado, mordazas desalineadas o mango roto. La revisión del filo y del pasador antes de cada uso es rutina de operación. | Afilar o reponer las mordazas, o reponer la herramienta. |
 | ACT-16 | Escalera de tijera de cuatro peldaños | Correctivo | Pata, peldaño, remache o tapón dañado. La revisión visual antes de cada uso es rutina de operación. | Retirar la escalera de uso y repararla o reponerla. |
+| ACT-17 | Monitor Sony de videovigilancia | Correctivo | Falla del equipo o pantalla sin imagen. | Reparar o reponer el monitor y verificar la conexión con el DVR. |
+| ACT-18 | Cámara bullet Hikvision | Correctivo | Canal en «NO LINK» o «NO VIDEO», o cámara sin imagen. La revisión mensual de los canales en el monitor es rutina de operación. | Reconectar o reemplazar el cable o la cámara. |
+| ACT-19 | Cámara giratoria TP-Link Tapo | Correctivo | Canal en «NO LINK» o «NO VIDEO», o cámara sin imagen. La revisión mensual de los canales en el monitor es rutina de operación. | Reconectar o reemplazar el cable, el adaptador o la cámara. |
+| ACT-20 | Cámara bullet con visera deteriorada | Correctivo | Canal en «NO LINK» o «NO VIDEO», cámara sin imagen o visera rota. La revisión mensual de los canales en el monitor es rutina de operación. | Reponer la visera o la cámara y reconectar el cable. |
+| ACT-21 | Cámara compacta fija | Correctivo | Canal en «NO LINK» o «NO VIDEO», o cámara sin imagen. La revisión mensual de los canales en el monitor es rutina de operación. | Reconectar o reemplazar el cable o la cámara. |
+| ACT-22 | Teléfono celular del propietario | Preventivo | Respaldo mensual de contactos y conversaciones; revisión trimestral de batería y almacenamiento. | Respaldar la información, actualizar el sistema, verificar la batería y mantener identificado un equipo de reemplazo. |
 
 ## 4. Paradas planificadas, metas de disponibilidad y responsables
 
@@ -65,11 +71,17 @@ Las metas de disponibilidad son una propuesta por nivel de criticidad: 95 % para
 | ACT-09 | Media | 99,70 | 92 | Cumple | No aplica | 4 (4 × 1 h) | SIS ejecuta; GER autoriza la reposición. |
 | ACT-10 | Alta | 99,21 | 95 | Cumple | No aplica | 0 (el respaldo no detiene el equipo) | SIS ejecuta; GER autoriza la reposición. |
 | ACT-11 | Baja | 99,21 | 90 | Cumple | No aplica | 0 | SIS ejecuta; GER autoriza la reposición. |
-| ACT-12 | Baja | 95,42 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
+| ACT-12 | Baja | 99,40 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
 | ACT-13 | Baja | 98,94 | 90 | Cumple | No aplica | 0 | ALM opera; GER autoriza la reposición. |
 | ACT-14 | Alta | 99,80 | 95 | Cumple | No aplica | 0 (sin parada en MIGAL) | GER, como operador del servicio. |
 | ACT-15 | Baja | 99,84 | 90 | Cumple | No aplica | 0 | ALM opera; GER autoriza la reposición. |
 | ACT-16 | Baja | 99,95 | 90 | Cumple | No aplica | 0 | ALM opera; GER autoriza la reposición. |
+| ACT-17 | Baja | 99,70 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
+| ACT-18 | Baja | 99,21 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
+| ACT-19 | Baja | 99,21 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
+| ACT-20 | Baja | 98,43 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
+| ACT-21 | Baja | 99,21 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
+| ACT-22 | Alta | 99,21 | 95 | Cumple | No aplica | 0 (el respaldo no detiene el equipo) | SIS ejecuta; GER autoriza la reposición. |
 
 Las horas de parada planificada se restan de la disponibilidad operativa, y la disponibilidad de referencia no las descuenta. La relación entre estas horas, la mejora esperada del MTBF y la continuidad del despacho se modela en el análisis de continuidad de la cadena, pendiente de documentación. Los códigos de rol proceden del [modelo de autorización](../arquitectura/seguridad/modelo-autorizacion.md).
 
