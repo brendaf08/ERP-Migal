@@ -19,7 +19,7 @@ Esta sección reúne avances que todavía no forman parte de un hito académico 
 
 No incluir borradores ni resultados pendientes de aprobación.
 
-Sin entradas documentadas por ahora.
+- **Entorno local Odoo:** se incorpora la [configuración Docker reproducible](infra/odoo/readme.md) junto con los [nueve addons](custom_addons/readme.md) y sus dependencias.
 
 ## 2026-11-07 — Corrección, pruebas de frontera y cierre de la consolidación documental
 

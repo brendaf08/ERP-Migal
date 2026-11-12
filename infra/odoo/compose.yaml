@@ -1,0 +1,49 @@
+name: erp-migal-odoo
+
+services:
+  db:
+    image: postgres:16@sha256:1beaa3084eee2676f20a9cd9928f0bf2c5bf674f8e49f81017912183d377c61c
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${ODOO_DB_PASSWORD:?Define ODOO_DB_PASSWORD en .env}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "odoo", "-d", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  odoo:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${ODOO_HTTP_PORT:-8070}:8069"
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: ${ODOO_DB_PASSWORD:?Define ODOO_DB_PASSWORD en .env}
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - type: bind
+        source: ./odoo.conf
+        target: /etc/odoo/odoo.conf
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ../../custom_addons
+        target: /mnt/extra-addons
+        read_only: true
+        bind:
+          create_host_path: false
+    restart: unless-stopped
+
+volumes:
+  odoo-db-data:
+  odoo-web-data:

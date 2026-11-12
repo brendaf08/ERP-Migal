@@ -1,0 +1,4 @@
+xlsxwriter==3.1.9
+openpyxl==3.1.2
+ofxparse==0.21
+qifparse==0.5

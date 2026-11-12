@@ -9,6 +9,7 @@ La revisión y aprobación del contenido generado con apoyo de IA son responsabi
 | Herramienta | Uso | Evidencia comprobable |
 |---|---|---|
 | OpenAI Codex | Elaboración de los cambios documentales de procesos y reglas, datos y trazabilidad, y casos de prueba. | Ramas `codex/b2-procesos-reglas`, `codex/b3-datos-trazabilidad` y `codex/b4-casos-prueba`, integradas mediante los PR #8, #9 y #10. |
+| OpenAI Codex | Preparación del entorno Docker, documentación y verificación técnica en una base sintética aislada. | Rama `chore/pc3-entorno-reproducible`. La verificación se limita a los resultados consignados en su PR. |
 | GitHub Copilot (revisor de PR) | Revisión automática de los Pull Requests. | Revisiones de `copilot-pull-request-reviewer[bot]` en los PR #5 a #10. |
 
 Los PR #6 a #10 registran además una aprobación humana (`brendaf08`) antes de su integración.
@@ -29,6 +30,6 @@ El historial no permite determinar si se usó IA en los PR #1 a #7. El equipo de
 ## 4. Criterios aplicados y limitaciones
 
 - Los hechos sobre MIGAL proceden de las fuentes registradas en [fuentes del negocio](fuentes-negocio.md), no de las herramientas de IA.
-- Las herramientas de IA no ejecutaron pruebas en Odoo. Los casos de prueba permanecen **No ejecutados**.
+- Los casos de negocio CP-01 a CP-04 permanecen **No ejecutados**. Las comprobaciones de infraestructura en una base sintética se documentan en el PR correspondiente.
 - Las salidas de IA se revisaron mediante Pull Requests antes de integrarse en `main`.
 - Esta declaración se actualiza cuando se incorpora un nuevo uso relevante de IA.

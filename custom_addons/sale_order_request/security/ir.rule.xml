@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- ============================================================
+             sale.order.request
+             ============================================================ -->
+        <!-- Vendedor: lee solo las solicitudes de su compañía; escribe/solo
+             crea las propias. -->
+        <record id="rule_sale_order_request_salesperson_read" model="ir.rule">
+            <field name="name">sale.order.request - Vendedor: lectura de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_salesperson')])]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="rule_sale_order_request_salesperson_write" model="ir.rule">
+            <field name="name">sale.order.request - Vendedor: escritura solo propias de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_salesperson')])]"/>
+            <field name="domain_force">[('requester_id', '=', user.id), ('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Abastecimiento: lee y escribe solo solicitudes de su compañía. -->
+        <record id="rule_sale_order_request_supply" model="ir.rule">
+            <field name="name">sale.order.request - Abastecimiento: su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_supply')])]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Transporte: lee y escribe solo solicitudes de su compañía. -->
+        <record id="rule_sale_order_request_transport" model="ir.rule">
+            <field name="name">sale.order.request - Transporte: su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_transport')])]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Usuarios genéricos: solo lectura de solicitudes de su compañía. -->
+        <record id="rule_sale_order_request_users_read" model="ir.rule">
+            <field name="name">sale.order.request - Usuarios: solo lectura de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request"/>
+            <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ============================================================
+             sale.order.request.line
+             ============================================================ -->
+        <!-- Vendedor: lee solo las líneas de su compañía; escribe/solo crea
+             las líneas de sus propias solicitudes. -->
+        <record id="rule_sale_order_request_line_salesperson_read" model="ir.rule">
+            <field name="name">sale.order.request.line - Vendedor: lectura de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_salesperson')])]"/>
+            <field name="domain_force">[('request_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="rule_sale_order_request_line_salesperson_write" model="ir.rule">
+            <field name="name">sale.order.request.line - Vendedor: escritura solo propias de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_salesperson')])]"/>
+            <field name="domain_force">[('request_id.requester_id', '=', user.id), ('request_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Abastecimiento y Transporte: solo lectura de líneas de su
+             compañía. -->
+        <record id="rule_sale_order_request_line_abastecimiento" model="ir.rule">
+            <field name="name">sale.order.request.line - Abastecimiento: lectura de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_supply')])]"/>
+            <field name="domain_force">[('request_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="rule_sale_order_request_line_transporte" model="ir.rule">
+            <field name="name">sale.order.request.line - Transporte: lectura de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_transport')])]"/>
+            <field name="domain_force">[('request_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="rule_sale_order_request_line_users_read" model="ir.rule">
+            <field name="name">sale.order.request.line - Usuarios: solo lectura de su compañía</field>
+            <field name="model_id" ref="sale_order_request.model_sale_order_request_line"/>
+            <field name="groups" eval="[(6, 0, [ref('base.group_user')])]"/>
+            <field name="domain_force">[('request_id.company_id', 'in', company_ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- ============================================================
+             sale.order / sale.order.line (lectura compartida )
+             Vendedor de solicitudes de orden de venta: lectura de cotizaciones/líneas  de su compañía.
+             Sin permisos de escritura, creación ni eliminación.
+             ============================================================ -->
+        <record id="rule_sale_order_salesperson_read_company_sale_request" model="ir.rule">
+            <field name="name">sale.order - Vendedor de solicitudes de orden de venta: lectura en compañía de cotizaciones sujetas a solicitud de orden de venta</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_salesperson')])]"/>
+            <field name="domain_force">[
+                ('company_id', 'in', company_ids),
+                ('sale_request_subject', '=', True),
+                ('sale_request_applicable', '=', True)
+            ]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        <record id="rule_sale_order_line_salesperson_read_company_sale_request" model="ir.rule">
+            <field name="name">sale.order.line - Vendedor de solicitudes de orden de venta: lectura de líneas en compañía de cotizaciones sujetas a solicitud de orden de venta</field>
+            <field name="model_id" ref="sale.model_sale_order_line"/>
+            <field name="groups" eval="[(6, 0, [ref('sale_order_request.group_sale_order_request_salesperson')])]"/>
+            <field name="domain_force">[
+                ('order_id.company_id', 'in', company_ids),
+                ('order_id.sale_request_subject', '=', True),
+                ('order_id.sale_request_applicable', '=', True)
+            ]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>
