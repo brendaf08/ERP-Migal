@@ -21,6 +21,7 @@ Las siguientes herramientas se utilizaron fuera del repositorio. Sus salidas no 
 |---|---|---|
 | Claude (Anthropic) | Auditorías de alineamiento entre ramas y de cobertura documental, especificación operativa de la consolidación de PR #3 y PR #4, y propuesta de los cambios correctivos de esta fase. No tuvo acceso de escritura al repositorio. | Declarado. Integrante responsable y fechas por confirmar. |
 | ChatGPT (OpenAI) | Revisión y refinamiento de la especificación operativa de la consolidación. | Declarado por el equipo. Alcance por confirmar. |
+| Claude Code (Anthropic) | Identificación de marca, modelo y datos legibles de los activos a partir de las fotografías de FN-04; redacción del catálogo de activos y del plan de mantenimiento, incluidos los supuestos de MTBF y MTTR; corrección de enlaces y de afirmaciones de disponibilidad en el análisis de continuidad. Los commits se registraron con la autoría del integrante. | Declarado por Diego Pinedo. Los supuestos y la identificación de equipos requieren validación (PEN-021 y PEN-023). |
 
 ## 3. Uso en la elaboración de los PR #1 a #7
 
