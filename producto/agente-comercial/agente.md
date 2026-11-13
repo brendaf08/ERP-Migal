@@ -44,7 +44,7 @@ Para Comercial, el valor está en responder más rápido y con datos consistente
 | Contabilidad | Apuntes contabilizados de cuentas por cobrar de la compañía activa, vencimientos, saldos residuales y conciliaciones. |
 | Ventas y Punto de Venta | Órdenes con importe por facturar y tickets de caja sin movimiento contable en los casos previstos por el módulo. Se muestran aparte del saldo contable. |
 
-En la demo, el agente consulta datos de prueba guardados en Odoo mediante su ORM. Los tests del repositorio también crean registros sintéticos y usan simulaciones para dependencias externas. Los resultados con esas fuentes acreditan el escenario probado en Odoo 19, mientras que la aplicación con datos operativos depende de la calidad y actualización de la base.
+Para la demo, el profesor levanta Odoo 19 Community con Docker y los módulos del proyecto, incluido `migal_agente`. Después restaura la copia de la base y sus adjuntos desde el respaldo que el equipo comparte por un canal privado. Esa copia contiene los módulos instalados, la configuración y los datos de prueba. Una vez restaurada, el profesor puede abrir Odoo y probar el agente con las cotizaciones y los estados de cuenta preparados.
 
 ## 5. Herramientas y funcionamiento
 
