@@ -1,5 +1,6 @@
 import base64
 import json
+import os
 import re
 from urllib.parse import quote
 from urllib.request import urlopen
@@ -77,8 +78,10 @@ class MigalAgenteToolWhatsapp(models.AbstractModel):
         Se consulta su estado en 127.0.0.1 (solo local, timeout corto). Si no responde, no hay túnel.
         """
         puerto = self.env["ir.config_parameter"].sudo().get_param("migal_agente.puerto_publicador", "8090")
+        # En Docker el publicador es otro servicio de la red interna (MIGAL_PUBLICADOR_URL=http://publicador:8090)
+        base = os.environ.get("MIGAL_PUBLICADOR_URL") or "http://127.0.0.1:%s" % int(puerto)
         try:
-            with urlopen("http://127.0.0.1:%s/estado" % int(puerto), timeout=1.5) as resp:
+            with urlopen(base.rstrip("/") + "/estado", timeout=1.5) as resp:
                 url = (json.loads(resp.read(4096) or b"{}").get("url_publica") or "")
         except (OSError, ValueError):
             return ""
@@ -200,10 +203,10 @@ class MigalAgenteToolWhatsapp(models.AbstractModel):
                 "Se abre desde cualquier red (datos móviles incluidos) mientras el publicador esté abierto."))
         elif local:
             avisos.append("No hay publicación activa y Odoo está en una dirección local: el celular del cliente no "
-                          "podrá abrir el QR. Inicie herramientas\\publicar_cotizaciones.py.")
+                          "podrá abrir el QR. Inicie el publicador (en Docker: docker compose --profile qr up -d publicador).")
         elif re.search(r"//(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)", url):
             avisos.append("El QR usa una dirección de la red local: solo abre en celulares conectados al mismo Wi-Fi. "
-                          "Para cualquier red, inicie herramientas\\publicar_cotizaciones.py.")
+                          "Para cualquier red, inicie el publicador (en Docker: docker compose --profile qr up -d publicador).")
         return controles, avisos, local
 
     # ------------------------------------------------------------------

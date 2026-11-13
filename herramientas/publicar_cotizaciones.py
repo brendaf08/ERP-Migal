@@ -173,6 +173,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--odoo", default="http://127.0.0.1:8069", help="Dirección local de Odoo")
     ap.add_argument("--puerto", type=int, default=8090, help="Puerto local del portero")
+    ap.add_argument("--host", default="127.0.0.1",
+                    help="Interfaz del portero (en Docker: 0.0.0.0, solo dentro de la red interna)")
     ap.add_argument("--cloudflared", default=str(BASE / "cloudflared" / "cloudflared.exe"))
     args = ap.parse_args()
 
@@ -185,9 +187,9 @@ def main():
         sys.exit("Odoo no responde en %s. Arranque Odoo primero." % args.odoo)
 
     ESTADO["odoo"] = args.odoo.rstrip("/")
-    servidor = ThreadingHTTPServer(("127.0.0.1", args.puerto), Portero)
+    servidor = ThreadingHTTPServer((args.host, args.puerto), Portero)
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
-    log("Portero escuchando en http://127.0.0.1:%s (solo PDFs de cotizaciones con token)" % args.puerto)
+    log("Portero escuchando en http://%s:%s (solo PDFs de cotizaciones con token)" % (args.host, args.puerto))
 
     proc = iniciar_tunel(cloudflared, args.puerto)
     detener = threading.Event()

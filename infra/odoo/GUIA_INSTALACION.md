@@ -2,7 +2,7 @@
 
 De una PC vacía a tener **Odoo 19 Community con los módulos de MIGAL, el Agente MIGAL y todos los datos de prueba**, en unos 20 minutos.
 
-> Validada el 13/11/2026 en Windows 11 + Docker Desktop 29 con el respaldo `ferre_inversiones_migal_revision_2026-11-13_18-40-18.zip`: restauración sin errores (100 módulos, 487 archivos adjuntos, 4 usuarios), inicio de sesión correcto, agente operativo, PDF con estilos y **29/29 pruebas automáticas aprobadas**.
+> Validada el 13/11/2026 en Windows 11 + Docker Desktop 29 con el respaldo `ferre_inversiones_migal_revision_2026-11-13_18-40-18.zip`: restauración sin errores (100 módulos, 487 archivos adjuntos, 4 usuarios), inicio de sesión correcto, agente operativo, PDF con estilos, QR público por túnel (contenedor `publicador`) y **29/29 pruebas automáticas aprobadas**.
 
 ---
 
@@ -133,24 +133,26 @@ Se puede ejecutar varias veces: no duplica nada.
 
 ## 9. (Opcional) QR que abra desde cualquier celular
 
-1. Instala **Python 3.12** (<https://www.python.org/downloads/>) y marca *Add to PATH*.
-2. Descarga `cloudflared-windows-amd64.exe` desde <https://github.com/cloudflare/cloudflared/releases/latest>, renómbralo a `cloudflared.exe` y ponlo en `ERP-Migal\herramientas\cloudflared\`.
-3. Desde la carpeta `ERP-Migal`, con Odoo encendido:
+No necesitas instalar nada más: el publicador corre en su propio contenedor (portero + túnel seguro de Cloudflare). Con Odoo encendido, en `infra\odoo`:
 
 ```powershell
-python herramientas\publicar_cotizaciones.py
+docker compose --profile qr up -d --build publicador
+docker compose logs publicador
 ```
 
-   Si usas otro puerto, añade `--odoo http://127.0.0.1:8079`.
+Cuando el registro diga `Túnel activo: https://….trycloudflare.com`, los QR y enlaces que genere el agente ya abren desde cualquier red (datos móviles incluidos). El agente lo detecta solo; no hay que configurar nada en Odoo.
 
-4. Deja esa ventana abierta mientras atiendes. Solo publica los PDF de cotizaciones y estados de cuenta con su token; al cerrarla, los QR dejan de abrir.
+- Solo publica los PDF de cotizaciones y estados de cuenta con su token; el resto de Odoo no es accesible.
+- Para despublicar: `docker compose stop publicador` (los QR emitidos dejan de abrir).
+- La dirección cambia cada vez que lo enciendes: genera los QR después de encenderlo.
 
 ## 10. Uso diario
 
 | Quiero… | Comando (en `ERP-Migal\infra\odoo`) |
 |---|---|
 | Encender Odoo | `docker compose up -d` |
-| Apagarlo (conserva los datos) | `docker compose down` |
+| Encender / apagar el QR público | `docker compose --profile qr up -d publicador` / `docker compose stop publicador` |
+| Apagarlo (conserva los datos) | `docker compose --profile qr down` |
 | Ver si hay errores | `docker compose logs --tail 100 odoo` |
 | Actualizar el código del equipo | `git pull` → `docker compose build` → `docker compose up -d` |
 | Aplicar cambios de un módulo | `docker compose stop odoo` → `docker compose run --rm --no-deps odoo odoo -d ferre_inversiones_migal -u migal_agente --stop-after-init` → `docker compose up -d` |
@@ -178,12 +180,13 @@ powershell -ExecutionPolicy Bypass -File .\restaurar.ps1
 | `Hay más de un respaldo en restore/` | Deja un solo `.zip` en esa carpeta. |
 | No puedo iniciar sesión | `.\cambiar_clave.ps1` para poner una clave nueva. |
 | PDF sin colores ni logo | Ajustes → Técnico → Parámetros del sistema: `report.url` y `web.base.url` = `http://127.0.0.1:8069` y `web.base.url.freeze` = `True` (el restaurador ya lo hace). |
+| El agente avisa «No hay publicación activa» | El publicador no está encendido o aún no abrió el túnel: `docker compose logs publicador` (punto 9). |
 | El script `.ps1` no se ejecuta | Usa `powershell -ExecutionPolicy Bypass -File .\script.ps1`, como en esta guía. |
 | Error de autenticación de PostgreSQL | Cambiaste `DB_PASSWORD` después del primer arranque. Vuelve a la clave original o reinstala (punto 11). |
 
 ## 13. Qué nunca se sube a GitHub
 
-`.env`, respaldos (`.zip`, `.dump`, `.backup`), filestore, `odoo.conf` con claves reales, `cloudflared.exe` y archivos de credenciales. El `.gitignore` del repositorio ya los excluye.
+`.env`, respaldos (`.zip`, `.dump`, `.backup`), filestore, `odoo.conf` con claves reales, binarios de `cloudflared` y archivos de credenciales. El `.gitignore` del repositorio ya los excluye.
 
 ---
 

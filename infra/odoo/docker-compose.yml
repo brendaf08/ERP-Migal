@@ -23,6 +23,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD en .env}
       ADMIN_PASSWD: ${ADMIN_PASSWD:?Defina ADMIN_PASSWD en .env}
       ODOO_RC: /var/lib/odoo/runtime.conf
+      MIGAL_PUBLICADOR_URL: http://publicador:8090
     ports:
       - "127.0.0.1:${ODOO_PORT:-8069}:8069"
     volumes:
@@ -31,6 +32,17 @@ services:
       - odoo-data:/var/lib/odoo
       - ./restore:/restore:ro
     command: ["odoo", "-d", "ferre_inversiones_migal", "--db-filter=^ferre_inversiones_migal$$"]
+  publicador:
+    profiles: ["qr"]
+    build:
+      context: .
+      dockerfile: Dockerfile.publicador
+    depends_on:
+      - odoo
+    volumes:
+      - ../../herramientas/publicar_cotizaciones.py:/app/publicar_cotizaciones.py:ro
+    command: ["python", "-u", "/app/publicar_cotizaciones.py", "--odoo", "http://odoo:8069",
+              "--host", "0.0.0.0", "--cloudflared", "/usr/local/bin/cloudflared"]
 volumes:
   db-data:
   odoo-data:
