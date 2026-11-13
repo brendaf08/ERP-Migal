@@ -1,6 +1,6 @@
 # Plan de mantenimiento por activo de ERP-MIGAL
 
-**Estado:** plan propuesto, sujeto a aprobación de GER. Asigna a cada activo del [catálogo de activos](catalogo-activos.md) un enfoque de mantenimiento, una frecuencia o disparador y una acción principal. Las frecuencias y duraciones son propuestas de planificación, no recomendaciones del fabricante: los manuales de los equipos no se han consultado. Los valores de disponibilidad provienen de supuestos de trabajo (MTBF y MTTR) y no de un historial de fallas.
+**Estado:** plan propuesto, sujeto a aprobación de GER. Asigna a cada activo del [catálogo de activos](activos.md) un enfoque de mantenimiento, una frecuencia o disparador y una acción principal. Las frecuencias y duraciones son propuestas de planificación, no recomendaciones del fabricante: los manuales de los equipos no se han consultado. Los valores de disponibilidad provienen de supuestos de trabajo (MTBF y MTTR) y no de un historial de fallas.
 
 ## 1. Once activos con mantenimiento preventivo y once con correctivo
 
@@ -83,17 +83,17 @@ Las metas de disponibilidad son una propuesta por nivel de criticidad: 95 % para
 | ACT-21 | Baja | 99,21 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
 | ACT-22 | Alta | 99,21 | 95 | Cumple | No aplica | 0 (el respaldo no detiene el equipo) | SIS ejecuta; GER autoriza la reposición. |
 
-Las horas de parada planificada se restan de la disponibilidad operativa, y la disponibilidad de referencia no las descuenta. La relación entre estas horas, la mejora esperada del MTBF y la continuidad del despacho se modela en el análisis de continuidad de la cadena, pendiente de documentación. Los códigos de rol proceden del [modelo de autorización](../arquitectura/seguridad/modelo-autorizacion.md).
+Las horas de parada planificada se restan de la disponibilidad operativa, y la disponibilidad de referencia no las descuenta. La relación entre estas horas, la mejora esperada del MTBF y la continuidad del despacho se modela en el análisis de continuidad de la cadena, pendiente de documentación. Los códigos de rol proceden del [modelo de autorización](../../arquitectura/seguridad/modelo-autorizacion.md).
 
 ## 5. Mantenimiento predictivo no adoptado y registro de intervenciones
 
 El mantenimiento predictivo exige medir la condición de los equipos (vibración, temperatura, análisis de aceite) y comparar esas mediciones con un historial. MIGAL no tiene instrumentos ni historial, y el catálogo parte de supuestos de MTBF y MTTR. El plan lo reconsidera cuando existan al menos doce meses de registro de intervenciones.
 
-Cada intervención, preventiva o correctiva, deja un registro con estos datos: ID del activo, fecha, tipo, duración de la parada, causa de la falla (si hubo), repuestos y costo, y responsable. Con ese registro se calculan MTBF y MTTR reales y se sustituyen los supuestos del catálogo. Hasta que se evalúe una herramienta de registro en Odoo 19, el registro se lleva en una hoja controlada por ALM. La falla de un activo de despacho se relaciona con los riesgos [RSK-014](../arquitectura/riesgos-y-controles.md) (incumplimiento en preparación y entrega) y [RSK-018](../arquitectura/riesgos-y-controles.md) (interrupción del servicio).
+Cada intervención, preventiva o correctiva, deja un registro con estos datos: ID del activo, fecha, tipo, duración de la parada, causa de la falla (si hubo), repuestos y costo, y responsable. Con ese registro se calculan MTBF y MTTR reales y se sustituyen los supuestos del catálogo. Hasta que se evalúe una herramienta de registro en Odoo 19, el registro se lleva en una hoja controlada por ALM. La falla de un activo de despacho se relaciona con los riesgos [RSK-014](../../arquitectura/riesgos-y-controles.md) (incumplimiento en preparación y entrega) y [RSK-018](../../arquitectura/riesgos-y-controles.md) (interrupción del servicio).
 
 ## 6. Validaciones pendientes
 
-El [registro de pendientes](../producto/registro-pendientes.md) conserva estas validaciones:
+El [registro de pendientes](../../producto/registro-pendientes.md) conserva estas validaciones:
 
 - PEN-021: confirmar con los propietarios el catálogo y los valores de MTBF y MTTR de los que depende la disponibilidad de referencia.
 - PEN-023: aprobar con GER las metas de disponibilidad, las frecuencias, las duraciones de parada y los responsables, y contrastar las frecuencias con los manuales de los equipos y con un taller.
