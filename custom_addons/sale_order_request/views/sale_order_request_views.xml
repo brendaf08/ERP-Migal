@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         Vistas de sale.order.request
+         ============================================================ -->
+    <record id="view_sale_order_request_form" model="ir.ui.view">
+        <field name="name">sale.order.request.form</field>
+        <field name="model">sale.order.request</field>
+        <field name="arch" type="xml">
+            <form string="Solicitud de orden de venta">
+                <header>
+                    <button
+                        name="action_request_validation"
+                        string="Solicitar validación"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state != 'draft'"
+                        groups="sale_order_request.group_sale_order_request_salesperson"
+                    />
+                    <button
+                        name="action_accept"
+                        string="Aceptar"
+                        type="object"
+                        class="btn-success"
+                        invisible="state != 'approved'"
+                        groups="sale_order_request.group_sale_order_request_salesperson"
+                    />
+                    <button
+                        name="action_cancel"
+                        string="Cancelar"
+                        type="object"
+                        class="btn-danger"
+                        invisible="state not in ('draft', 'pending_approval', 'approved')"
+                        groups="sale_order_request.group_sale_order_request_salesperson,base.group_system"
+                    />
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="draft,pending_approval,approved,accepted,confirmed,superseded,cancel"
+                    />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sale_order_id" readonly="1"/>
+                            <field name="sale_order_revision_id" readonly="1"/>
+                            <field name="delivery_mode" readonly="state != 'draft'"/>
+                            <field name="stock_sufficient" readonly="1"/>
+                            <field name="requester_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="state" readonly="1"/>
+                            <field name="validation_status" invisible="1"/>
+                            <field name="request_date" readonly="1"/>
+                            <field name="approval_date" readonly="1"/>
+                            <field name="accepted_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Líneas de solicitud">
+                        <field name="line_ids" readonly="1">
+                            <list>
+                                <field name="sale_order_line_id"/>
+                                <field name="product_id"/>
+                                <field name="qty"/>
+                                <field name="stock_sufficient"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sale_order_request_tree" model="ir.ui.view">
+        <field name="name">sale.order.request.list</field>
+        <field name="model">sale.order.request</field>
+        <field name="arch" type="xml">
+            <list string="Solicitudes de órdenes de venta">
+                <field name="name"/>
+                <field name="sale_order_id"/>
+                <field name="sale_order_revision_id"/>
+                <field name="state"/>
+                <field name="delivery_mode"/>
+                <field name="stock_sufficient"/>
+                <field name="company_id"/>
+                <field name="requester_id"/>
+                <field name="request_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sale_order_request_search" model="ir.ui.view">
+        <field name="name">sale.order.request.search</field>
+        <field name="model">sale.order.request</field>
+        <field name="arch" type="xml">
+            <search string="Buscar solicitudes de órdenes de venta">
+                <field name="name"/>
+                <field name="sale_order_id"/>
+                <field name="state"/>
+                <field name="delivery_mode"/>
+                <field name="company_id"/>
+                <field name="requester_id"/>
+                <filter name="draft" string="Borrador" domain="[('state', '=', 'draft')]"/>
+                <filter name="pending_approval" string="Pendiente" domain="[('state', '=', 'pending_approval')]"/>
+                <filter name="approved" string="Aprobada" domain="[('state', '=', 'approved')]"/>
+                <filter name="accepted" string="Aceptada" domain="[('state', '=', 'accepted')]"/>
+                <filter name="confirmed" string="Confirmada" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="cancel" string="Cancelada" domain="[('state', '=', 'cancel')]"/>
+                <filter name="superseded" string="Reemplazada" domain="[('state', '=', 'superseded')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         Acción y menú de sale.order.request
+         ============================================================ -->
+    <record id="action_sale_order_request" model="ir.actions.act_window">
+        <field name="name">Solicitudes de órdenes de venta</field>
+        <field name="res_model">sale.order.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_sale_order_request_tree"/>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem
+        id="menu_sale_order_request"
+        name="Solicitudes de órdenes de venta"
+        parent="sale.sale_order_menu"
+        action="action_sale_order_request"
+        groups="sales_team.group_sale_salesman"
+        sequence="25"
+    />
+</odoo>

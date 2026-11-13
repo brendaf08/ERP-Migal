@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_estado_cuenta_wizard_form" model="ir.ui.view">
+        <field name="name">migal.agente.estado.cuenta.wizard.form</field>
+        <field name="model">migal.agente.estado.cuenta.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Estado de cuenta">
+                <field name="generado" invisible="1"/>
+                <group>
+                    <group>
+                        <field name="partner_id"/>
+                    </group>
+                    <group>
+                        <field name="fecha_desde"/>
+                        <field name="fecha_hasta"/>
+                    </group>
+                </group>
+                <field name="resultado_html" nolabel="1" readonly="1"/>
+                <footer>
+                    <button name="action_generar" type="object" string="Generar" class="btn-primary"/>
+                    <button name="action_imprimir" type="object" string="Descargar PDF" class="btn-secondary"
+                            invisible="not generado"/>
+                    <button string="Cerrar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_migal_estado_cuenta_wizard" model="ir.actions.act_window">
+        <field name="name">Estado de cuenta</field>
+        <field name="res_model">migal.agente.estado.cuenta.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

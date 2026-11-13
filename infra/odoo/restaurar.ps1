@@ -1,0 +1,17 @@
+$ErrorActionPreference = 'Stop'
+Set-Location $PSScriptRoot
+function Invoke-Compose {
+    & docker compose @args
+    if ($LASTEXITCODE -ne 0) { throw "docker compose fallo ($LASTEXITCODE). Se detuvo la restauracion." }
+}
+foreach ($file in @('.env', 'restore/ferre_migal_docker.dump', 'restore/filestore_ferre_inversiones_migal.zip')) {
+    if (-not (Test-Path -LiteralPath $file)) { throw "Falta $file" }
+}
+Invoke-Compose up -d --wait --wait-timeout 120 db
+$exists = Invoke-Compose exec -T db psql -U odoo -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname='ferre_inversiones_migal'"
+if (($exists -join '').Trim() -eq '1') { throw 'La base ya existe. No se sobrescribe; use docker compose up -d odoo para reanudar.' }
+Invoke-Compose run --rm --no-deps --user root --entrypoint python3 odoo /opt/migal/filestore.py
+Invoke-Compose exec -T db createdb -U odoo -T template0 -E UTF8 ferre_inversiones_migal
+Invoke-Compose exec -T db pg_restore -U odoo --exit-on-error --single-transaction --no-owner --role=odoo -d ferre_inversiones_migal /restore/ferre_migal_docker.dump
+Invoke-Compose up -d odoo
+Write-Host 'Abra http://localhost:8069 (el arranque puede tardar; revise docker compose logs odoo)'

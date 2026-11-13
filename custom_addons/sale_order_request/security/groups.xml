@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Grupo: Vendedor de solicitudes de orden de venta -->
+        <record id="group_sale_order_request_salesperson" model="res.groups">
+            <field name="name">Vendedor de solicitudes de orden de venta</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Grupo: Responsable de Abastecimiento -->
+        <record id="group_sale_order_request_supply" model="res.groups">
+            <field name="name">Responsable de Abastecimiento</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Grupo: Responsable de Transporte -->
+        <record id="group_sale_order_request_transport" model="res.groups">
+            <field name="name">Responsable de Transporte</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Grupo: Coordinador de solicitudes de orden de venta (pendiente asignación de usuarios, D-AUD-5) -->
+        <record id="group_sale_order_request_coordinator" model="res.groups">
+            <field name="name">Coordinador de solicitudes de orden de venta</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- Plantilla de botones Tier para sale.order.request sin Request/Restart Validation.
+         Solo incluye el campo validation_status oculto, necesario para el
+         mecanismo de readonly dinámico de OCA. Los botones Request Validation
+         y Restart Validation se omiten deliberadamente (D-UI-06-A′). -->
+    <template id="tier_validation_buttons">
+        <div>
+            <field name="validation_status" invisible="1" />
+        </div>
+    </template>
+</odoo>

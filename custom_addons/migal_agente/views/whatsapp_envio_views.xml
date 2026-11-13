@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_whatsapp_envio_list" model="ir.ui.view">
+        <field name="name">migal.agente.whatsapp.envio.list</field>
+        <field name="model">migal.agente.whatsapp.envio</field>
+        <field name="arch" type="xml">
+            <list string="Envíos por WhatsApp" create="0">
+                <field name="fecha"/>
+                <field name="cotizacion"/>
+                <field name="revision_number"/>
+                <field name="partner_id"/>
+                <field name="telefono"/>
+                <field name="amount_total"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="user_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_migal_whatsapp_envio_form" model="ir.ui.view">
+        <field name="name">migal.agente.whatsapp.envio.form</field>
+        <field name="model">migal.agente.whatsapp.envio</field>
+        <field name="arch" type="xml">
+            <form string="Envío por WhatsApp" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="order_id"/>
+                            <field name="cotizacion"/>
+                            <field name="revision_number"/>
+                            <field name="fecha"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="telefono"/>
+                            <field name="amount_total"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    <field name="mensaje"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_migal_whatsapp_envio" model="ir.actions.act_window">
+        <field name="name">Envíos por WhatsApp</field>
+        <field name="res_model">migal.agente.whatsapp.envio</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

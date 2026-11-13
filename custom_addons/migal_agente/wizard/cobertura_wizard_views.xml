@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_cobertura_wizard_form" model="ir.ui.view">
+        <field name="name">migal.agente.cobertura.wizard.form</field>
+        <field name="model">migal.agente.cobertura.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Cobertura preliminar">
+                <group>
+                    <field name="order_id"/>
+                    <field name="fecha_requerida" help="Si se deja vacía se usa la fecha comprometida de la cotización o la fecha de hoy."/>
+                </group>
+                <field name="resultado_html" nolabel="1" readonly="1"/>
+                <footer>
+                    <button name="action_evaluar" type="object" string="Volver a evaluar" class="btn-primary"/>
+                    <button string="Cerrar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

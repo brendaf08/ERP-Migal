@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         Extensión de vista de sale.order para 
+         
+         Los botones Request/Restart Validation se inyectan dinámicamente
+         por OCA mediante get_view() en tier_validation.py. No pueden
+         eliminarse mediante herencia de vista XML. La protección contra
+         su ejecución en cotizaciones sujetas a solicitud de orden de venta se implementa en servidor
+         mediante los overrides de request_validation() y
+         restart_validation() en sale_order_request/models/sale_order.py,
+         que lanzan UserError para cotizaciones con sale_request_subject=True.
+         
+         Esta vista solo añade el campo sale_request_subject como invisible para
+         que esté disponible en la vista si fuera necesario.
+         ============================================================ -->
+    <record id="view_order_form_sale_request_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.solicitud.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="sale_request_subject" invisible="1"/>
+                <field name="sale_request_applicable" invisible="1"/>
+                <button
+                    name="action_mark_sale_request_subject"
+                    string="Marcar como cotización aplicable"
+                    type="object"
+                    class="btn-primary"
+                    invisible="sale_request_subject or state not in ('draft', 'sent')"
+                    groups="sale_order_request.group_sale_order_request_salesperson"/>
+                <button
+                    name="action_create_sale_order_request_from_quotation"
+                    string="Crear solicitud de orden de venta"
+                    type="object"
+                    class="btn-success"
+                    invisible="not sale_request_subject or not sale_request_applicable or state not in ('draft', 'sent')"
+                    groups="sale_order_request.group_sale_order_request_salesperson"/>
+            </field>
+        </field>
+    </record>
+</odoo>

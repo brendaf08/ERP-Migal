@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_sale_order_request_salesperson,sale.order.request - Vendedor,sale_order_request.model_sale_order_request,sale_order_request.group_sale_order_request_salesperson,1,1,1,0
+access_sale_order_request_supply,sale.order.request - Abastecimiento,sale_order_request.model_sale_order_request,sale_order_request.group_sale_order_request_supply,1,1,0,0
+access_sale_order_request_transport,sale.order.request - Transporte,sale_order_request.model_sale_order_request,sale_order_request.group_sale_order_request_transport,1,1,0,0
+access_sale_order_request_users,sale.order.request - Usuarios,sale_order_request.model_sale_order_request,base.group_user,1,0,0,0
+access_sale_order_request_line_salesperson,sale.order.request.line - Vendedor,sale_order_request.model_sale_order_request_line,sale_order_request.group_sale_order_request_salesperson,1,1,1,0
+access_sale_order_request_line_abastecimiento,sale.order.request.line - Abastecimiento,sale_order_request.model_sale_order_request_line,sale_order_request.group_sale_order_request_supply,1,0,0,0
+access_sale_order_request_line_transporte,sale.order.request.line - Transporte,sale_order_request.model_sale_order_request_line,sale_order_request.group_sale_order_request_transport,1,0,0,0
+access_sale_order_request_line_users,sale.order.request.line - Usuarios,sale_order_request.model_sale_order_request_line,base.group_user,1,0,0,0

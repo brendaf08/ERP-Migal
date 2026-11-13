@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_agente_log_list" model="ir.ui.view">
+        <field name="name">migal.agente.log.list</field>
+        <field name="model">migal.agente.log</field>
+        <field name="arch" type="xml">
+            <list string="Bitácora del agente" create="0" edit="0"
+                  decoration-danger="resultado == 'bloqueado'" decoration-warning="resultado == 'error'"
+                  decoration-muted="resultado == 'ayuda'">
+                <header>
+                    <button name="action_exportar_jsonl" type="object" string="Exportar audit_log.jsonl"/>
+                </header>
+                <field name="timestamp"/>
+                <field name="user_id"/>
+                <field name="roles"/>
+                <field name="canal"/>
+                <field name="modo"/>
+                <field name="input_prompt"/>
+                <field name="tools_resumen"/>
+                <field name="rule_triggered"/>
+                <field name="escalated_to"/>
+                <field name="resultado"/>
+                <field name="odoo_latency_ms" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_migal_agente_log_form" model="ir.ui.view">
+        <field name="name">migal.agente.log.form</field>
+        <field name="model">migal.agente.log</field>
+        <field name="arch" type="xml">
+            <form string="Turno del agente" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="timestamp"/>
+                            <field name="session_id"/>
+                            <field name="user_id"/>
+                            <field name="roles"/>
+                            <field name="canal"/>
+                            <field name="modo"/>
+                        </group>
+                        <group>
+                            <field name="resultado"/>
+                            <field name="rule_triggered"/>
+                            <field name="escalation_flag"/>
+                            <field name="escalated_to"/>
+                            <field name="odoo_latency_ms"/>
+                            <field name="res_model"/>
+                            <field name="res_id"/>
+                        </group>
+                    </group>
+                    <separator string="Entrada"/>
+                    <field name="input_prompt"/>
+                    <separator string="Herramientas invocadas"/>
+                    <field name="tools_invoked"/>
+                    <separator string="Respuesta"/>
+                    <field name="output_response"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_migal_agente_log_search" model="ir.ui.view">
+        <field name="name">migal.agente.log.search</field>
+        <field name="model">migal.agente.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="input_prompt"/>
+                <field name="user_id"/>
+                <field name="rule_triggered"/>
+                <filter name="escalados" string="Escalados" domain="[('escalation_flag', '=', True)]"/>
+                <filter name="bloqueados" string="Bloqueados" domain="[('resultado', '=', 'bloqueado')]"/>
+                <group>
+                    <filter name="g_resultado" string="Resultado" context="{'group_by': 'resultado'}"/>
+                    <filter name="g_user" string="Usuario" context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_migal_agente_log" model="ir.actions.act_window">
+        <field name="name">Bitácora del agente</field>
+        <field name="res_model">migal.agente.log</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

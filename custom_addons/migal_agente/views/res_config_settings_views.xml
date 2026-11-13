@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_migal_agente" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.migal.agente</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="60"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Agente MIGAL" string="Agente MIGAL" name="migal_agente" groups="base.group_system">
+                    <block title="Atención al cliente">
+                        <setting string="URL pública para clientes" help="Dirección que abre el celular del cliente al escanear el QR (IP de la red de la tienda o dominio). Vacía = web.base.url.">
+                            <field name="migal_url_publica" placeholder="http://192.168.1.50:8069"/>
+                        </setting>
+                    </block>
+                    <block title="Métodos de pago (estado de cuenta)">
+                        <setting string="Datos para que el cliente abone" help="Se imprimen al final del estado de cuenta. Los campos vacíos no se muestran.">
+                            <div class="mt-2"><label for="migal_pago_titular" string="Titular"/><field name="migal_pago_titular"/></div>
+                            <div class="mt-2"><label for="migal_pago_yape" string="Yape"/><field name="migal_pago_yape" placeholder="987 654 321"/></div>
+                            <div class="mt-2"><label for="migal_pago_bcp_cuenta" string="BCP cuenta"/><field name="migal_pago_bcp_cuenta"/></div>
+                            <div class="mt-2"><label for="migal_pago_bcp_cci" string="BCP CCI"/><field name="migal_pago_bcp_cci"/></div>
+                            <div class="mt-2"><label for="migal_pago_bbva_cuenta" string="BBVA cuenta"/><field name="migal_pago_bbva_cuenta"/></div>
+                            <div class="mt-2"><label for="migal_pago_bbva_cci" string="BBVA CCI"/><field name="migal_pago_bbva_cci"/></div>
+                        </setting>
+                    </block>
+                    <block title="Capa LLM opcional">
+                        <setting help="Interpreta lenguaje libre y redacta respuestas. Las reglas deterministas siguen decidiendo: el LLM nunca aprueba, confirma ni escribe.">
+                            <field name="migal_llm_enabled"/>
+                        </setting>
+                        <setting help="Los datos de cada consulta se envían al proveedor del LLM. Requiere revisión de privacidad y aprobación de GER.">
+                            <field name="migal_llm_data_ack"/>
+                        </setting>
+                        <setting string="Credenciales y modelo" help="Sin API key válida el agente responde en modo de reglas.">
+                            <div class="mt-2">
+                                <label for="migal_llm_api_key" string="API key"/>
+                                <field name="migal_llm_api_key" password="True"/>
+                            </div>
+                            <div class="mt-2">
+                                <label for="migal_llm_model" string="Modelo"/>
+                                <field name="migal_llm_model"/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_migal_agente" model="ir.ui.view">
+        <field name="name">res.partner.form.migal.agente</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_migal_estado_cuenta" type="object" class="oe_stat_button" icon="fa-file-text-o"
+                        groups="account.group_account_invoice,sales_team.group_sale_manager">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Estado de</span>
+                        <span class="o_stat_text">cuenta</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

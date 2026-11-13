@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="migal_agente.AgenteAvatar">
+        <svg viewBox="0 0 100 100" t-attf-class="o_migal_avatar o_migal_avatar_{{estado}}" aria-hidden="true">
+            <circle cx="50" cy="50" r="48" class="o_migal_av_fondo"/>
+            <path d="M22 52 a28 28 0 0 1 56 0" class="o_migal_av_diadema"/>
+            <rect x="15" y="47" width="10" height="18" rx="5" class="o_migal_av_audifono"/>
+            <rect x="75" y="47" width="10" height="18" rx="5" class="o_migal_av_audifono"/>
+            <circle cx="50" cy="56" r="25" class="o_migal_av_cara"/>
+            <g class="o_migal_av_ojos">
+                <ellipse cx="41" cy="53" rx="3.6" ry="4.4" class="o_migal_av_ojo"/>
+                <ellipse cx="59" cy="53" rx="3.6" ry="4.4" class="o_migal_av_ojo"/>
+            </g>
+            <path t-if="estado === 'feliz'" d="M40 63 q10 9 20 0" class="o_migal_av_boca"/>
+            <path t-elif="estado === 'pensando'" d="M44 65 h12" class="o_migal_av_boca"/>
+            <path t-else="" d="M41 63 q9 6 18 0" class="o_migal_av_boca"/>
+            <path d="M80 62 q2 14 -14 18" class="o_migal_av_micro"/>
+            <circle cx="65" cy="80" r="3" class="o_migal_av_micro_punta"/>
+        </svg>
+    </t>
+
+    <t t-name="migal_agente.AgenteWidget">
+        <div class="o_migal_agente d-print-none">
+            <div t-if="state.abierto" class="o_migal_panel">
+                <div class="o_migal_cabecera">
+                    <t t-call="migal_agente.AgenteAvatar"><t t-set="estado" t-value="estadoAvatar"/></t>
+                    <div class="flex-grow-1 ms-2">
+                        <div class="fw-bold">Agente MIGAL</div>
+                        <small class="opacity-75">
+                            <t t-if="state.pensando">pensando…</t>
+                            <t t-elif="state.ctx">modo <t t-esc="state.ctx.modo"/></t>
+                        </small>
+                    </div>
+                    <button class="btn btn-link text-white p-1" title="Cerrar" t-on-click="alternar">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <div class="o_migal_cuerpo" t-ref="cuerpo">
+                    <t t-if="state.ctx">
+                        <div class="o_migal_burbuja">
+                            Hola <b t-esc="state.ctx.usuario"/> 👋 <br/>
+                            <b t-esc="state.ctx.titulo"/>
+                            <div class="small text-muted" t-esc="state.ctx.subtitulo"/>
+                        </div>
+
+                        <div t-if="state.sinGuardar" class="o_migal_burbuja o_migal_error">
+                            Hay cambios sin guardar en la cotización. Guárdala para que revise los datos actuales.
+                            <button class="btn btn-primary btn-sm mt-2 d-block" t-on-click="guardarYRevisar">
+                                <i class="fa fa-save me-1"/>Guardar y revisar
+                            </button>
+                        </div>
+                        <t t-elif="state.ctx.pestanas">
+                        <div t-if="!state.ocupado" class="o_migal_pestanas">
+                            <t t-foreach="state.ctx.pestanas" t-as="tab" t-key="tab.id">
+                                <button t-attf-class="o_migal_pestana {{state.pestana === tab.id ? 'activa' : ''}}"
+                                        t-on-click="() => this.cambiarPestana(tab.id)">
+                                    <i t-attf-class="fa {{tab.icon}} me-1"/><t t-esc="tab.label"/>
+                                </button>
+                            </t>
+                        </div>
+                        </t>
+                        <div t-if="!state.sinGuardar and tieneFecha and !state.ocupado and !state.pasos.length" class="o_migal_periodo">
+                            <span class="small text-muted me-1">Cobertura para:</span>
+                            <button t-attf-class="btn btn-sm {{state.fechaCob === 'cotizacion' ? 'btn-primary' : 'btn-light'}}" t-on-click="() => this.state.fechaCob = 'cotizacion'">Fecha de la cotización</button>
+                            <button t-attf-class="btn btn-sm {{state.fechaCob === 'hoy' ? 'btn-primary' : 'btn-light'}}" t-on-click="() => this.state.fechaCob = 'hoy'">Hoy</button>
+                            <button t-attf-class="btn btn-sm {{state.fechaCob === '3' ? 'btn-primary' : 'btn-light'}}" t-on-click="() => this.state.fechaCob = '3'">En 3 días</button>
+                            <button t-attf-class="btn btn-sm {{state.fechaCob === '7' ? 'btn-primary' : 'btn-light'}}" t-on-click="() => this.state.fechaCob = '7'">En 7 días</button>
+                            <input type="date" class="form-control form-control-sm o_migal_fecha" t-model="state.fechaOtra"
+                                   t-on-change="() => this.state.fechaCob = this.state.fechaOtra ? 'otra' : 'cotizacion'"/>
+                        </div>
+                        <div t-if="tienePeriodo and !state.ocupado and !state.pasos.length" class="o_migal_periodo">
+                            <span class="small text-muted me-1">Período:</span>
+                            <button t-attf-class="btn btn-sm {{state.periodo === 'mes' ? 'btn-primary' : 'btn-light'}}" t-on-click="() => this.state.periodo = 'mes'">Este mes</button>
+                            <button t-attf-class="btn btn-sm {{state.periodo === 'trimestre' ? 'btn-primary' : 'btn-light'}}" t-on-click="() => this.state.periodo = 'trimestre'">Últimos 3 meses</button>
+                            <button t-attf-class="btn btn-sm {{state.periodo === 'anio' ? 'btn-primary' : 'btn-light'}}" t-on-click="() => this.state.periodo = 'anio'">Este año</button>
+                        </div>
+                        <label t-if="!state.sinGuardar and state.ctx.pestanas and state.pestana === 'enviar' and !state.ocupado and !state.pasos.length"
+                               class="o_migal_casilla small">
+                            <input type="checkbox" t-model="state.incluirDisp"/> Incluir la disponibilidad en el mensaje de WhatsApp
+                        </label>
+                        <div t-if="!state.sinGuardar and !state.ocupado and !state.pasos.length and accionesVisibles.length" class="o_migal_acciones">
+                            <t t-foreach="accionesVisibles" t-as="acc" t-key="acc.id">
+                                <button t-attf-class="o_migal_accion {{acc.principal ? 'o_migal_accion_principal' : ''}}"
+                                        t-att-disabled="acc.bloqueada" t-on-click="() => this.ejecutarAccion(acc)">
+                                    <i t-attf-class="fa {{acc.icon}} fa-fw me-2"/>
+                                    <span>
+                                        <span class="d-block fw-bold" t-esc="acc.label"/>
+                                        <small t-esc="acc.descripcion"/>
+                                    </span>
+                                    <i t-if="acc.bloqueada" class="fa fa-lock ms-auto"/>
+                                </button>
+                            </t>
+                        </div>
+                    </t>
+
+                    <ul t-if="state.pasos.length" class="o_migal_pasos">
+                        <t t-foreach="state.pasos" t-as="paso" t-key="paso_index">
+                            <li class="o_migal_paso">
+                                <i t-att-class="iconoPaso(paso, paso_index)"/>
+                                <div>
+                                    <div class="o_migal_paso_titulo" t-esc="paso.titulo"/>
+                                    <div t-if="paso.detalle and !(state.corriendo and paso_index === state.visibles - 1)"
+                                         class="o_migal_paso_detalle" t-esc="paso.detalle"/>
+                                </div>
+                            </li>
+                        </t>
+                    </ul>
+
+                    <div t-if="state.pensando and !state.pasos.length" class="o_migal_burbuja o_migal_escribiendo">
+                        <span/><span/><span/>
+                    </div>
+
+                    <t t-set="res" t-value="state.resultado"/>
+                    <div t-if="res and !state.ocupado" class="o_migal_resultado">
+                        <div t-attf-class="o_migal_burbuja {{res.ok ? 'o_migal_ok' : 'o_migal_error'}}">
+                            <t t-esc="res.final"/>
+                        </div>
+                        <t t-foreach="res.avisos or []" t-as="aviso" t-key="aviso_index">
+                            <div class="small text-muted mb-1"><i class="fa fa-info-circle me-1"/><t t-esc="aviso"/></div>
+                        </t>
+
+                        <div t-if="res.qr" class="o_migal_qr">
+                            <img t-att-src="res.qr.imagen" alt="Código QR de la cotización" t-on-click="() => this.state.qrGrande = true"/>
+                            <div class="small fw-bold" t-esc="res.qr.titulo or res.qr.cotizacion"/>
+                            <button class="btn btn-primary btn-sm mt-1" t-on-click="() => this.state.qrGrande = true">
+                                <i class="fa fa-expand me-1"/>Ampliar para el cliente
+                            </button>
+                            <a class="btn btn-link btn-sm" t-att-href="res.qr.url" target="_blank" rel="noopener">Ver versión digital</a>
+                        </div>
+                        <div t-if="res.sugerencia" class="o_migal_sugerencia">
+                            <label class="small fw-bold">💬 Mensaje sugerido para el cliente (editable, no es un compromiso)</label>
+                            <textarea class="form-control form-control-sm o_migal_mensaje" rows="4" t-model="state.sugerencia"/>
+                            <div class="o_migal_botones">
+                                <button class="btn btn-outline-secondary btn-sm" t-on-click="copiarSugerencia">
+                                    <i t-attf-class="fa {{state.copiado ? 'fa-check' : 'fa-copy'}} me-1"/><t t-if="state.copiado">Copiado</t><t t-else="">Copiar</t>
+                                </button>
+                                <a t-if="res.sugerencia.telefono" class="btn btn-success btn-sm" target="_blank" rel="noopener" t-att-href="enlaceSugerencia">
+                                    <i class="fa fa-whatsapp me-1"/>Enviar por WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                        <t t-if="res.whatsapp and !res.registrado">
+                            <label class="small fw-bold mt-2">Mensaje para <t t-esc="res.whatsapp.telefono"/> (editable)</label>
+                            <textarea class="form-control form-control-sm o_migal_mensaje" rows="5" t-model="state.mensajeWa"/>
+                        </t>
+                        <div class="o_migal_botones">
+                            <a t-if="res.whatsapp and !res.registrado" class="btn btn-success btn-sm" target="_blank"
+                               rel="noopener" t-att-href="enlaceWhatsapp">
+                                <i class="fa fa-whatsapp me-1"/>Abrir WhatsApp
+                            </a>
+                            <a t-if="res.pdf_url" class="btn btn-outline-secondary btn-sm" t-att-href="res.pdf_url"
+                               t-att-download="res.pdf_nombre" target="_blank">
+                                <i class="fa fa-file-pdf-o me-1"/>Descargar PDF
+                            </a>
+                            <button t-if="res.puede_compartir" class="btn btn-primary btn-sm"
+                                    t-on-click="() => this.ejecutar('estado_cuenta_compartir', res.periodo)">
+                                <i class="fa fa-share-alt me-1"/>Compartir con el cliente
+                            </button>
+                            <button t-if="res.whatsapp and !res.registrado" class="btn btn-primary btn-sm"
+                                    t-on-click="registrarEnvio">
+                                <i class="fa fa-check me-1"/>Ya lo envié
+                            </button>
+                        </div>
+                        <div t-if="res.whatsapp and !res.registrado" class="small text-muted mt-1">
+                            1) Descarga el PDF · 2) Abre WhatsApp y adjúntalo · 3) Envía · 4) «Ya lo envié»
+                        </div>
+                        <button class="btn btn-link btn-sm px-0 mt-1" t-on-click="volver">
+                            <i class="fa fa-arrow-left me-1"/>Otras acciones
+                        </button>
+                    </div>
+
+                    <t t-foreach="state.respuestas" t-as="r" t-key="r_index">
+                        <div t-if="r.autor === 'yo'" class="o_migal_burbuja o_migal_yo" t-esc="r.html"/>
+                        <div t-else="" class="o_migal_burbuja o_migal_html"><t t-out="r.html"/></div>
+                    </t>
+                    <div t-if="state.pensando and state.respuestas.length" class="o_migal_burbuja o_migal_escribiendo">
+                        <span/><span/><span/>
+                    </div>
+                </div>
+
+                <div class="o_migal_pie">
+                    <input class="form-control form-control-sm" placeholder="Escríbeme… ej. «cobertura para el 20/11/2026»"
+                           t-model="state.texto" t-on-keydown="onTecla" t-att-disabled="state.ocupado"/>
+                    <button class="btn btn-primary btn-sm ms-1" t-on-click="enviarTexto" t-att-disabled="state.ocupado">
+                        <i class="fa fa-paper-plane"/>
+                    </button>
+                </div>
+            </div>
+
+            <div t-if="state.qrGrande and state.resultado and state.resultado.qr" class="o_migal_qr_pantalla"
+                 t-on-click="() => this.state.qrGrande = false">
+                <div class="o_migal_qr_tarjeta" t-on-click.stop="() => {}">
+                    <div class="o_migal_qr_marca">
+                        <t t-call="migal_agente.AgenteAvatar"><t t-set="estado" t-value="'feliz'"/></t>
+                        <span>Ferre &amp; Inversiones MIGAL</span>
+                    </div>
+                    <h3 class="mb-0"><t t-if="state.resultado.qr.titulo" t-esc="state.resultado.qr.titulo"/><t t-else="">Cotización <t t-esc="state.resultado.qr.cotizacion"/></t></h3>
+                    <div class="text-muted"><t t-esc="state.resultado.qr.cliente"/> · <t t-esc="state.resultado.qr.total"/></div>
+                    <img t-att-src="state.resultado.qr.imagen" alt="Código QR de la cotización"/>
+                    <div class="fs-5">📱 Escanea con la cámara de tu celular</div>
+                    <div t-if="!state.resultado.qr.accesible" class="text-danger small mt-1">
+                        No hay publicación activa: el celular no podrá abrirlo (inicie el publicador de cotizaciones).
+                    </div>
+                    <button class="btn btn-secondary mt-3" t-on-click="() => this.state.qrGrande = false">Cerrar</button>
+                </div>
+            </div>
+
+            <button t-attf-class="o_migal_fab {{state.pensando ? 'o_migal_fab_pensando' : ''}}"
+                    title="Agente MIGAL" t-on-click="alternar">
+                <t t-call="migal_agente.AgenteAvatar"><t t-set="estado" t-value="estadoAvatar"/></t>
+                <span t-if="state.pensando and !state.abierto" class="o_migal_globo">…</span>
+            </button>
+        </div>
+    </t>
+</templates>
