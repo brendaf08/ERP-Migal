@@ -83,7 +83,7 @@ Las metas de disponibilidad son una propuesta por nivel de criticidad: 95 % para
 | ACT-21 | Baja | 99,21 | 90 | Cumple | No aplica | 0 | ALM revisa; GER autoriza la reparación. |
 | ACT-22 | Alta | 99,21 | 95 | Cumple | No aplica | 0 (el respaldo no detiene el equipo) | SIS ejecuta; GER autoriza la reposición. |
 
-Las horas de parada planificada se restan de la disponibilidad operativa, y la disponibilidad de referencia no las descuenta. La relación entre estas horas, la mejora esperada del MTBF y la continuidad del despacho se modela en el análisis de continuidad de la cadena, pendiente de documentación. Los códigos de rol proceden del [modelo de autorización](../../arquitectura/seguridad/modelo-autorizacion.md).
+Las horas de parada planificada se restan de la disponibilidad operativa, y la disponibilidad de referencia no las descuenta. La relación entre estas horas, la mejora esperada del MTBF y la continuidad del despacho se analiza en la [continuidad de la cadena](../continuidad/continuidad_cadena.md). Los códigos de rol proceden del [modelo de autorización](../../arquitectura/seguridad/modelo-autorizacion.md).
 
 ## 5. Mantenimiento predictivo no adoptado y registro de intervenciones
 
