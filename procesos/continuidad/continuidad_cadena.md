@@ -8,7 +8,7 @@ La continuidad de las operaciones de despacho de MIGAL depende de una infraestru
 
 El mantenimiento preventivo actúa como el principal sostén de la **Disponibilidad**:
 * Un mantenimiento correctivo (falla imprevista) inmoviliza un equipo crítico entre 16 y 24 horas (MTTR).
-* Un mantenimiento preventivo programado representa una parada controlada de 4 a 6 horas (según el [plan de mantenimiento](../activos_mantenimiento/mantenimiento.md)), minimizando el impacto en los despachos diarios y acercando la disponibilidad a la meta del **95 %**.
+* Un mantenimiento preventivo programado representa una parada controlada de 4 a 6 horas (según el [plan de mantenimiento](../activos_mantenimiento/mantenimiento.md)), minimizando el impacto en los despachos diarios. El preventivo acerca la disponibilidad a la meta del **95 %**, pero no la garantiza: el plan identifica una brecha en los dos camiones, el montacargas y el minicargador, que solo se cierra si el MTBF real alcanza el valor requerido (456 h para cada camión, 304 h para el montacargas y 276 h para el minicargador).
 
 ## 2. Matriz Causa-Efecto (Escenario de Falla)
 
@@ -36,8 +36,8 @@ Para evitar el quiebre de la cadena de suministro por indisponibilidad de activo
 ### C. Decisión Principal de Mitigación
 Para sostener la continuidad de la cadena de suministro, se toma la siguiente **decisión principal sustentada**:
 
-> **Decisión:** Implementar un régimen estricto de **mantenimiento preventivo basado en tiempo/uso** (inspecciones diarias y servicios cada 250h/5000km) para asegurar la meta del 95 % de disponibilidad, combinado con un **protocolo logístico de contingencia (Outsourcing Spot)**.
+> **Decisión:** Implementar un régimen estricto de **mantenimiento preventivo basado en tiempo/uso** (inspecciones diarias y servicios cada 250h/5000km) para acercar la disponibilidad a la meta del 95 %, combinado con un **protocolo logístico de contingencia (Outsourcing Spot)**.
 
 **Sustento de la decisión:**
-1. **Sustento Cuantitativo:** Cambiar las paradas por fallas (MTTR de 24h) a paradas planificadas (4h a 6h) reduce la indisponibilidad en un 75 %, asegurando que la capacidad de despacho se mantenga cerca de las 40 toneladas/día **[SIM]**.
+1. **Sustento Cuantitativo:** Cada falla que el preventivo evita sustituye una parada de 24 h (MTTR) por una planificada de 6 h, un 75 % menos de horas detenidas por evento. El cálculo supone que cada servicio evita una falla, lo que debe contrastarse con el registro de intervenciones del plan, asegurando que la capacidad de despacho se mantenga cerca de las 40 toneladas/día **[SIM]**.
 2. **Protocolo de contingencia:** Dado que el mantenimiento preventivo no elimina el 100 % de las fallas, se establece como regla de negocio que ante cualquier falla de un activo de criticidad Alta (camión o montacargas) cuyo diagnóstico supere las 6 horas, GER autorizará el alquiler temporal (*outsourcing spot*) de un equipo de reemplazo para evitar que el indicador OTIF caiga por debajo del 90 %.
