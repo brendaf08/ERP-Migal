@@ -176,8 +176,8 @@ ERP-Migal/
 ├── procesos/
 │   ├── activos_mantenimiento/activos.md         # A1
 │   ├── activos_mantenimiento/mantenimiento.md   # A2
-│   ├── p2p/cadena_suministro.md                  # A3
-│   └── continuidad/continuidad_cadena.md        # A4
+│   ├── continuidad/continuidad_cadena.md        # A4
+│   └── cadena_suministro.md                     # A3
 ├── producto/
 │   ├── pc3/                                      # Estos 4 Markdown
 │   └── agente-comercial/
