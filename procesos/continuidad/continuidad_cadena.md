@@ -4,11 +4,11 @@
 
 ## 1. Relación Mantenimiento - Disponibilidad - Servicio
 
-La continuidad de las operaciones de despacho de MIGAL depende de una infraestructura logística pequeña y centralizada. Como se identificó en el catálogo de activos (`activos.md`), los equipos críticos operan con motores de combustión y presentan tiempos medios de reparación (MTTR) elevados. 
+La continuidad de las operaciones de despacho de MIGAL depende de una infraestructura logística pequeña y centralizada. Como se identificó en el [catálogo de activos](../activos_mantenimiento/activos.md), los equipos críticos operan con motores de combustión y presentan tiempos medios de reparación (MTTR) elevados. 
 
 El mantenimiento preventivo actúa como el principal sostén de la **Disponibilidad**:
 * Un mantenimiento correctivo (falla imprevista) inmoviliza un equipo crítico entre 16 y 24 horas (MTTR).
-* Un mantenimiento preventivo programado representa una parada controlada de 4 a 6 horas (según el plan de `mantenimiento.md`), minimizando el impacto en los despachos diarios y acercando la disponibilidad a la meta del **95 %**.
+* Un mantenimiento preventivo programado representa una parada controlada de 4 a 6 horas (según el [plan de mantenimiento](../activos_mantenimiento/mantenimiento.md)), minimizando el impacto en los despachos diarios y acercando la disponibilidad a la meta del **95 %**.
 
 ## 2. Matriz Causa-Efecto (Escenario de Falla)
 
