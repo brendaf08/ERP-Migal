@@ -19,7 +19,9 @@ Esta sección reúne avances que todavía no forman parte de un hito académico 
 
 No incluir borradores ni resultados pendientes de aprobación.
 
-Sin entradas documentadas por ahora.
+### Añadido
+
+- **Activos y mantenimiento (PR #17):** se incorporan el [catálogo de activos](procesos/activos_mantenimiento/activos.md), con 22 activos, su criticidad y su disponibilidad de referencia, y el [plan de mantenimiento](procesos/activos_mantenimiento/mantenimiento.md), con el enfoque, la frecuencia y los responsables de cada activo. Se crean el prefijo `ACT`, la fuente FN-04 y los pendientes PEN-021 a PEN-024. Los valores de MTBF y MTTR son supuestos de trabajo y las metas de disponibilidad requieren aprobación de GER.
 
 ## 2026-11-07 — Corrección, pruebas de frontera y cierre de la consolidación documental
 
