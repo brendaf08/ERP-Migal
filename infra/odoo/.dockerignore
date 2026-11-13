@@ -2,3 +2,4 @@
 !Dockerfile
 !iniciar.py
 !filestore.py
+!restaurar_respaldo.py

@@ -1,5 +1,7 @@
 # Odoo 19 Community · MIGAL
 
+> **¿Primera vez?** Siga la [guía maestra de instalación](GUIA_INSTALACION.md): de cero a Odoo + módulos + Agente MIGAL + datos.
+
 Incluye diez módulos propios/comunitarios y seis herramientas. El respaldo y filestore se comparten por un canal privado; no están en este repositorio. El núcleo se obtiene de la imagen oficial. No se modifica el código de los addons.
 
 ## Requisitos

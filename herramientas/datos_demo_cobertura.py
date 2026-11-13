@@ -27,20 +27,25 @@ proveedores = env.ref("stock.stock_location_suppliers")
 P = env["product.product"]
 
 
-def producto(*nombres):
+def producto(*nombres, categoria=None, excluir=()):
+    base = [("is_storable", "=", True), ("sale_ok", "=", True), ("id", "not in", [p.id for p in excluir])]
     for nombre in nombres:
-        p = P.search([("name", "ilike", nombre), ("is_storable", "=", True)], limit=1)
+        p = P.search(base + [("name", "ilike", nombre)], limit=1)
         if p:
             return p
-    raise ValueError("No encontré ninguno de %s" % (nombres,))
+    if categoria:
+        p = P.search(base + [("categ_id.name", "ilike", categoria)], limit=1)
+        if p:
+            return p
+    raise ValueError("No encontré ninguno de %s (categoría %s)" % (nombres, categoria))
 
 
-cemento = producto("CEMENTO ANDINO ROJO")
-fierro = producto("FIERRO CORRUGADO", "MALLA CUADRADA SPRATT", "ALAMBRE #16")
-ladrillo = producto("LADRILLO KK18")
-piedra = producto("PIEDRA CHANCADA")
-yee = producto("YEE SANITARIA")
-arena = producto("ARENA FINA")
+cemento = producto("CEMENTO ANDINO ROJO", "CEMENTO", categoria="Cemento")
+fierro = producto("FIERRO CORRUGADO", "MALLA CUADRADA SPRATT", "ALAMBRE #16", categoria="Fierro")
+ladrillo = producto("LADRILLO KK18", "LADRILLO", categoria="Ladrillo")
+piedra = producto("PIEDRA CHANCADA", categoria="Agregado")
+yee = producto("YEE SANITARIA", "CODO", "TEE", categoria="Tuber")
+arena = producto("ARENA FINA", "ARENA", categoria="Agregado", excluir=(piedra,))
 
 cot = env["sale.order"].search([("client_order_ref", "=", "%s Obra Pinedo" % TAG)], limit=1)
 if not cot:
@@ -70,7 +75,10 @@ if not cot:
         picking.action_confirm()
 
     # 3. Cotización con todos los casos
-    cliente = env["res.partner"].search([("name", "=", "PRUEBA - Servicios Generales Lima")], limit=1)
+    cliente = env["res.partner"].search([("name", "=", "PRUEBA - Servicios Generales Lima")], limit=1) or \
+        env["res.partner"].create({"name": "PRUEBA - Servicios Generales Lima", "phone": "+51 90000003",
+                                   "street": "Calle Prueba 3", "city": "Lima",
+                                   "country_id": env.ref("base.pe").id, "customer_rank": 1})
     vendedor = env["res.users"].search([("login", "=", "vendedor.pruebas@example.invalid")], limit=1)
     cot = env["sale.order"].create({
         "partner_id": cliente.id, "client_order_ref": "%s Obra Pinedo" % TAG,

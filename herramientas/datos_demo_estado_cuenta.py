@@ -27,8 +27,13 @@ def ruc_valido(base10):
     return base10 + str({10: 0, 11: 1}.get(r, r))
 
 
-cliente = env["res.partner"].search([("name", "=", "PRUEBA - Inversiones del Norte")], limit=1)
-assert cliente, "No existe el cliente PRUEBA - Inversiones del Norte"
+RUC_DEMO = ruc_valido("2088888888")
+cliente = env["res.partner"].search(["|", ("vat", "=", RUC_DEMO), ("name", "=", "PRUEBA - Inversiones del Norte")], limit=1)
+if not cliente:
+    # La base no trae el cliente de demostración: se crea (datos ficticios).
+    cliente = env["res.partner"].create({"name": "PRUEBA - Inversiones del Norte", "phone": "+51 90000002",
+                                         "street": "Calle Prueba 2", "city": "Lima",
+                                         "country_id": env.ref("base.pe").id, "customer_rank": 1})
 if not cliente.vat:
     vals = {"vat": ruc_valido("2088888888"), "is_company": True}
     ruc = env.ref("l10n_pe.it_RUC", raise_if_not_found=False)
@@ -45,13 +50,18 @@ doc_nc = env["l10n_latam.document.type"].search([("code", "=", "07"), ("country_
 Prod = env["product.product"]
 
 
-def prod(nombre):
+def prod(nombre, categoria=None):
     p = Prod.search([("name", "ilike", nombre), ("sale_ok", "=", True)], limit=1)
-    assert p, nombre
+    if not p and categoria:
+        p = Prod.search([("categ_id.name", "ilike", categoria), ("sale_ok", "=", True)], limit=1)
+    assert p, "No encontré un producto para %s" % nombre
     return p
 
 
-cemento, fierro, ladrillo, arena = prod("CEMENTO"), prod("FIERRO"), prod("LADRILLO"), prod("ARENA FINA")
+cemento = prod("CEMENTO", "Cemento")
+fierro = prod("FIERRO", "Fierro")
+ladrillo = prod("LADRILLO", "Ladrillo")
+arena = prod("ARENA", "Agregado")
 
 
 def venta(ref, lineas, fecha):
