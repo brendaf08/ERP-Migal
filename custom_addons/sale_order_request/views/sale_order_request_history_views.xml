@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================
+         Historial de solicitudes de órdenes de venta
+         - Solo estados: approved, confirmed
+         - Solo lectura (UI)
+         - Visible para Abastecimiento y Transporte
+         - No modifica ACL/reglas/grupos/lógica/OCA/core
+         ============================================================ -->
+
+    <record id="view_sale_order_request_history_tree" model="ir.ui.view">
+        <field name="name">sale.order.request.history.list</field>
+        <field name="model">sale.order.request</field>
+        <field name="arch" type="xml">
+            <list string="Historial de solicitudes de órdenes de venta" create="0" edit="0" delete="0">
+                <field name="name"/>
+                <field name="sale_order_id" string="Cotización / orden de venta"/>
+                <field name="sale_order_revision_id" optional="show"/>
+                <field name="state"/>
+                <field name="delivery_mode"/>
+                <field name="stock_sufficient" optional="show"/>
+                <field name="stock_checked_date" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="requester_id" optional="hide"/>
+                <field name="approval_date" optional="show"/>
+                <field name="accepted_date" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sale_order_request_history_form" model="ir.ui.view">
+        <field name="name">sale.order.request.history.form</field>
+        <field name="model">sale.order.request</field>
+        <field name="arch" type="xml">
+            <form string="Historial de solicitudes de órdenes de venta" create="0" edit="0" delete="0">
+                <header>
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="draft,pending_approval,approved,accepted,confirmed,superseded,cancel"
+                    />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Solicitud">
+                            <field name="sale_order_id" readonly="1" string="Cotización / orden de venta"/>
+                            <field name="sale_order_revision_id" readonly="1" string="Revisión de cotización"/>
+                            <field name="delivery_mode" readonly="1"/>
+                            <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Disponibilidad y estado">
+                            <field name="state" readonly="1"/>
+                            <field name="stock_sufficient" readonly="1" string="Disponibilidad de stock registrada"/>
+                            <field name="stock_checked_date" readonly="1"/>
+                            <field name="requester_id" readonly="1"/>
+                            <field name="request_date" readonly="1"/>
+                            <field name="approval_date" readonly="1"/>
+                            <field name="accepted_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Líneas de solicitud" name="history_lines">
+                            <field name="line_ids" readonly="1">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="sale_order_line_id" optional="hide"/>
+                                    <field name="product_id"/>
+                                    <field name="product_uom_id" optional="show"/>
+                                    <field name="qty"/>
+                                    <field name="stock_qty" optional="show"/>
+                                    <field name="stock_sufficient" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Aprobaciones Tier" name="history_tier_reviews">
+                            <!-- Bloque informativo. Datos basados en campos reales de
+                                 base_tier_validation/tier.review (OCA instalado).
+                                 Sin botones comerciales ni acciones Tier. -->
+                            <field name="review_ids" readonly="1">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="name" string="Definición / revisión"/>
+                                    <field name="reviewer_ids" widget="many2many_tags" string="Revisores asignados"/>
+                                    <field name="done_by" string="Usuario que aprobó / actuó"/>
+                                    <field name="status" string="Estado de la revisión"/>
+                                    <field name="reviewed_date" string="Fecha de aprobación / revisión"/>
+                                    <field name="comment" string="Comentario" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sale_order_request_history" model="ir.actions.act_window">
+        <field name="name">Historial de solicitudes de órdenes de venta</field>
+        <field name="res_model">sale.order.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_sale_order_request_history_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_sale_order_request_history_form')})]"/>
+        <field name="domain">[('state', 'in', ('approved', 'confirmed'))]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+    </record>
+
+    <menuitem
+        id="menu_sale_order_request_history"
+        name="Historial de solicitudes de órdenes de venta"
+        parent="sale.sale_order_menu"
+        action="action_sale_order_request_history"
+        groups="sale_order_request.group_sale_order_request_supply,sale_order_request.group_sale_order_request_transport"
+        sequence="26"
+    />
+</odoo>

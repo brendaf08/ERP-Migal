@@ -1,0 +1,393 @@
+// Morado de Odoo Community ($o-community-color) y acento verde azulado de Odoo
+$migal-azul: #71639e;
+$migal-naranja: #01a9a7;
+
+.o_migal_agente {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    pointer-events: none;
+
+    > * {
+        pointer-events: auto;
+    }
+}
+
+// --- Botón flotante con el avatar ---------------------------------------
+.o_migal_fab {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    animation: o_migal_flotar 3.2s ease-in-out infinite;
+    transition: transform 0.15s;
+
+    &:hover {
+        transform: scale(1.08);
+    }
+
+    .o_migal_avatar {
+        width: 62px;
+        height: 62px;
+    }
+
+    &.o_migal_fab_pensando {
+        animation: o_migal_latido 1s ease-in-out infinite;
+    }
+}
+
+.o_migal_globo {
+    position: absolute;
+    top: -14px;
+    left: -10px;
+    background: #fff;
+    color: $migal-azul;
+    border-radius: 12px;
+    padding: 0 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    animation: o_migal_latido 1s infinite;
+}
+
+// --- Avatar SVG ---------------------------------------------------------
+.o_migal_avatar {
+    .o_migal_av_fondo { fill: $migal-azul; }
+    .o_migal_av_cara { fill: #ffe0bd; }
+    .o_migal_av_diadema { fill: none; stroke: #263238; stroke-width: 5; stroke-linecap: round; }
+    .o_migal_av_audifono { fill: #263238; }
+    .o_migal_av_micro { fill: none; stroke: #263238; stroke-width: 3; stroke-linecap: round; }
+    .o_migal_av_micro_punta { fill: $migal-naranja; }
+    .o_migal_av_ojo { fill: #263238; }
+    .o_migal_av_boca { fill: none; stroke: #8d4b2f; stroke-width: 3; stroke-linecap: round; }
+
+    .o_migal_av_ojos {
+        transform-origin: 50px 53px;
+        animation: o_migal_parpadeo 4.5s infinite;
+    }
+
+    &.o_migal_avatar_pensando .o_migal_av_ojos {
+        animation: o_migal_mirar 1.4s ease-in-out infinite;
+    }
+}
+
+// --- Panel --------------------------------------------------------------
+.o_migal_panel {
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 620px;
+    max-height: calc(100vh - 120px);
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    background: var(--o-view-background-color, #fff);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: o_migal_aparecer 0.22s ease-out;
+}
+
+.o_migal_cabecera {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    color: #fff;
+    background: linear-gradient(135deg, $migal-azul, darken($migal-azul, 12%));
+
+    .o_migal_avatar {
+        width: 38px;
+        height: 38px;
+        flex: none;
+    }
+}
+
+.o_migal_cuerpo {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 12px;
+    background: var(--o-webclient-background-color, #f6f7f9);
+}
+
+.o_migal_burbuja {
+    background: var(--o-view-background-color, #fff);
+    border-radius: 12px 12px 12px 4px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    animation: o_migal_aparecer 0.25s ease-out;
+
+    &.o_migal_yo {
+        margin-left: 40px;
+        border-radius: 12px 12px 4px 12px;
+        background: $migal-azul;
+        color: #fff;
+    }
+
+    &.o_migal_ok { border-left: 4px solid #28a745; }
+    &.o_migal_error { border-left: 4px solid #dc3545; }
+
+    &.o_migal_html {
+        font-size: 0.85rem;
+
+        table { font-size: 0.75rem; }
+    }
+}
+
+.o_migal_acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.o_migal_accion {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 12px;
+    background: var(--o-view-background-color, #fff);
+    transition: all 0.15s;
+    animation: o_migal_aparecer 0.3s ease-out;
+
+    &:hover:not(:disabled) {
+        border-color: $migal-azul;
+        transform: translateX(-3px);
+        box-shadow: 0 2px 8px rgba(113, 99, 158, 0.25);
+    }
+
+    &:disabled { opacity: 0.55; }
+
+    > .fa:first-child {
+        font-size: 1.3rem;
+        color: $migal-azul;
+    }
+
+    &.o_migal_accion_principal {
+        background: linear-gradient(135deg, $migal-azul, darken($migal-azul, 10%));
+        color: #fff;
+        border-color: transparent;
+
+        > .fa:first-child { color: $migal-naranja; }
+    }
+}
+
+.o_migal_pasos {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px;
+}
+
+.o_migal_paso {
+    display: flex;
+    gap: 8px;
+    padding: 6px 4px;
+    border-bottom: 1px dashed var(--border-color, #e5e7eb);
+    animation: o_migal_aparecer 0.25s ease-out;
+
+    > .fa {
+        margin-top: 3px;
+        font-size: 1.05rem;
+    }
+}
+
+.o_migal_paso_titulo {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.o_migal_paso_detalle {
+    font-size: 0.78rem;
+    color: var(--text-muted, #6c757d);
+}
+
+.o_migal_resultado {
+    animation: o_migal_aparecer 0.3s ease-out;
+}
+
+.o_migal_mensaje {
+    font-size: 0.8rem;
+}
+
+.o_migal_botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.o_migal_pie {
+    display: flex;
+    padding: 8px;
+    border-top: 1px solid var(--border-color, #dee2e6);
+    background: var(--o-view-background-color, #fff);
+}
+
+.o_migal_escribiendo {
+    display: inline-flex;
+    gap: 4px;
+
+    span {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: $migal-azul;
+        animation: o_migal_rebote 1.2s infinite ease-in-out;
+
+        &:nth-child(2) { animation-delay: 0.15s; }
+        &:nth-child(3) { animation-delay: 0.3s; }
+    }
+}
+
+// --- Animaciones --------------------------------------------------------
+@keyframes o_migal_flotar {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes o_migal_latido {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+@keyframes o_migal_parpadeo {
+    0%, 92%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+}
+
+@keyframes o_migal_mirar {
+    0%, 100% { transform: translateX(0); }
+    30% { transform: translateX(-4px) translateY(-2px); }
+    70% { transform: translateX(4px) translateY(-2px); }
+}
+
+@keyframes o_migal_aparecer {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes o_migal_rebote {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+    40% { transform: translateY(-6px); opacity: 1; }
+}
+
+// --- QR para atención presencial ----------------------------------------
+.o_migal_qr {
+    text-align: center;
+    margin: 8px 0;
+    padding: 10px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    animation: o_migal_aparecer 0.35s ease-out;
+
+    img {
+        width: 170px;
+        height: 170px;
+        cursor: zoom-in;
+    }
+}
+
+.o_migal_qr_pantalla {
+    position: fixed;
+    inset: 0;
+    z-index: 1060;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(40, 30, 60, 0.75);
+    animation: o_migal_aparecer 0.2s ease-out;
+}
+
+.o_migal_qr_tarjeta {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 32px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    max-width: 92vw;
+
+    > img {
+        width: 420px;
+        max-width: 70vh;
+        height: auto;
+        margin: 12px 0;
+    }
+}
+
+.o_migal_qr_marca {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: $migal-azul;
+    font-weight: bold;
+
+    .o_migal_avatar {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+.o_migal_periodo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.o_migal_fecha {
+    width: auto;
+    max-width: 150px;
+}
+
+.o_migal_sugerencia {
+    margin: 8px 0;
+    padding: 8px 10px;
+    border-left: 4px solid $migal-naranja;
+    background: var(--o-view-background-color, #fff);
+    border-radius: 8px;
+}
+
+.o_migal_pestanas {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    padding: 3px;
+    background: rgba(113, 99, 158, 0.12);
+    border-radius: 10px;
+}
+
+.o_migal_pestana {
+    flex: 1;
+    border: 0;
+    border-radius: 8px;
+    padding: 6px 4px;
+    background: transparent;
+    color: $migal-azul;
+    font-weight: 600;
+    font-size: 0.85rem;
+
+    &.activa {
+        background: $migal-azul;
+        color: #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.o_migal_casilla {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px 2px;
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="partner_agente_migal" model="res.partner">
+            <field name="name">Agente MIGAL</field>
+            <field name="active" eval="True"/>
+            <field name="comment">Agente de atención comercial integrado en Odoo (PC3). Solo consulta, prepara y registra; no confirma ventas, no reserva stock ni aplica descuentos.</field>
+            <field name="image_1920" type="base64" file="migal_agente/static/description/icon.png"/>
+        </record>
+
+        <record id="param_llm_enabled" model="ir.config_parameter">
+            <field name="key">migal_agente.llm_enabled</field>
+            <field name="value">False</field>
+        </record>
+        <record id="param_llm_model" model="ir.config_parameter">
+            <field name="key">migal_agente.llm_model</field>
+            <field name="value">claude-opus-5-5</field>
+        </record>
+    </data>
+</odoo>

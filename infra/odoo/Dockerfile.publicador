@@ -1,0 +1,6 @@
+# Publicador temporal de QR (portero + túnel cloudflared). Se usa con: docker compose --profile qr up -d publicador
+FROM python:3.12-slim
+ARG TARGETARCH=amd64
+ADD --chmod=755 https://github.com/cloudflare/cloudflared/releases/download/2026.11.0/cloudflared-linux-${TARGETARCH} /usr/local/bin/cloudflared
+RUN useradd --create-home publicador
+USER publicador

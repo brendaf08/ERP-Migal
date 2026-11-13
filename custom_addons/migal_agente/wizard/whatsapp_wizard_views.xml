@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_whatsapp_wizard_form" model="ir.ui.view">
+        <field name="name">migal.agente.whatsapp.wizard.form</field>
+        <field name="model">migal.agente.whatsapp.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Abrir en WhatsApp">
+                <field name="habilitado" invisible="1"/>
+                <field name="resultado_html" nolabel="1" readonly="1"/>
+                <group invisible="not habilitado">
+                    <field name="order_id"/>
+                    <field name="telefono"/>
+                    <field name="mensaje" widget="text" placeholder="Mensaje que verá el cliente"/>
+                    <field name="enlace" widget="url" text="📲 Abrir chat de WhatsApp" readonly="1"/>
+                </group>
+                <div class="alert alert-info" role="status" invisible="not habilitado">
+                    1) Abra el chat con el enlace (puede editar antes el mensaje). 2) Descargue y adjunte el PDF.
+                    3) Envíe desde WhatsApp. 4) Pulse «Registrar envío» para dejar constancia en Odoo.
+                </div>
+                <footer>
+                    <button name="action_registrar_envio" type="object" string="Registrar envío"
+                            class="btn-primary" invisible="not habilitado"/>
+                    <button name="action_descargar_pdf" type="object" string="Descargar PDF" class="btn-secondary"
+                            invisible="not habilitado"/>
+                    <button string="Cerrar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

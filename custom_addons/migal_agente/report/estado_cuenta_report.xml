@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_estado_cuenta" model="ir.actions.report">
+        <field name="name">Estado de cuenta</field>
+        <field name="model">migal.agente.estado.cuenta.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_agente.report_estado_cuenta</field>
+        <field name="report_file">migal_agente.report_estado_cuenta</field>
+        <field name="print_report_name">'Estado de cuenta - %s' % (object.partner_id.name)</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_estado_cuenta_publicado" model="ir.actions.report">
+        <field name="name">Estado de cuenta (compartido)</field>
+        <field name="model">migal.agente.estado.cuenta.publicacion</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_agente.report_estado_cuenta_publicado</field>
+        <field name="report_file">migal_agente.report_estado_cuenta_publicado</field>
+        <field name="print_report_name">'Estado de cuenta - %s' % (object.partner_id.name)</field>
+    </record>
+
+    <template id="report_estado_cuenta_publicado">
+        <t t-call="migal_agente.report_estado_cuenta"/>
+    </template>
+
+    <template id="report_estado_cuenta">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="d" t-value="doc.get_datos()"/>
+                <t t-set="s" t-value="d.get('simbolo', 'S/')"/>
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Estado de cuenta</h2>
+                        <div class="row mb-3">
+                            <div class="col-7">
+                                <strong>Cliente:</strong> <span t-out="d.get('cliente')"/><br/>
+                                <strong>RUC/DNI:</strong> <span t-out="d.get('documento_identidad') or '-'"/>
+                            </div>
+                            <div class="col-5 text-end">
+                                <strong>Período:</strong> <span t-out="d.get('fecha_desde_txt')"/> al <span t-out="d.get('fecha_hasta_txt')"/><br/>
+                                <strong>Fecha de consulta:</strong> <span t-out="d.get('fecha_consulta_txt')"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr><th>Fecha</th><th>Documento</th><th>Tipo</th><th class="text-end">Saldo</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr class="fw-bold">
+                                    <td class="text-nowrap" t-out="d.get('fecha_desde_txt')"/>
+                                    <td colspan="2">Saldo anterior</td>
+                                    <td class="text-end text-nowrap"><span t-out="s"/> <span t-out="'{:,.2f}'.format(d.get('saldo_anterior') or 0)"/></td>
+                                </tr>
+                                <tr t-foreach="d.get('movimientos', [])" t-as="m">
+                                    <t t-set="imp" t-value="m.get('importe', m.get('cargo', 0) - m.get('abono', 0))"/>
+                                    <td class="text-nowrap" t-out="m.get('fecha_txt') or m['fecha']"/>
+                                    <td t-out="m['documento']"/>
+                                    <td t-out="m.get('tipo_cliente') or m['tipo']"/>
+                                    <td class="text-end text-nowrap">
+                                        <span t-attf-class="{{'text-success' if imp &lt; 0 else ''}}"><t t-out="'+' if imp &gt; 0 else '−'"/> <span t-out="s"/> <span t-out="'{:,.2f}'.format(abs(imp) or 0)"/></span>
+                                    </td>
+                                </tr>
+                                <tr t-if="not d.get('movimientos')"><td colspan="4"><i>Sin movimientos en el período.</i></td></tr>
+                                <tr class="fw-bold border-top">
+                                    <td class="text-nowrap" t-out="d.get('fecha_hasta_txt')"/>
+                                    <td colspan="2">Saldo al cierre del período</td>
+                                    <td class="text-end text-nowrap"><span t-out="s"/> <span t-out="'{:,.2f}'.format(d.get('saldo_periodo') or 0)"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <t t-set="docs_pend" t-value="d.get('documentos_pendientes', [])"/>
+                        <t t-if="docs_pend">
+                            <h5 class="mt-4">Antigüedad de la deuda</h5>
+                            <table class="table table-sm">
+                                <thead><tr><th>Documento</th><th>Tipo</th><th>Emisión</th><th>Plazo acordado</th><th>Situación</th><th class="text-end">Pendiente</th></tr></thead>
+                                <tbody>
+                                    <tr t-foreach="docs_pend" t-as="x">
+                                        <td t-out="x['documento']"/>
+                                        <td t-out="x.get('tipo_cliente') or x.get('tipo', '')"/>
+                                        <td class="text-nowrap" t-out="x.get('fecha_txt') or x['fecha']"/>
+                                        <td t-out="x.get('plazo', '')"/>
+                                        <td t-attf-class="{{'text-danger fw-bold' if x.get('excedido') else ''}}" t-out="x.get('estado_plazo', '')"/>
+                                        <td class="text-end text-nowrap"><span t-out="s"/> <span t-out="'{:,.2f}'.format(x['pendiente'] or 0)"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <div class="row mt-3">
+                            <div class="col-7">
+                                <p t-if="d.get('total_sin_aplicar')" class="small">
+                                    Incluye un abono a cuenta de <span t-out="s"/> <span t-out="'{:,.2f}'.format(d.get('total_sin_aplicar') or 0)"/> registrado y aún no aplicado a un documento.
+                                </p>
+                            </div>
+                            <div class="col-5 text-end">
+                                <h4 class="mb-1">Total pendiente: <span t-out="s"/> <span t-out="'{:,.2f}'.format(d.get('total_pendiente') or 0)"/></h4>
+                                <div t-if="d.get('total_vencido')" class="text-danger">Con plazo excedido: <span t-out="s"/> <span t-out="'{:,.2f}'.format(d.get('total_vencido') or 0)"/></div>
+                            </div>
+                        </div>
+
+                        <t t-set="metodos" t-value="d.get('metodos_pago') or []"/>
+                        <div t-if="metodos" class="mt-3 px-3 py-2" style="border: 1px solid #71639e; border-radius: 8px; page-break-inside: avoid; break-inside: avoid;">
+                            <h5 class="mb-1" style="color: #71639e;">Métodos de pago</h5>
+                            <p class="mb-1 small">Puede abonar el saldo pendiente por cualquiera de estos medios e indicar su RUC/DNI o el número de documento como referencia.</p>
+                            <table class="table table-sm table-borderless mb-0">
+                                <tbody>
+                                    <tr t-foreach="metodos" t-as="mp">
+                                        <td class="fw-bold text-nowrap" style="width: 30%;" t-out="mp['metodo']"/>
+                                        <td t-out="' · '.join(mp['lineas'])"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p t-if="d.get('pago_titular')" class="mb-0 mt-1 small">Titular: <strong t-out="d['pago_titular']"/></p>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

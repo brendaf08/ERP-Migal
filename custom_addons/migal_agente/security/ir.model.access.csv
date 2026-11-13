@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_migal_agente_log_manager,migal.agente.log manager,model_migal_agente_log,sales_team.group_sale_manager,1,0,0,0
+access_migal_agente_log_system,migal.agente.log system,model_migal_agente_log,base.group_system,1,0,0,1
+access_migal_agente_regla_user,migal.agente.regla.cobertura user,model_migal_agente_regla_cobertura,base.group_user,1,0,0,0
+access_migal_agente_regla_manager,migal.agente.regla.cobertura manager,model_migal_agente_regla_cobertura,sales_team.group_sale_manager,1,1,1,1
+access_migal_agente_envio_salesman,migal.agente.whatsapp.envio salesman,model_migal_agente_whatsapp_envio,sales_team.group_sale_salesman,1,0,1,0
+access_migal_agente_envio_manager,migal.agente.whatsapp.envio manager,model_migal_agente_whatsapp_envio,sales_team.group_sale_manager,1,1,1,1
+access_migal_agente_wa_wizard,migal.agente.whatsapp.wizard,model_migal_agente_whatsapp_wizard,base.group_user,1,1,1,1
+access_migal_agente_cob_wizard,migal.agente.cobertura.wizard,model_migal_agente_cobertura_wizard,base.group_user,1,1,1,1
+access_migal_agente_ec_wizard,migal.agente.estado.cuenta.wizard,model_migal_agente_estado_cuenta_wizard,base.group_user,1,1,1,1
+access_migal_agente_ec_pub_fco,migal.agente.estado.cuenta.publicacion fco,model_migal_agente_estado_cuenta_publicacion,account.group_account_invoice,1,1,0,0
+access_migal_agente_ec_pub_ger,migal.agente.estado.cuenta.publicacion ger,model_migal_agente_estado_cuenta_publicacion,sales_team.group_sale_manager,1,1,0,0

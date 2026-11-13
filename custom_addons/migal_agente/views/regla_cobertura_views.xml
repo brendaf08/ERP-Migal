@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_regla_cobertura_list" model="ir.ui.view">
+        <field name="name">migal.agente.regla.cobertura.list</field>
+        <field name="model">migal.agente.regla.cobertura</field>
+        <field name="arch" type="xml">
+            <list string="Reglas habituales de cobertura" editable="bottom">
+                <field name="categ_id"/>
+                <field name="incluir_subcategorias"/>
+                <field name="plazo_dias"/>
+                <field name="faltante_max_pct"/>
+                <field name="faltante_max_qty"/>
+                <field name="nota"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_migal_regla_cobertura" model="ir.actions.act_window">
+        <field name="name">Reglas habituales de cobertura</field>
+        <field name="res_model">migal.agente.regla.cobertura</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+</odoo>
