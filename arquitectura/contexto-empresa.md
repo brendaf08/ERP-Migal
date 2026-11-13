@@ -24,9 +24,9 @@ La empresa dispone de los siguientes recursos:
 | Almacenes          | 2        | Almacenamiento de mercadería y materiales.           | FN-01                                |
 | Camiones           | 2        | Transporte y despacho de materiales.                 | FN-01                                |
 | Montacargas        | 1        | Apoyo en las operaciones de despacho.                | FN-02, pendiente de corroboración    |
-| Vehículo eléctrico | 1        | Apoyo en las operaciones de despacho.                | FN-02, pendiente de corroboración    |
+| Vehículo eléctrico | 1        | Entregas cercanas y apoyo con cargas pequeñas, hasta 500 kg según la dueña. | FN-05 |
 
-Los recursos respaldados por FN-01 forman parte de la infraestructura operativa documentada de MIGAL. El montacargas y el vehículo eléctrico dependen de afirmaciones atribuidas a FN-02 y permanecen pendientes de corroboración con los propietarios, según el registro de [fuentes del negocio](../fuentes/fuentes-negocio.md) y [supuestos y vacíos](../fuentes/supuestos-y-vacios.md).
+Los recursos respaldados por FN-01 forman parte de la infraestructura operativa documentada de MIGAL. La dueña confirmó el uso del vehículo eléctrico para entregas cercanas y reportó una capacidad de 500 kg. Del montacargas quedan por confirmar su capacidad técnica y las tareas que requieren su uso. Véase el registro de [fuentes del negocio](../fuentes/fuentes-negocio.md).
 
 ### 1.2. Recursos tecnológicos
 
