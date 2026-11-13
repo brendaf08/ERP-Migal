@@ -1,12 +1,12 @@
 # Catálogo de activos de ERP-MIGAL: función, criticidad y disponibilidad
 
-**Estado:** catálogo de trabajo. Identifica los activos físicos y tecnológicos que sostienen [O2C](o2c/flujo.md), [P2P](p2p/flujo.md) e [inventario](inventario/flujo.md), y asigna a cada uno una criticidad y una disponibilidad de referencia. La función y la criticidad son interpretaciones del equipo. Los valores de MTBF y MTTR son **supuestos de trabajo**: MIGAL no conserva un registro de fallas que permita calcularlos. Las fotografías se declaran como [FN-04](../fuentes/fuentes-negocio.md).
+**Estado:** catálogo de trabajo. Identifica los activos físicos y tecnológicos que sostienen [O2C](../o2c/flujo.md), [P2P](../p2p/flujo.md) e [inventario](../inventario/flujo.md), y asigna a cada uno una criticidad y una disponibilidad de referencia. La función y la criticidad son interpretaciones del equipo. Los valores de MTBF y MTTR son **supuestos de trabajo**: MIGAL no conserva un registro de fallas que permita calcularlos. Las fotografías se declaran como [FN-04](../../fuentes/fuentes-negocio.md).
 
 ## 1. Veintidós activos con seis de criticidad alta
 
 El catálogo reúne 22 activos: 6 de criticidad alta, 6 de media y 10 de baja. Los de criticidad alta son los dos camiones, el montacargas, los dos teléfonos celulares de los propietarios y el servicio KeyFacil. La disponibilidad inherente de referencia varía entre 89,29 % (minicargador frontal) y 99,95 % (escalera de tijera). Los tres equipos con menor disponibilidad tienen motor de combustión: el minicargador, el camión volquete y el camión de baranda.
 
-La criticidad se evalúa sobre la operación propuesta con Odoo 19 Community, no sobre el uso actual. El mantenimiento de cada activo se define en el [plan de mantenimiento](plan-mantenimiento.md), que usa este catálogo como entrada.
+La criticidad se evalúa sobre la operación propuesta con Odoo 19 Community, no sobre el uso actual. El mantenimiento de cada activo se define en el [plan de mantenimiento](mantenimiento.md), que usa este catálogo como entrada.
 
 ## 2. Criterios de criticidad y cálculo de disponibilidad
 
@@ -76,12 +76,12 @@ La tabla justifica la criticidad con los dos criterios de la sección 2. Las alt
 | ACT-06 | Los traslados internos pasan a hacerse a mano, con más tiempo. | Traslado manual. | Media |
 | ACT-07 | La venta por peso se cotiza con peso teórico o estimado y pierde exactitud. | Peso teórico o estimado. | Media |
 | ACT-08 | Se pierde la venta con tarjeta; el cobro continúa. | Los demás medios de pago vigentes. | Media |
-| ACT-09 | El registro en el ERP continúa con menor comodidad. | Tablet o teléfono; contingencia de [RSK-018](../arquitectura/riesgos-y-controles.md). | Media |
+| ACT-09 | El registro en el ERP continúa con menor comodidad. | Tablet o teléfono; contingencia de [RSK-018](../../arquitectura/riesgos-y-controles.md). | Media |
 | ACT-10 | Detiene los pedidos por WhatsApp de la propietaria y deja sin acceso a los contactos y al historial guardados en el equipo. | El teléfono del propietario cubre la comunicación, no los contactos de la propietaria. | Alta |
 | ACT-11 | Sin efecto sobre las operaciones. | La computadora All-in-One y los teléfonos. | Baja |
 | ACT-12 | Sin efecto sobre la continuidad; todas las cámaras dejan de grabar y se pierde la evidencia ante pérdidas. | Revisión presencial. | Baja |
 | ACT-13 | Sin efecto sobre O2C, P2P ni inventario. | No requerida. | Baja |
-| ACT-14 | Detiene la emisión de comprobantes. | Ninguna registrada: el [alcance](../arquitectura/alcance.md) mantiene KeyFacil como único emisor. | Alta |
+| ACT-14 | Detiene la emisión de comprobantes. | Ninguna registrada: el [alcance](../../arquitectura/alcance.md) mantiene KeyFacil como único emisor. | Alta |
 | ACT-15 | Sin efecto sobre la continuidad en el corto plazo. | Otra herramienta de corte, por confirmar. | Baja |
 | ACT-16 | Sin efecto sobre la continuidad en el corto plazo. | Otro medio de acceso a los estantes, por confirmar. | Baja |
 | ACT-17 | Sin efecto sobre la continuidad; se pierde la supervisión en vivo y la grabación continúa. | Revisión presencial. | Baja |
@@ -100,12 +100,12 @@ Esta tabla separa lo que se lee en las fotografías de lo que queda por confirma
 | ACT-01 | No legibles. | Placa C4W-921; peso neto 2 830 kg, carga útil 2 500 kg y peso bruto 5 330 kg; carrocería de baranda. | Marca, modelo y año, con la tarjeta de propiedad. |
 | ACT-02 | No legibles. | Placa F5E-844; carga útil 3 580 kg, peso seco 3 700 kg y peso bruto 7 280 kg; tolva volcable. | Marca, modelo y año, con la tarjeta de propiedad. |
 | ACT-03 | No legibles; la calcomanía está borrada. | Mástil con horquillas, neumáticos y motor de combustión. | Capacidad aparente de 2 a 3 t; combustible (GLP o diésel) por confirmar. |
-| ACT-04 | No legibles. | Cabina abierta, brazos hidráulicos y cuchara. | Posible conversión de un chasis de montacargas. No figura en el [contexto de la empresa](../arquitectura/contexto-empresa.md). |
+| ACT-04 | No legibles. | Cabina abierta, brazos hidráulicos y cuchara. | Posible conversión de un chasis de montacargas. No figura en el [contexto de la empresa](../../arquitectura/contexto-empresa.md). |
 | ACT-05 | No legibles. | Tecle eléctrico de cadena sobre viga carril, con balancín de cadenas. | Capacidad, que consta en la placa del tecle. |
 | ACT-06 | No legibles. | Triciclo con plataforma de baranda baja, manubrio, asiento y tres ruedas. | Tensión de batería y capacidad de carga. |
 | ACT-07 | Sin marca legible. | Indicador con tres visores (peso, precio unitario e importe) y plataforma de acero. | Capacidad máxima, que consta en la placa. |
 | ACT-08 | Culqi (rótulo visible). | Rótulos Culqi y Visa; pantalla táctil, teclado numérico, lector sin contacto e impresora. | Fabricante y modelo del terminal. |
-| ACT-09 | Sin fotografía. | Descrita en el [contexto](../arquitectura/contexto-empresa.md), apartado 1.2. | Marca y modelo. |
+| ACT-09 | Sin fotografía. | Descrita en el [contexto](../../arquitectura/contexto-empresa.md), apartado 1.2. | Marca y modelo. |
 | ACT-10 | Sin fotografía. | Equipo de la propietaria; el contexto, apartado 1.2, indica un teléfono por propietario. | Marca y modelo. |
 | ACT-11 | Sin fotografía. | Descrita en el contexto, apartado 1.2. | Marca y modelo. |
 | ACT-12 | Sin fotografía. | Mosaico de 16 canales en el monitor, con un canal en «NO LINK» y otro en «NO VIDEO». | Marca, modelo y número de canales. El contexto indica unas 10 cámaras; las demás no se fotografiaron. |
@@ -125,15 +125,15 @@ Esta tabla separa lo que se lee en las fotografías de lo que queda por confirma
 - **Altavoz Amazon Echo Dot:** no tiene función verificada en los procesos. Se incorpora si los propietarios le asignan un uso operativo.
 - **Parihuelas de madera:** son material de manipulación consumible y no admiten mantenimiento por unidad.
 - **Instancia de Odoo 19 Community:** el alojamiento no está definido. Se cataloga cuando se decida dónde se ejecuta.
-- **Escáner de códigos QR:** su compra no se ha realizado, según el [contexto](../arquitectura/contexto-empresa.md), apartado 1.2.
+- **Escáner de códigos QR:** su compra no se ha realizado, según el [contexto](../../arquitectura/contexto-empresa.md), apartado 1.2.
 
 ## 7. Diferencias con el contexto vigente y validaciones pendientes
 
 El contexto de la empresa mantiene el montacargas y el vehículo eléctrico como pendientes de corroboración (FN-02). Las fotografías de FN-04 corresponden a ACT-03 y ACT-06, pero no establecen propiedad ni uso: el contexto se actualiza cuando los propietarios confirmen ambos recursos.
 
-El minicargador, el tecle con monorriel, la balanza, el terminal Culqi y el compresor no figuran en el apartado 1 del contexto. El terminal Culqi implica un cobro con tarjeta que el [alcance](../arquitectura/alcance.md) no describe ni concilia. El monitor muestra 16 canales con fallas visibles, frente a las 10 cámaras que indica el contexto; la cantidad operativa de cámaras está por verificar.
+El minicargador, el tecle con monorriel, la balanza, el terminal Culqi y el compresor no figuran en el apartado 1 del contexto. El terminal Culqi implica un cobro con tarjeta que el [alcance](../../arquitectura/alcance.md) no describe ni concilia. El monitor muestra 16 canales con fallas visibles, frente a las 10 cámaras que indica el contexto; la cantidad operativa de cámaras está por verificar.
 
-Las validaciones quedan registradas en el [registro de pendientes](../producto/registro-pendientes.md):
+Las validaciones quedan registradas en el [registro de pendientes](../../producto/registro-pendientes.md):
 
 - PEN-021: validar con los propietarios la lista, la cantidad y el estado de los activos, y los valores de MTBF y MTTR.
 - PEN-022: definir el tratamiento del terminal Culqi en el cobro de O2C y en la conciliación.
