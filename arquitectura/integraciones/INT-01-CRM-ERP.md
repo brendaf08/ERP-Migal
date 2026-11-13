@@ -178,24 +178,12 @@ El historial depende del módulo Conversaciones (`mail`). Su configuración y el
 | Clientes y contactos compartidos | `contacts` | Propuesto |
 | Consulta de disponibilidad | `stock` y el módulo de enlace `sale_stock` | Propuesto |
 | Historial de eventos y decisiones | `mail` | Propuesto |
-| Representación de la solicitud de orden de venta | Por definir (alternativas a continuación) | Por validar |
-| Restricción técnica de confirmación sin solicitud aceptada | Configuración de grupos o desarrollo adicional | Por validar |
+| Representación de la solicitud de orden de venta | Objeto `sale.order.request` del addon `sale_order_request` | Implementado en el entorno de pruebas |
+| Restricción técnica de confirmación sin solicitud aceptada | Se activa al marcar la cotización como aplicable al flujo | Implementado para cotizaciones marcadas |
 
-En Odoo, la cotización y la orden de venta no son registros distintos: constituyen un único documento (`sale.order`) que cambia de estado al confirmarse. Odoo no genera de forma estándar un documento de solicitud de orden de venta ni dispone de una sección donde se gestione. La posibilidad de generarla y enlazarla a la cotización, incluso mediante módulos externos, no está confirmada y se encuentra en análisis.
+En el entorno de pruebas, el vendedor marca la cotización como aplicable y genera una solicitud vinculada a su revisión. El addon exige una solicitud aceptada para confirmar las cotizaciones marcadas. Al pulsar **Aceptar**, el vendedor confirma la misma cotización como orden de venta. Este mecanismo corresponde a la alternativa de un objeto propio.
 
-### Alternativas para representar la solicitud
-
-ADR-004 no exige crear un objeto nuevo en Odoo. Se consideran las siguientes alternativas:
-
-| Alternativa | Ventajas | Limitaciones |
-|---|---|---|
-| **A. Estado o etiqueta sobre la cotización** | Menor intervención en la plataforma. | No impide técnicamente confirmar la orden de venta sin evaluación. |
-| **B. Actividad de Odoo asignada al evaluador, con registro en el historial** | Utiliza funciones estándar y deja constancia del responsable y la fecha. | El control es procedimental. |
-| **C. Objeto propio de Odoo** | Permite estados explícitos y un control técnico de la transición. | Requiere desarrollo y mantenimiento, lo que incrementa la complejidad (ADR-001). |
-
-**Propuesta preliminar:** combinar las alternativas A y B, y evaluar la alternativa C únicamente si la validación demuestra que el control de la transición no puede asegurarse con ellas. Esta propuesta no constituye una decisión y está sujeta a la validación del apartado 10.
-
-Hasta que se compruebe una restricción técnica, el control de que no se confirme una orden de venta sin una solicitud aceptada es procedimental y se verifica mediante el historial.
+La revisión del 12 de noviembre vuelve a consultar el stock al aceptar y permite confirmar con abastecimiento pendiente después de las aprobaciones exigidas por el flujo. La aceptación verifica la correspondencia de líneas, productos, unidades y cantidades. Queda por validar con el equipo cómo formalizar la excepción de abastecimiento pendiente y cómo representar una respuesta condicionada. El [inventario de addons](../../custom_addons/readme.md) describe el alcance de esta implementación.
 
 ## 10. Validación, riesgos y pendientes
 

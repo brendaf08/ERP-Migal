@@ -580,10 +580,10 @@ class TestA32SeguridadAprobaciones(TransactionCase):
         # F-2: aprobación automática al completar la revisión requerida.
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación final se bloquea por stock insuficiente (B-08)
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
+        # La aceptación final se permite con aprobaciones completas pese a stock insuficiente
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        self.assertEqual(self.env["sale.order"].browse(cotizacion.id).state, "sale")
 
     def test_flujo_legítimo_ambas_aprobaciones(self):
         """Flujo válido: despacho + stock insuficiente → Abastecimiento +
@@ -607,10 +607,10 @@ class TestA32SeguridadAprobaciones(TransactionCase):
         # F-2: aprobación automática al completar todas las revisiones requeridas.
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación final se bloquea por stock insuficiente (B-08)
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
+        # La aceptación final se permite con aprobaciones completas pese a stock insuficiente
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        self.assertEqual(self.env["sale.order"].browse(cotizacion.id).state, "sale")
 
     def test_aprobaciones_independientes_y_paralelas(self):
         """Abastecimiento y Transporte pueden validar en cualquier orden."""

@@ -234,8 +234,8 @@ class TestSaleOrderRequestPhaseASecurity(TransactionCase):
         self.assertNotEqual(cotizacion.state, "sale")
 
     def test_cotizacion_subject_solicitud_aceptada_se_confirma(self):
-        """Cotización sujeta a solicitud de orden de venta con solicitud aprobada: la confirmación queda
-        bloqueada por stock insuficiente (B-08) en este entorno."""
+        """Cotización sujeta a solicitud de orden de venta con solicitud aprobada y aprobaciones
+        completas: el vendedor acepta y la cotización se confirma aunque el stock físico sea insuficiente."""
         env_sales = self.env(user=self.user_sales)
         env_admin = self.env(user=self.admin)
         cotizacion = self._crear_cotizacion("C01-ACEPTADA", "sent")
@@ -249,13 +249,10 @@ class TestSaleOrderRequestPhaseASecurity(TransactionCase):
         # F-2: aprobación automática al completar la revisión requerida.
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación se bloquea por stock insuficiente (B-08), la cotización
-        # no se confirma.
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
         cotizacion = env_admin["sale.order"].browse(cotizacion.id)
-        self.assertNotEqual(cotizacion.state, "sale")
+        self.assertEqual(cotizacion.state, "sale")
 
     def test_cotizacion_no_subject_confirma_normalmente(self):
         """Cotización no sujeta a  confirma normalmente (sin indicador)."""
@@ -677,20 +674,23 @@ class TestSaleOrderRequestPhaseASecurity(TransactionCase):
     # A3 / B-08: aceptación final solo del solicitante y stock suficiente
     # ------------------------------------------------------------------
     def test_aceptar_como_no_solicitante_falla(self):
-        """Un vendedor que no es el solicitante no puede aceptar."""
+        """Un usuario que no es el solicitante no puede aceptar aunque la solicitud esté aprobada."""
         env_sales = self.env(user=self.user_sales)
         cotizacion = self._crear_cotizacion("B08-NO-SOLIC", "sent")
         self._mark_as_subject(cotizacion)
         solicitud = self._crear_solicitud(env_sales, cotizacion, "pickup")
         solicitud.with_user(self.user_sales).action_request_validation()
+        solicitud.with_user(self.user_abastecimiento).validate_tier()
+        self.env.invalidate_all()
+        solicitud = self.env["sale.order.request"].browse(solicitud.id)
+        self.assertEqual(solicitud.state, "approved")
 
         with self.assertRaises(UserError):
-            solicitud.with_user(self.user_plain).action_accept()
+            solicitud.with_user(self.user_abastecimiento).action_accept()
 
     def test_aceptante_autorizado_puede_aceptar(self):
-        """El vendedor solicitante llega a approved y la aceptación queda
-        bloqueada por stock insuficiente (B-08); en este entorno no se puede
-        llegar a confirmed porque free_qty=0.0 y qty=1.0."""
+        """El vendedor solicitante puede aceptar cuando la solicitud está aprobada
+        con revisiones completas, aunque el stock físico sea insuficiente."""
         env_sales = self.env(user=self.user_sales)
         env_admin = self.env(user=self.admin)
         cotizacion = self._crear_cotizacion("B08-ACEPT", "sent")
@@ -705,16 +705,14 @@ class TestSaleOrderRequestPhaseASecurity(TransactionCase):
         # F-2: aprobación automática al completar la revisión requerida.
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación final se bloquea por stock insuficiente (B-08).
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
-
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
         cotizacion = env_admin["sale.order"].browse(cotizacion.id)
-        self.assertNotEqual(cotizacion.state, "sale")
+        self.assertEqual(cotizacion.state, "sale")
 
-    def test_aceptar_con_stock_insuficiente_falla(self):
-        """La aceptación se bloquea si, tras revalidar, el stock es insuficiente."""
+    def test_aceptar_con_stock_insuficiente_y_conformidad_aprobada(self):
+        """La aceptación se permite si, tras revalidar, el stock es insuficiente
+        pero las aprobaciones requeridas están completas y vigentes."""
         env_sales = self.env(user=self.user_sales)
         cotizacion = self._crear_cotizacion("B08-STOCK-INS", "sent")
         self._mark_as_subject(cotizacion)
@@ -731,8 +729,9 @@ class TestSaleOrderRequestPhaseASecurity(TransactionCase):
         self.assertEqual(solicitud.state, "approved")
         self.assertEqual(solicitud.validation_status, "validated")
 
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        self.assertEqual(self.env["sale.order"].browse(cotizacion.id).state, "sale")
 
     # ------------------------------------------------------------------
     # B-09: aprobaciones Tier solo por revisor asignado

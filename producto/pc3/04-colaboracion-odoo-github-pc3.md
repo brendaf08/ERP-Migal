@@ -124,66 +124,9 @@ Antes de proponer cambios, presenta el inventario y las recomendaciones.
 - [ ] `REPORTE_AUDITORIA_MIGAL.md` distingue hallazgos de supuestos y fue revisado.
 - [ ] No se movió/eliminó código durante la auditoría.
 
-## 3. Docker reproducible: plantilla de referencia
+## 3. Docker reproducible
 
-**Ruta propuesta:** `infra/odoo/compose.yaml` (desde esa ubicación, `../../custom_addons` apunta a la raíz del repositorio). Este Compose es una plantilla que el equipo **debe comprobar** contra su instalación real; no obliga a reinstalar si ya existe entorno estable.
-
-```yaml
-services:
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configurar en entorno local}
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-  web:
-    image: odoo:19.0
-    depends_on:
-      - db
-    ports:
-      - "127.0.0.1:8069:8069"
-    environment:
-      HOST: db
-      USER: odoo
-      PASSWORD: ${POSTGRES_PASSWORD:?Configurar en entorno local}
-    volumes:
-      - odoo-data:/var/lib/odoo
-      - ../../custom_addons:/mnt/extra-addons
-
-volumes:
-  db-data:
-  odoo-data:
-```
-
-**Advertencias:** gestionar contraseña maestra de Odoo por configuración segura; verificar que `custom_addons/` exista; comprobar versión de imagen y entorno PostgreSQL; no exponer el puerto públicamente; una instalación con addons incompatibles puede fallar aunque `compose config` sea válido.
-
-### `.env.example` de infraestructura
-
-```dotenv
-POSTGRES_PASSWORD=CAMBIAR_SOLO_EN_COPIA_LOCAL
-```
-
-La plantilla no debe usarse como credencial efectiva. Crear `.env` local con una contraseña fuerte y mantenerlo fuera del repositorio.
-
-### Arranque de validación en PowerShell
-
-```powershell
-# Solo si el árbol Git está limpio y no se pisa una instalación existente
-git status
-git switch main
-git pull --ff-only
-git switch -c chore/pc3-entorno-reproducible
-
-# Después de crear infra/odoo/.env local (fuera de Git)
-docker compose --env-file infra/odoo/.env -f infra/odoo/compose.yaml config
-docker compose --env-file infra/odoo/.env -f infra/odoo/compose.yaml up -d
-docker compose --env-file infra/odoo/.env -f infra/odoo/compose.yaml ps
-```
-
-> `config` prueba estructura y variables, **no** confirma que Odoo funcione ni que los addons sean compatibles. Registrar `docker compose logs`, estado de base y acceso de usuario de prueba cuando se valide.
+Usamos el [Compose del repositorio](../../infra/odoo/compose.yaml) y la [guía de arranque y restauración](../../infra/odoo/readme.md) para macOS, Linux y Windows. La imagen de Odoo contiene los nueve addons y sus dependencias. La base y el filestore se restauran desde el respaldo privado del equipo.
 
 ### Checklist de reproducibilidad del entorno
 

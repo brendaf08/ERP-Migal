@@ -51,6 +51,8 @@ El repositorio se organiza conforme a las áreas documentales establecidas para 
 | `datos/` | Diccionario, fuentes, datos de prueba y tratamiento de datos sensibles. |
 | `producto/` | Código, automatizaciones, configuraciones o evidencias equivalentes. |
 | `pruebas/` | Casos, resultados, incidencias y criterios de aceptación. |
+| `custom_addons/` | [Addons de Odoo 19](custom_addons/readme.md) seleccionados para MIGAL. |
+| `infra/odoo/` | [Entorno Docker y guía de restauración](infra/odoo/readme.md). |
 | `fuentes/` | Bibliografía, licencias, atribución y declaración de uso de IA. |
 
 ### Documentación principal

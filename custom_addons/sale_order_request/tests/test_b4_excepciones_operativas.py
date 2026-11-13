@@ -675,8 +675,9 @@ class TestB4ExcepcionesOperativas(TransactionCase):
     # ------------------------------------------------------------------
     # B4.5 — Cambios de inventario durante el proceso
     # ------------------------------------------------------------------
-    def test_b45_stock_insuficiente_despues_de_aprobar_bloquea_aceptar(self):
-        """Stock insuficiente después de aprobar bloquea action_accept()."""
+    def test_b45_stock_insuficiente_despues_de_aprobar_permite_aceptar(self):
+        """Stock insuficiente después de aprobar no bloquea action_accept()
+        cuando las aprobaciones requeridas están completas (conformidad vigente)."""
         env_sales = self.env(user=self.user_sales_c1)
         env_abast = self.env(user=self.user_abast_c1)
         cotizacion = self._crear_cotizacion(
@@ -694,10 +695,11 @@ class TestB4ExcepcionesOperativas(TransactionCase):
         # F-2: aprobación automática al completar la revisión requerida.
         self.assertEqual(solicitud.state, "approved")
 
-        # action_accept revalida stock y bloquea porque free_qty=1.0 < qty=5.0
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales_c1).action_accept()
-        self.assertEqual(solicitud.state, "approved")
+        # action_accept revalida stock (free_qty=1.0 < qty=5.0) pero permite
+        # aceptar por conformidad de Abastecimiento aprobada.
+        solicitud.with_user(self.user_sales_c1).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        self.assertEqual(self.env["sale.order"].browse(cotizacion.id).state, "sale")
 
     def test_b45_revalidacion_antes_de_confirmar(self):
         """La aceptación final revalida el stock antes de confirmar."""

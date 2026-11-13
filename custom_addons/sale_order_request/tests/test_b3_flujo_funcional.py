@@ -13,7 +13,7 @@ Escenarios cubiertos:
 - 5.1: Aprobaciones paralelas (Abastecimiento y Transporte independientes)
 - 5.2: Rechazo de una aprobación
 - 5.3: Revisión de cotización (nueva revisión invalida solicitud anterior)
-- 5.4: Revalidación de stock (stock insuficiente bloquea aceptación)
+- 5.4: Revalidación de stock (registra insuficiencia sin bloquear con aprobaciones completas)
 - 5.5: Seguridad funcional (usuarios sin permisos no pueden operar)
 
 Nota de entorno: esta compilación de Odoo 19 Community tiene free_qty=0.0 y
@@ -21,8 +21,8 @@ virtual_available=0.0 para todos los productos (no hay productos almacenables
 con stock real). Por lo tanto, toda solicitud con qty >= 1.0 tiene stock
 insuficiente y requiere aprobaciones según la matriz .
 Los flujos legítimos se validan hasta approved; la aceptación final se bloquea
-por stock insuficiente (B-08), que es el comportamiento esperado de este
-entorno.
+stock insuficiente; con aprobaciones completas la aceptación es permitida
+(conformidad de abastecimiento futuro) sin inventar existencias.
 """
 
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -239,14 +239,15 @@ class TestB3FlujoFuncionalIntegral(TransactionCase):
         # 8. F-2: aprobación automática al completar la revisión requerida
         self.assertEqual(solicitud.state, "approved")
 
-        # 9. Aceptación final bloqueada por stock insuficiente (B-08)
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales_c1).action_accept()
-        self.assertEqual(solicitud.state, "approved")
+        # 9. Aceptación final permitida: Abastecimiento aprobó el faltante
+        # (conformidad de abastecimiento futuro) aunque el stock físico sea
+        # insuficiente. No se inventan existencias.
+        solicitud.with_user(self.user_sales_c1).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
 
-        # 10. La cotización NO se confirma (aceptación bloqueada)
+        # 10. La cotización vigente se confirma
         cotizacion = env_sales["sale.order"].browse(cotizacion.id)
-        self.assertEqual(cotizacion.state, "sent")
+        self.assertEqual(cotizacion.state, "sale")
 
         # 11. No se creó segunda sale.order
         ordenes_dup = self.env["sale.order"].search([
@@ -308,11 +309,12 @@ class TestB3FlujoFuncionalIntegral(TransactionCase):
         # F-2: aprobación automática al completar todas las revisiones requeridas
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación final bloqueada por stock insuficiente (B-08)
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales_c1).action_accept()
-        self.assertEqual(solicitud.state, "approved")
-        self.assertEqual(cotizacion.state, "sent")
+        # Aceptación final permitida con aprobaciones completas pese a
+        # stock físico insuficiente (conformidad aprobada).
+        solicitud.with_user(self.user_sales_c1).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        cotizacion = env_sales["sale.order"].browse(cotizacion.id)
+        self.assertEqual(cotizacion.state, "sale")
 
         # No se creó segunda sale.order
         ordenes_dup = self.env["sale.order"].search([
@@ -364,10 +366,10 @@ class TestB3FlujoFuncionalIntegral(TransactionCase):
         # F-2: aprobación automática al completar la revisión requerida
         self.assertEqual(solicitud.state, "approved")
 
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales_c1).action_accept()
-        self.assertEqual(solicitud.state, "approved")
-        self.assertEqual(cotizacion.state, "sent")
+        solicitud.with_user(self.user_sales_c1).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        cotizacion = env_sales["sale.order"].browse(cotizacion.id)
+        self.assertEqual(cotizacion.state, "sale")
 
         ordenes_dup = self.env["sale.order"].search([
             ("unrevisioned_name", "=", cotizacion.unrevisioned_name),
@@ -415,10 +417,10 @@ class TestB3FlujoFuncionalIntegral(TransactionCase):
         # F-2: aprobación automática al completar todas las revisiones requeridas
         self.assertEqual(solicitud.state, "approved")
 
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales_c1).action_accept()
-        self.assertEqual(solicitud.state, "approved")
-        self.assertEqual(cotizacion.state, "sent")
+        solicitud.with_user(self.user_sales_c1).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        cotizacion = env_sales["sale.order"].browse(cotizacion.id)
+        self.assertEqual(cotizacion.state, "sale")
 
         ordenes_dup = self.env["sale.order"].search([
             ("unrevisioned_name", "=", cotizacion.unrevisioned_name),
@@ -553,7 +555,7 @@ class TestB3FlujoFuncionalIntegral(TransactionCase):
     # 5.4: Revalidación de stock (stock insuficiente bloquea aceptación)
     # ------------------------------------------------------------------
     def test_revalidacion_stock_bloquea_aceptacion(self):
-        """La aceptación final se bloquea por stock insuficiente (B-08)."""
+        """La aceptación final se permite con aprobaciones completas pese a stock insuficiente (B-08 ajustado)."""
         env_sales = self.env(user=self.user_sales_c1)
         env_abast = self.env(user=self.user_abast_c1)
         cotizacion = self._crear_cotizacion(
@@ -570,11 +572,12 @@ class TestB3FlujoFuncionalIntegral(TransactionCase):
         # F-2: aprobación automática al completar la revisión requerida.
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación final se bloquea por stock insuficiente
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales_c1).action_accept()
-        self.assertEqual(solicitud.state, "approved")
-        self.assertEqual(cotizacion.state, "sent")
+        # La revalidación registra stock insuficiente pero no bloquea la
+        # aceptación cuando las aprobaciones requeridas están completas.
+        solicitud.with_user(self.user_sales_c1).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        cotizacion = env_sales["sale.order"].browse(cotizacion.id)
+        self.assertEqual(cotizacion.state, "sale")
 
     # ------------------------------------------------------------------
     # 5.5: Seguridad funcional (usuarios sin permisos no pueden operar)

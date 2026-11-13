@@ -10,3 +10,4 @@ from . import test_b3_flujo_funcional
 from . import test_b3_flujo_funcional_stock_real
 from . import test_b4_excepciones_operativas
 from . import test_b6_aceptacion_comercial
+from . import test_escenario_compra_futura

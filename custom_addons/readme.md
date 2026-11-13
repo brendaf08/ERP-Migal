@@ -11,3 +11,9 @@ Seleccionamos nueve módulos para complementar Odoo 19 en ERP-MIGAL. Con ellos i
 | `partner_relation_multi`, `sale_order_request`, `sale_revision_tier_compat` | Versión usada por el equipo ERP-MIGAL | AGPL-3 |
 
 Textos de licencia [AGPL 3](licenses/agpl-3.0.txt), [LGPL 3](licenses/lgpl-3.0.txt) y [GPL 3](licenses/gpl-3.0.txt), según corresponda. La instalación y configuración se describen en la [guía del entorno Odoo](../infra/odoo/readme.md).
+
+## Solicitudes de orden de venta
+
+La revisión del 12 de noviembre de `sale_order_request` permite aceptar una solicitud con stock insuficiente cuando el flujo la deja aprobada. La aceptación vuelve a consultar el inventario y comprueba que las líneas, productos, unidades y cantidades coincidan con la cotización. La orden puede quedar con abastecimiento pendiente. El addon conserva las aprobaciones de Abastecimiento y Transporte según el caso.
+
+El equipo registró **175 pruebas automatizadas sin fallos ni errores** en su instalación de origen. La suite incluye la regresión de compra futura sin orden de compra registrada. Quedan pendientes la reproducción en Docker y la revisión de dos casos: un faltante que aparece después de aprobar y una revisión coordinada que conserva una referencia distinta a la cotización original.

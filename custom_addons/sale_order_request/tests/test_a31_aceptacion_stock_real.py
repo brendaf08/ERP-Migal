@@ -9,7 +9,7 @@ Valida el flujo completo de Solicitud de orden de venta con:
 - Identificación automática de cotización sujeta a solicitud de orden de venta (sale_request_applicable=True)
 - Flujo completo hasta action_accept() y confirmación de cotización
 - Ausencia de creación de segundo sale.order
-- Escenario de stock insuficiente y revalidación
+- Escenario de stock insuficiente con conformidad aprobada (abastecimiento futuro) y revalidación
 """
 
 from odoo.exceptions import UserError
@@ -214,11 +214,13 @@ class TestA31AceptacionStockReal(TransactionCase):
         self.assertEqual(len(ordenes_dup), 0, "No debe crearse un segundo sale.order")
 
     # ------------------------------------------------------------------
-    # Prueba 2: Stock insuficiente → bloqueo en acción de aceptación
+    # Prueba 2: Stock insuficiente con conformidad aprobada (abastecimiento futuro)
     # ------------------------------------------------------------------
-    def test_stock_insuficiente_bloquea_aceptacion(self):
-        """Producto con stock insuficiente: action_accept() bloqueado por
-        revalidación de stock (B-08)."""
+    def test_stock_insuficiente_con_conformidad_permite_aceptacion(self):
+        """Producto con stock insuficiente: si Abastecimiento aprueba (conformidad
+        de abastecimiento futuro) y F-2 aprueba automáticamente al completar las
+        revisiones requeridas, el vendedor puede aceptar y confirmar la cotización
+        sin inventar existencias ni crear compras/recepciones/entregas/facturas."""
         producto, _ = self._crear_producto_almacenable(
             "Producto Stock Bajo", qty_stock=2.0
         )
@@ -240,13 +242,17 @@ class TestA31AceptacionStockReal(TransactionCase):
         solicitud = self.env["sale.order.request"].browse(solicitud.id)
         self.assertEqual(solicitud.state, "approved")
 
-        # 6. action_accept() revalida stock: 2 < 5 → bloqueado
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
-        self.assertNotEqual(
-            self.env["sale.order"].browse(cotizacion.id).state, "sale"
-        )
+        # action_accept() revalida stock pero no bloquea: conformidad vigente.
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        cotizacion = self.env["sale.order"].browse(cotizacion.id)
+        self.assertEqual(cotizacion.state, "sale")
+        # Sin inventar stock ni crear documentos automáticos (compra/recepción/factura)
+        self.assertEqual(producto.qty_available, 2.0)
+        self.assertFalse(self.env["purchase.order"].search([("origin", "ilike", cotizacion.name)]))
+        self.assertFalse(cotizacion.invoice_ids)
+        # No confirmar entregas automáticamente
+        self.assertFalse(any(p.state == 'done' for p in cotizacion.picking_ids))
 
     # ------------------------------------------------------------------
     # Prueba 3: Cotización no  confirma normalmente
@@ -312,7 +318,12 @@ class TestA31AceptacionStockReal(TransactionCase):
         # Al completar todas las revisiones requeridas, F-2 aprueba automáticamente.
         self.assertEqual(solicitud.state, "approved")
 
-        # Aceptación bloqueada por stock insuficiente (2 < 5)
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
+        # Aceptación permitida con aprobaciones completas pese a stock insuficiente
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
+        cotizacion = self.env["sale.order"].browse(cotizacion.id)
+        self.assertEqual(cotizacion.state, "sale")
+        self.assertEqual(producto.qty_available, 2.0)
+        self.assertFalse(self.env["purchase.order"].search([("origin", "ilike", cotizacion.name)]))
+        self.assertFalse(cotizacion.invoice_ids)
+        self.assertFalse(any(p.state == 'done' for p in cotizacion.picking_ids))

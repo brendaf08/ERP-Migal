@@ -248,14 +248,12 @@ class TestSaleOrderRequest(TransactionCase):
         # F-2: aprobación automática al completar todas las revisiones requeridas.
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación final se bloquea por stock insuficiente (B-08) en este
-        # entorno (free_qty=0.0, qty=1.0), por lo que la cotización no se
-        # confirma. Se prueba por separado que el bloqueo ocurre.
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
+        # Con aprobaciones completas (Transporte aprobada, F-2 automática) el
+        # vendedor puede aceptar aunque el stock físico sea insuficiente.
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
         cotizacion = self.env["sale.order"].browse(cotizacion.id)
-        self.assertNotEqual(cotizacion.state, "sale")
+        self.assertEqual(cotizacion.state, "sale")
 
     # ------------------------------------------------------------------
     # Escenario 3: Stock insuficiente + recojo → requiere Abastecimiento
@@ -580,14 +578,12 @@ class TestSaleOrderRequest(TransactionCase):
         # F-2: aprobación automática al completar la revisión requerida.
         self.assertEqual(solicitud.state, "approved")
 
-        # La aceptación final se bloquea por stock insuficiente (B-08), no por
-        # falta de aprobaciones: todas las aprobaciones requeridas están hechas.
-        with self.assertRaises(UserError):
-            solicitud.with_user(self.user_sales).action_accept()
-        self.assertEqual(solicitud.state, "approved")
-
+        # Todas las aprobaciones requeridas están completas y F-2 aprobó:
+        # la aceptación se permite aunque el stock físico sea insuficiente.
+        solicitud.with_user(self.user_sales).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
         cotizacion = self.env["sale.order"].browse(cotizacion.id)
-        self.assertNotEqual(cotizacion.state, "sale")
+        self.assertEqual(cotizacion.state, "sale")
 
     # ------------------------------------------------------------------
     # Bloqueo de confirmación directa (C-01)

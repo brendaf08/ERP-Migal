@@ -283,19 +283,17 @@ class TestB6AceptacionComercial(TransactionCase):
         # F-2: aprobación automática al completar todas las revisiones requeridas.
         self.assertEqual(solicitud.state, "approved")
 
-        # Aceptación final bloqueada por stock insuficiente (revalidación)
-        try:
-            solicitud.with_user(self.user_sales_c1).action_accept()
-            self.fail("action_accept() debería haber fallado por stock insuficiente")
-        except UserError:
-            pass  # Esperado
-
-        self.assertEqual(solicitud.state, "approved")
+        # Aceptación final permitida con conformidad aprobada pese a stock insuficiente
+        solicitud.with_user(self.user_sales_c1).action_accept()
+        self.assertEqual(solicitud.state, "confirmed")
         cotizacion = self.env["sale.order"].browse(cotizacion.id)
-        self.assertEqual(cotizacion.state, "sent")
+        self.assertEqual(cotizacion.state, "sale")
+        self.assertFalse(self.env["purchase.order"].search([("origin", "ilike", cotizacion.name)]))
+        self.assertFalse(cotizacion.invoice_ids)
+        self.assertFalse(any(p.state == 'done' for p in cotizacion.picking_ids))
 
         self._resultado("B5-T2", "PASS",
-                        "Aprobaciones registradas, accept bloqueado por stock, cotización en sent")
+                        "Aprobaciones registradas, aceptación con conformidad pese a stock insuficiente, cotización confirmada")
 
     # ------------------------------------------------------------------
     # B5-T3 — Nueva revisión → solicitud anterior superseded → nueva solicitud con Transporte
