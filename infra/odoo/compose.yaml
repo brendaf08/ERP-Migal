@@ -18,7 +18,11 @@ services:
     restart: unless-stopped
 
   odoo:
-    build: .
+    image: ${ODOO_IMAGE:-erp-migal-odoo:19.0-20261112}
+    build:
+      context: ../..
+      dockerfile: infra/odoo/Dockerfile
+    command: ["odoo", "--addons-path=/opt/migal/addons"]
     depends_on:
       db:
         condition: service_healthy
@@ -33,12 +37,6 @@ services:
       - type: bind
         source: ./odoo.conf
         target: /etc/odoo/odoo.conf
-        read_only: true
-        bind:
-          create_host_path: false
-      - type: bind
-        source: ../../custom_addons
-        target: /mnt/extra-addons
         read_only: true
         bind:
           create_host_path: false

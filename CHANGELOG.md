@@ -19,7 +19,7 @@ Esta sección reúne avances que todavía no forman parte de un hito académico 
 
 No incluir borradores ni resultados pendientes de aprobación.
 
-- **Entorno local Odoo:** se incorpora la [configuración Docker reproducible](infra/odoo/readme.md) junto con los [nueve addons](custom_addons/readme.md) y sus dependencias.
+- **Entorno local Odoo:** se incorpora la [configuración Docker reproducible](infra/odoo/readme.md) junto con los [nueve addons](custom_addons/readme.md) y sus dependencias. La imagen incluye los addons y `sale_order_request` incorpora la actualización de aceptación con abastecimiento pendiente del 12 de noviembre.
 
 ## 2026-11-07 — Corrección, pruebas de frontera y cierre de la consolidación documental
 

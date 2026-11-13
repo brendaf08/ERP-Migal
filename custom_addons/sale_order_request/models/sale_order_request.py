@@ -874,6 +874,39 @@ class SaleOrderRequest(models.Model):
                     rec.action_reject()
         return result
 
+    def _check_quotation_consistency(self):
+        """Impide aceptar una solicitud basada en una cotización materialmente modificada
+        sin la revalidación correspondiente."""
+        self.ensure_one()
+        sale_order = self.sale_order_id
+        revision = self.sale_order_revision_id
+        if not sale_order or not revision:
+            raise UserError("La solicitud no tiene cotización o revisión vinculada válida.")
+        if revision != sale_order:
+            raise UserError("La solicitud no está vinculada a la revisión vigente de la cotización.")
+        if sale_order.state == "cancel":
+            raise UserError("La cotización vinculada está cancelada; se requiere revalidación.")
+        commercial_lines = sale_order.order_line.filtered(
+            lambda l: not getattr(l, "display_type", False) and l.product_id
+        )
+        req_lines = self.line_ids.filtered(lambda l: l.sale_order_line_id)
+        req_by_sol = {l.sale_order_line_id.id: l for l in req_lines}
+        if len(req_lines) != len(self.line_ids):
+            raise UserError("Existen líneas de solicitud inválidas; se requiere revalidación.")
+        if set(req_by_sol.keys()) != set(commercial_lines.ids):
+            raise UserError("Las líneas de la cotización han cambiado; se requiere revalidación.")
+        for sol in commercial_lines:
+            rline = req_by_sol.get(sol.id)
+            if not rline:
+                raise UserError("La cotización contiene líneas no contempladas en la solicitud; se requiere revalidación.")
+            if rline.product_id != sol.product_id:
+                raise UserError("El producto de una línea cambió; se requiere revalidación.")
+            sol_uom = sol.product_uom_id or sol.product_id.uom_id
+            if rline.product_uom_id != sol_uom:
+                raise UserError("La unidad de medida de una línea cambió; se requiere revalidación.")
+            if abs((rline.qty or 0.0) - (sol.product_uom_qty or 0.0)) > 1e-6:
+                raise UserError("La cantidad de una línea cambió; se requiere revalidación.")
+
     def action_accept(self):
         """Aceptación final del vendedor.
 
@@ -881,7 +914,9 @@ class SaleOrderRequest(models.Model):
         - Todas las aprobaciones requeridas están completadas
         - No hay aprobaciones pendientes ni rechazos vigentes
         - La solicitud corresponde a la revisión actual de la cotización
-        - La evaluación de stock está actualizada y el stock es suficiente
+        - La cotización no ha sido materialmente modificada sin revalidación
+        - La evaluación de stock se revalida y registra (la falta de stock físico
+          no bloquea si las aprobaciones requeridas están completas y vigentes)
         """
         self.ensure_one()
         # A3.3: Validar consistencia de compañía.
@@ -897,15 +932,18 @@ class SaleOrderRequest(models.Model):
                 "Solo el vendedor solicitante de la solicitud puede realizar la aceptación final."
             )
 
-        # Revalidar inventario antes de aceptar (B-08). La aceptación final
-        # se bloquea si el stock disponible no cubre las cantidades solicitadas.
+        # Verificar coherencia con la cotización/revisión vigente y detectar
+        # cambios materiales antes de aceptar.
+        self._check_quotation_consistency()
+
+        # Revalidar inventario antes de aceptar. Se registra la evaluación
+        # real más reciente, pero la falta de stock físico no bloquea la
+        # aceptación cuando las aprobaciones requeridas están completas y
+        # vigentes (p.ej. conformidad de Abastecimiento por abastecimiento
+        # futuro aún no registrado en Compras). No se inventan existencias
+        # ni se generan recepciones/compras.
         self._evaluate_stock()
         self._internal_request_write({"stock_checked_date": fields.Datetime.now()})
-        if not self.stock_sufficient:
-            raise UserError(
-                "No se puede aceptar la solicitud: el stock disponible no cubre "
-                "las cantidades solicitadas según la última evaluación de inventario."
-            )
 
         # Verificar que no exista una revisión posterior de la cotización
         sale_order = self.sale_order_id

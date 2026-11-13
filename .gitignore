@@ -26,6 +26,8 @@ data_dir/
 filestore/
 *.sql
 *.dump
+*.backup
+/infra/odoo/*.tar
 audit_log.jsonl
 escalations.jsonl
 
