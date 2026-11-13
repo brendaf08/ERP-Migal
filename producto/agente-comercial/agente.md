@@ -44,7 +44,11 @@ Para Comercial, el valor está en responder más rápido y con datos consistente
 | Contabilidad | Apuntes contabilizados de cuentas por cobrar de la compañía activa, vencimientos, saldos residuales y conciliaciones. |
 | Ventas y Punto de Venta | Órdenes con importe por facturar y tickets de caja sin movimiento contable en los casos previstos por el módulo. Se muestran aparte del saldo contable. |
 
-Para la demo, el profesor levanta Odoo 19 Community con Docker y los módulos del proyecto, incluido `migal_agente`. Después restaura la copia de la base y sus adjuntos desde el respaldo que el equipo comparte por un canal privado. Esa copia contiene los módulos instalados, la configuración y los datos de prueba. Una vez restaurada, el profesor puede abrir Odoo y probar el agente con las cotizaciones y los estados de cuenta preparados.
+**Datos para la demo del profesor.** Se usará el respaldo actualizado de la base `ferre_inversiones_migal_revision`, con sus adjuntos, compartido por un canal privado. El profesor levanta Odoo 19 Community con Docker y los módulos del proyecto, incluido `migal_agente`. Después restaura el respaldo, que incluye la configuración, los módulos instalados y los registros de la demo.
+
+La base de la demo se preparó con 13 clientes entre empresas y personas, 50 referencias del catálogo con precios y existencias, y 54 casos comerciales de entre 5 y 14 productos. Incluye cotizaciones, solicitudes de aprobación, órdenes de venta, facturas y boletas con pagos completos, abonos parciales y saldos pendientes vigentes o vencidos. Para recorrer la demo basta con restaurar el respaldo actualizado y abrir los casos preparados en Odoo.
+
+**Datos de las pruebas técnicas.** El PR #19 incluye pruebas automatizadas que crean registros temporales con resultados conocidos, además de scripts para preparar escenarios específicos en una base de pruebas. Esos scripts usan nombres, cantidades y fechas definidos de antemano, y algunos requieren contactos de la base anterior. La restauración para el profesor prescinde de esos scripts.
 
 ## 5. Herramientas y funcionamiento
 
@@ -112,6 +116,6 @@ Por ejemplo, ante un faltante, el agente comercial podría enviar a un futuro ag
 
 En la base local de la demo se verificaron la preparación del enlace de WhatsApp para una cotización con teléfono, el bloqueo de una cotización cuyo contacto carecía de teléfono, la evaluación de cobertura con faltantes y la generación de un PDF de estado de cuenta con saldo pendiente y vencido. La validación local llegó a la preparación del enlace y a la generación del PDF.
 
-Las pruebas corresponden a Agente MIGAL 19.0.1.1.0, en la revisión [`7c379c5`](https://github.com/brendaf08/ERP-Migal/commit/7c379c52f050c75ad7604455256e93b89ce5cb07). El equipo documentó las pruebas y la validación del entorno Docker en el [PR #19](https://github.com/brendaf08/ERP-Migal/pull/19).
+La validación técnica de Agente MIGAL 19.0.1.1.0, revisión [`7c379c5`](https://github.com/brendaf08/ERP-Migal/commit/7c379c52f050c75ad7604455256e93b89ce5cb07), se documentó por separado en el [PR #19](https://github.com/brendaf08/ERP-Migal/pull/19).
 
 La asignación del entregable y los criterios de aceptación están en la [distribución de actividades de la PC3](../pc3/02-distribucion-equipo-pc3.md#gabriel--a9-especificación-del-agente).
