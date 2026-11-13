@@ -1,43 +1,30 @@
-# Continuidad de la Cadena y Relación Mantenimiento-Disponibilidad
+# Continuidad de la cadena y relación entre mantenimiento y despacho
 
-**Estado:** Documento de análisis. Este archivo modela un escenario crítico de interrupción logística en Ferre & Inversiones MIGAL, analiza el impacto de la falla de un activo en la cadena de suministro (P2P y O2C) y sustenta la decisión principal de mitigación para asegurar el nivel de servicio. Los valores cuantitativos marcados con `[SIM]` son datos sintéticos formulados para el escenario.
+Este análisis identifica qué pedidos se afectan cuando un camión entra al taller o un equipo de carga deja de funcionar. Las prácticas de trabajo se basan en las [aclaraciones de la propietaria (FN-05)](../../fuentes/fuentes-negocio.md). Las capacidades y funciones por activo se detallan en el [catálogo de activos](../activos_mantenimiento/activos.md).
 
-## 1. Relación Mantenimiento - Disponibilidad - Servicio
+## 1. Preparación, transporte y entrega
 
-La continuidad de las operaciones de despacho de MIGAL depende de una infraestructura logística pequeña y centralizada. Como se identificó en el catálogo de activos (`activos.md`), los equipos críticos operan con motores de combustión y presentan tiempos medios de reparación (MTTR) elevados. 
+La preparación comprende la descarga, el traslado dentro del establecimiento y la carga. Cuando falla la maquinaria de apoyo, el personal generalmente continúa con trabajo manual donde el material puede manejarse con seguridad. El vehículo eléctrico ayuda con cargas pequeñas y despachos cercanos de hasta 500 kg, siempre que la mercadería quepa y pueda sujetarse en la plataforma.
 
-El mantenimiento preventivo actúa como el principal sostén de la **Disponibilidad**:
-* Un mantenimiento correctivo (falla imprevista) inmoviliza un equipo crítico entre 16 y 24 horas (MTTR).
-* Un mantenimiento preventivo programado representa una parada controlada de 4 a 6 horas (según el plan de `mantenimiento.md`), minimizando el impacto en los despachos diarios y acercando la disponibilidad a la meta del **95 %**.
+En el transporte, el camión de baranda tiene 2 500 kg de carga útil y atiende despachos generales. El volquete tiene 3 580 kg de carga útil y se usa principalmente para agregados, con descarga por volteo. Ante una urgencia, el volquete también puede llevar materiales que normalmente irían en la baranda, según el espacio, la sujeción de la carga y la necesidad de mantener las entregas de agregados.
 
-## 2. Matriz Causa-Efecto (Escenario de Falla)
+## 2. Matriz de causa y efecto
 
-Se modela el escenario de falla imprevista del activo **ACT-03 (Montacargas de combustión)** o el **ACT-01 (Camión de baranda)** durante la temporada alta (noviembre a febrero).
+| Escenario | Efecto inmediato | Cómo se mantiene el despacho | Efecto posible en el servicio |
+| --- | --- | --- | --- |
+| Camión de baranda fuera de servicio | Hay menos disponibilidad para el reparto general. | El volquete puede cubrir pedidos generales compatibles. Se reordena su ruta según los horarios comprometidos y los pedidos de agregados. | Se reprograman con el cliente los pedidos que quedan fuera de la jornada. |
+| Volquete fuera de servicio | Se restringen los despachos de agregados que requieren descarga por volteo. | La baranda sigue atendiendo los despachos compatibles. Los pedidos que requieren volteo se evalúan por separado. | La restricción se concentra en los pedidos que necesitan esa modalidad de descarga. |
+| Equipo de carga fuera de servicio | La preparación puede requerir más tiempo y personal. | Se continúa manualmente con cargas manejables. El equipo eléctrico puede apoyar los movimientos pequeños. | Se priorizan los pedidos que pueden salir y se reorganizan los que requieren izaje o mayor tiempo. |
+| Vehículo eléctrico fuera de servicio | Se pierde capacidad para entregas pequeñas de cercanía. | Si hay espacio y tiempo, los pedidos se incorporan a la ruta de un camión. | Si la entrega queda fuera de la ruta, se acuerda otra fecha con el cliente. |
 
-| Etapa del Impacto | Descripción en el Escenario |
-| :--- | :--- |
-| **1. Paro del Activo (Causa)** | Falla mecánica imprevista del montacargas (único equipo capaz de levantar parihuelas pesadas) o del camión de baranda. |
-| **2. Caída de Disponibilidad** | El activo queda inoperativo por un MTTR de 16 a 24 horas (1 a 2 jornadas laborales completas perdidas). La disponibilidad operativa cae por debajo del 92 %. |
-| **3. Quiebre en la Cadena** | La Capacidad de Despacho (cuello de botella logístico) se reduce a más de la mitad (cayendo de las 40 toneladas/día nominales **[SIM]** a menos de 20 toneladas/día). |
-| **4. Efecto en el Cliente** | Se incumplen las programaciones de entrega a las obras. La métrica de Nivel de Servicio OTIF (*On Time In Full*) cae por debajo de la alerta del 90 % **[SIM]**. |
+## 3. Decisión de continuidad
 
-## 3. Escenario Analizado: Problemas, Efectos y Decisión
+La dueña indica que las fallas de camiones son poco usuales. Tampoco confirmó un caso previo en que ambos se enviaran a mantenimiento al mismo tiempo. La práctica habitual es **alternar las visitas al taller para mantener un camión disponible**. Si uno queda fuera de servicio, el equipo revisa los pedidos comprometidos, reorganiza la carga y la ruta, y procura completar la mayor cantidad de despachos planificados para ese día. Cuando un pedido queda fuera de la jornada, se comunica con el cliente para acordar una nueva fecha.
 
-Para evitar el quiebre de la cadena de suministro por indisponibilidad de activos críticos, se formula el siguiente análisis para la Gerencia (GER).
+Como propuesta de contingencia, Gerencia puede evaluar apoyo externo para pedidos que requieren un vehículo o equipo específico cuando la reorganización resulte insuficiente. La decisión depende de la carga, el plazo acordado, el costo y la aceptación de una fecha alternativa por parte del cliente.
 
-### A. Problemas
-* **Alta dependencia de activos únicos:** La empresa depende de un solo montacargas para estiba pesada y una flota muy reducida. No existe redundancia de equipos.
-* **Tiempos prolongados de inactividad:** Las fallas mecánicas correctivas tienen un MTTR proyectado de hasta 24 horas, lo que paraliza la operación de P2P (recepción) y O2C (despachos).
+## 4. Cómo medir el impacto
 
-### B. Efectos Operativos y Comerciales
-* **Entregas parciales o retrasadas:** Forzar el despacho manual o en vehículos no adecuados aumenta los tiempos de estiba, generando cuellos de botella en la tienda y almacenes.
-* **Pérdida de fidelidad:** Los retrasos en obra generan sobrecostos a los clientes (albañiles paralizados), lo que debilita la recomendación "boca a boca" de los maestros de obra, que es el principal canal de captación de MIGAL.
+El [plan de mantenimiento](../activos_mantenimiento/mantenimiento.md) propone registrar las horas fuera de servicio, los pedidos afectados y el recurso alternativo utilizado. Para evaluar el servicio, se registran los pedidos programados, los entregados completos en la fecha inicialmente acordada y los reprogramados. Con estos datos se puede medir OTIF y estimar la capacidad diaria con un camión operativo, con carga manual o con apoyo del vehículo eléctrico.
 
-### C. Decisión Principal de Mitigación
-Para sostener la continuidad de la cadena de suministro, se toma la siguiente **decisión principal sustentada**:
-
-> **Decisión:** Implementar un régimen estricto de **mantenimiento preventivo basado en tiempo/uso** (inspecciones diarias y servicios cada 250h/5000km) para asegurar la meta del 95 % de disponibilidad, combinado con un **protocolo logístico de contingencia (Outsourcing Spot)**.
-
-**Sustento de la decisión:**
-1. **Sustento Cuantitativo:** Cambiar las paradas por fallas (MTTR de 24h) a paradas planificadas (4h a 6h) reduce la indisponibilidad en un 75 %, asegurando que la capacidad de despacho se mantenga cerca de las 40 toneladas/día **[SIM]**.
-2. **Protocolo de contingencia:** Dado que el mantenimiento preventivo no elimina el 100 % de las fallas, se establece como regla de negocio que ante cualquier falla de un activo de criticidad Alta (camión o montacargas) cuyo diagnóstico supere las 6 horas, GER autorizará el alquiler temporal (*outsourcing spot*) de un equipo de reemplazo para evitar que el indicador OTIF caiga por debajo del 90 %.
+La referencia de 40 toneladas por día y la meta de 90 % de OTIF permanecen en el [modelo de cadena](../p2p/cadena_suministro.md) como escenario y meta propuesta, respectivamente. La duración de una parada preventiva o correctiva puede ilustrar un escenario puntual. Su efecto sobre el año requiere registrar la frecuencia de las paradas y las horas de operación del período.
