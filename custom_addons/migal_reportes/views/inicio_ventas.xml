@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_migal_inicio_ventas" model="ir.actions.client">
+        <field name="name">Ventas</field>
+        <field name="tag">migal_reportes.inicio_ventas</field>
+    </record>
+    <record id="action_migal_cotizaciones_para_solicitud" model="ir.actions.act_window">
+        <field name="name">Elige una cotización</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ('draft', 'sent'))]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+    <record id="action_migal_ordenes_confirmadas" model="ir.actions.act_window">
+        <field name="name">Órdenes de venta</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('state', '=', 'sale')]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+    <record id="view_migal_ventas_por_emitir" model="ir.ui.view">
+        <field name="name">migal.venta.por.emitir.list</field>
+        <field name="model">sale.order</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <list string="Emisión en Key Fácil" create="false" delete="false" default_order="date_order desc, id desc">
+                <field name="name" string="Orden"/>
+                <field name="partner_id"/>
+                <field name="date_order" string="Fecha de la orden"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="amount_total"/>
+                <field name="migal_comprobante_externo" widget="badge"
+                       decoration-warning="migal_comprobante_externo in ('receipt_pending', 'invoice_pending')"
+                       decoration-success="migal_comprobante_externo in ('receipt', 'invoice')"/>
+                <field name="migal_codigo_comprobante"/>
+                <field name="current_revision_id" column_invisible="1"/>
+                <button name="action_migal_registrar_comprobante" type="object" string="Actualizar emisión"
+                        icon="fa-pencil" invisible="current_revision_id"
+                        groups="sales_team.group_sale_salesman,account.group_account_invoice"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_migal_emision_busqueda" model="ir.ui.view">
+        <field name="name">migal.venta.emision.search</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <search string="Buscar orden de venta">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="migal_codigo_comprobante"/>
+                <filter name="emision_pendiente" string="Pendientes de emisión"
+                        domain="[('migal_comprobante_externo', 'in', ('receipt_pending', 'invoice_pending'))]"/>
+                <filter name="venta_sin_comprobante" string="Orden de venta"
+                        domain="[('migal_comprobante_externo', '=', 'order')]"/>
+                <filter name="emision_registrada" string="Emitidas"
+                        domain="[('migal_comprobante_externo', 'in', ('receipt', 'invoice'))]"/>
+                <group>
+                    <filter name="agrupar_emision" string="Estado de emisión"
+                            context="{'group_by': 'migal_comprobante_externo'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_migal_ventas_por_emitir" model="ir.actions.act_window">
+        <field name="name">Emisión en Key Fácil</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_migal_ventas_por_emitir"/>
+        <field name="search_view_id" ref="view_migal_emision_busqueda"/>
+        <field name="domain">[('state', '=', 'sale')]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+    <record id="menu_migal_inicio_ventas" model="ir.ui.menu">
+        <field name="name">Inicio</field>
+        <field name="parent_id" ref="sale.sale_menu_root"/>
+        <field name="action" eval="'ir.actions.client,%s' % ref('action_migal_inicio_ventas')"/>
+        <field name="active" eval="False"/>
+    </record>
+    <record id="sale.sale_menu_root" model="ir.ui.menu">
+        <field name="action" eval="'ir.actions.act_window,%s' % ref('sale.action_quotations_with_onboarding')"/>
+    </record>
+    <record id="sale.menu_sale_quotations" model="ir.ui.menu">
+        <field name="name">Cotizaciones</field>
+        <field name="parent_id" ref="sale.sale_menu_root"/>
+        <field name="sequence" eval="5"/>
+    </record>
+    <record id="sale_order_request.menu_sale_order_request" model="ir.ui.menu">
+        <field name="name">Solicitudes</field>
+        <field name="parent_id" ref="sale.sale_menu_root"/>
+        <field name="sequence" eval="6"/>
+    </record>
+    <record id="sale.menu_sale_order" model="ir.ui.menu">
+        <field name="name">Órdenes</field>
+        <field name="parent_id" ref="sale.sale_menu_root"/>
+        <field name="sequence" eval="7"/>
+    </record>
+    <menuitem id="menu_migal_ventas_por_emitir" name="Emisión" parent="sale.sale_menu_root"
+              action="action_migal_ventas_por_emitir" sequence="8" groups="sales_team.group_sale_salesman"/>
+    <menuitem id="menu_migal_facturacion_emision" name="Emisión en Key Fácil"
+              parent="account.menu_finance_receivables" action="action_migal_ventas_por_emitir"
+              sequence="1" groups="account.group_account_invoice"/>
+    <record id="sale.sale_order_menu" model="ir.ui.menu">
+        <field name="name">Más de ventas</field>
+        <field name="sequence" eval="40"/>
+    </record>
+    <record id="sale.menu_sale_invoicing" model="ir.ui.menu">
+        <field name="parent_id" ref="sale.sale_order_menu"/>
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

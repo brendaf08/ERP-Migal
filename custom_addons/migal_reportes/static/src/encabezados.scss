@@ -1,0 +1,99 @@
+.o_form_sheet:has(> .o_migal_encabezado) {
+    --migal-encabezado: #{$o-navbar-background};
+    --migal-encabezado-texto: #fff;
+    --migal-encabezado-control: #{mix(#000, $o-navbar-background, 8%)};
+    --migal-encabezado-activo: #{mix(#000, $o-navbar-background, 13%)};
+    --migal-encabezado-foco: #{mix(#000, $o-navbar-background, 18%)};
+}
+
+.o_form_sheet > .o_migal_encabezado {
+    background: var(--migal-encabezado);
+    color: var(--migal-encabezado-texto);
+    margin-inline: calc(-1 * var(--formView-sheet-padding-x, 16px));
+    margin-block-start: calc(-1 * var(--formView-sheet-padding-y, 16px));
+    padding: var(--formView-sheet-padding-y, 16px) var(--formView-sheet-padding-x, 16px) 0.75rem;
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+}
+
+.o_migal_encabezado :is(h1, h2, h3, .o_form_label, .o_form_label_help,
+    .o_horizontal_separator, .o_dropdown_button, .o_field_widget:not(.o_field_badge)),
+.o_migal_encabezado .o_field_widget :is(a, .o_readonly_modifier):not(.dropdown-item, .o-dropdown-item, .btn),
+.o_migal_encabezado .oe_title .o_field_widget > span:not(.badge),
+.o_migal_encabezado a.o_form_uri {
+    color: var(--migal-encabezado-texto);
+    overflow-wrap: anywhere;
+}
+
+.o_migal_encabezado :is(.text-primary, .text-muted, .text-info):not(.badge, .btn, .dropdown-item, .o-dropdown-item) {
+    color: var(--migal-encabezado-texto) !important;
+}
+
+.o_migal_encabezado .oe_title,
+.o_migal_encabezado .o_field_widget {
+    min-width: 0;
+}
+
+.o_migal_encabezado .o_input {
+    background: var(--migal-encabezado-control);
+    color: var(--migal-encabezado-texto);
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    padding-inline: 0.4rem;
+}
+
+.o_migal_encabezado .o_input::placeholder {
+    color: #f2edf8;
+    opacity: 1;
+}
+
+.o_migal_encabezado .o_input:focus,
+.o_migal_encabezado .o_input:focus-within {
+    background: var(--migal-encabezado-foco);
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.o_migal_encabezado .form-check-input {
+    border-color: var(--migal-encabezado-foco);
+}
+
+.o_migal_encabezado .form-check-input:checked {
+    background-color: var(--migal-encabezado-foco);
+}
+
+.o_migal_encabezado .o_migal_toggle_chatter > summary {
+    background: var(--migal-encabezado-control);
+    border-color: transparent;
+}
+
+.o_migal_encabezado .o_migal_toggle_chatter > summary:hover,
+.o_migal_encabezado .o_migal_toggle_chatter[open] > summary {
+    background: var(--migal-encabezado-activo);
+}
+
+.o_migal_encabezado .o_migal_contacto_foto img {
+    border-color: transparent !important;
+}
+
+.o_form_sheet > .o_notebook.o_migal_encabezado_pestanas {
+    margin-top: 0;
+}
+
+.o_migal_encabezado_pestanas > .o_notebook_headers,
+.o_migal_encabezado_pestanas > .o_notebook_headers > .nav-tabs {
+    background: var(--migal-encabezado);
+    border-color: transparent;
+}
+
+.o_migal_encabezado_pestanas > .o_notebook_headers .nav-link {
+    color: var(--migal-encabezado-texto);
+    background: transparent;
+    border-color: transparent;
+}
+
+.o_migal_encabezado_pestanas > .o_notebook_headers .nav-link:hover,
+.o_migal_encabezado_pestanas > .o_notebook_headers .nav-link.active {
+    background: var(--migal-encabezado-activo);
+    border-color: transparent;
+}

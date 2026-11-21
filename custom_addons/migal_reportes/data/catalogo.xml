@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="catalogo_estado_cuenta" model="migal.reportes.catalogo">
+        <field name="nombre">Estado de cuenta</field><field name="codigo">estado</field>
+        <field name="area">Cobranzas</field><field name="descripcion">Movimientos, deuda y saldos del cliente</field><field name="secuencia">10</field>
+    </record>
+    <record id="catalogo_cotizacion" model="migal.reportes.catalogo">
+        <field name="nombre">Cotización y orden</field><field name="codigo">cotizacion</field>
+        <field name="area">Ventas</field><field name="descripcion">Productos, importes y condiciones comerciales</field><field name="secuencia">20</field>
+    </record>
+    <record id="catalogo_comprobante" model="migal.reportes.catalogo">
+        <field name="nombre">Factura, boleta y notas</field><field name="codigo">comprobante</field>
+        <field name="area">Facturación</field><field name="descripcion">Copia comercial, no sustituta del comprobante fiscal oficial</field><field name="secuencia">30</field>
+    </record>
+    <record id="catalogo_entrega" model="migal.reportes.catalogo">
+        <field name="nombre">Resumen de entrega</field><field name="codigo">entrega</field>
+        <field name="area">Inventario</field><field name="descripcion">Resumen operativo, no guía de remisión electrónica</field><field name="secuencia">40</field>
+    </record>
+    <record id="catalogo_recibo" model="migal.reportes.catalogo">
+        <field name="nombre">Constancia interna de pago</field><field name="codigo">recibo</field>
+        <field name="area">Contabilidad</field><field name="descripcion">Registro interno, no comprobante fiscal</field><field name="secuencia">50</field>
+    </record>
+</odoo>

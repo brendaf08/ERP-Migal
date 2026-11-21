@@ -1,0 +1,127 @@
+/* El selector de la vista de ventas controla el panel nativo de Odoo. */
+.o_form_renderer:has(.o_migal_ventas_mensajes:not([open])) .o-mail-Form-chatter,
+.o_form_renderer:has(.o_migal_ventas_mensajes) .o-mail-Form-chatter .o-mail-Chatter-sendMessage {
+    display: none !important;
+}
+
+.o_migal_ventas_mensajes > summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.o_migal_ventas_mensajes > summary::-webkit-details-marker {
+    display: none;
+}
+
+.o_migal_ventas_mensajes > summary:hover,
+.o_migal_ventas_mensajes[open] > summary {
+    background-color: var(--secondary-bg, #e9ecef);
+}
+
+.o_migal_ventas_mensajes {
+    align-self: center;
+    flex: 0 0 auto;
+}
+
+.o_migal_ventas_mensajes > summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.o_form_sheet:has(> .o_migal_venta_encabezado),
+.o_migal_inicio_ventas {
+    --migal-venta-fondo: #ebe6f4;
+    --migal-venta-borde: #d5cbe5;
+    --migal-venta-tinta: #514168;
+}
+
+.o_form_sheet > .o_migal_venta_encabezado {
+    background-color: var(--migal-venta-fondo);
+    color: var(--migal-venta-tinta);
+    margin-inline: calc(-1 * var(--formView-sheet-padding-x));
+    margin-block-start: calc(-1 * var(--formView-sheet-padding-y));
+    padding: var(--formView-sheet-padding-y) var(--formView-sheet-padding-x) 0.75rem;
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+}
+
+.o_form_sheet > .o_notebook.o_migal_venta_pestanas {
+    margin-top: 0;
+}
+
+.o_migal_venta_pestanas > .o_notebook_headers,
+.o_migal_venta_pestanas > .o_notebook_headers > .nav-tabs {
+    background-color: var(--migal-venta-fondo);
+}
+
+.o_migal_venta_encabezado a,
+.o_migal_venta_pestanas .nav-tabs .nav-link:not(.active) {
+    --link-color: var(--migal-venta-tinta);
+    color: var(--migal-venta-tinta);
+}
+
+.o_migal_inicio_ventas {
+    max-width: 70rem;
+}
+
+.o_migal_inicio_ventas .o_migal_venta_opcion {
+    background-color: var(--migal-venta-fondo);
+    border-color: var(--migal-venta-borde) !important;
+    color: var(--migal-venta-tinta);
+}
+
+.o_migal_inicio_ventas .o_migal_venta_opcion:hover {
+    background-color: var(--migal-venta-borde);
+}
+
+.o_migal_venta_resumen {
+    padding: 0.75rem;
+    min-width: 0;
+}
+
+.o_form_renderer.flex-nowrap > .o_form_sheet_bg:has(~ .o_migal_venta_resumen) {
+    min-width: 0;
+}
+
+.o_form_renderer.flex-nowrap > .o_migal_venta_resumen {
+    flex: 0 0 clamp(16rem, 23vw, 24rem);
+    overflow: auto;
+}
+
+.o_form_renderer:has(.o_migal_ventas_mensajes[open]) > .o_migal_venta_resumen {
+    display: none;
+}
+
+.o_migal_venta_resumen_tarjeta {
+    background-color: var(--o-view-background-color, #fff);
+    border: 1px solid #d5cbe5;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.o_migal_venta_resumen_fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+}
+
+.o_migal_venta_resumen_fila > .o_field_widget {
+    margin: 0;
+    min-width: 0;
+    text-align: end;
+    overflow-wrap: anywhere;
+}
+
+.o_migal_venta_resumen_seccion {
+    border-top: 1px solid #d5cbe5;
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+}

@@ -1,0 +1,37 @@
+.o_migal_contacto_foto {
+    position: relative;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    width: fit-content;
+}
+
+.o_migal_contacto_cinta {
+    position: absolute;
+    z-index: 1;
+    inset-inline: 0;
+    bottom: 0;
+    padding: 0.2rem 0.125rem;
+    border-radius: 0 0 0.25rem 0.25rem;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    pointer-events: none;
+}
+
+.o_migal_contacto_cinta_interna {
+    background: #155a40;
+}
+
+.o_migal_contacto_cinta_maestro {
+    background: #8c451c;
+}
+
+.o_migal_contacto_foto_tarjeta .o_migal_contacto_cinta {
+    font-size: 0.6rem;
+}
+
+.o_form_renderer:has(.o_migal_contacto_encabezado) .o-mail-Chatter-sendMessage {
+    display: none !important;
+}

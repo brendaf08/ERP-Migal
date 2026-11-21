@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <!-- Se agrega una alternativa visual; NO se reemplaza la factura electrónica oficial de Odoo/SUNAT. -->
+    <record id="action_comprobante_a4" model="ir.actions.report">
+        <field name="name">MIGAL · Comprobante (vista A4)</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_comprobante_a4</field>
+        <field name="report_file">migal_reportes.report_comprobante_a4</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_a4"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'MIGAL - Comprobante A4 - %s' % object.name</field>
+    </record>
+    <record id="action_comprobante_58" model="ir.actions.report">
+        <field name="name">MIGAL · Comprobante (vista 58 mm)</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_comprobante_58</field>
+        <field name="report_file">migal_reportes.report_comprobante_58</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_ticket58"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'MIGAL - Comprobante ticket - %s' % object.name</field>
+    </record>
+
+    <template id="report_comprobante_a4">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="s" t-value="doc.currency_id.symbol or 'S/'"/>
+                <t t-set="titulo" t-value="doc.l10n_latam_document_type_id.name if 'l10n_latam_document_type_id' in doc._fields and doc.l10n_latam_document_type_id else ('Nota de crédito' if doc.move_type in ('out_refund','in_refund') else 'Comprobante de venta')"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-a4">
+                    <t t-call="migal_reportes.migal_a4_estilos"/>
+                    <t t-call="migal_reportes.migal_a4_cabecera"/>
+                    <div class="migal-caps">Detalle del comprobante</div>
+                    <h1 t-out="titulo"/>
+                    <div class="migal-muted">N.º <strong t-out="doc.name or '-'"/></div>
+                    <div class="migal-panel">
+                        <table class="migal-info">
+                            <tr>
+                                <td style="width:57%;"><span class="migal-caps">Cliente / destinatario</span><br/>
+                                    <strong t-out="doc.partner_id.display_name"/></td>
+                                <td><span class="migal-caps">Emisión</span><br/>
+                                    <strong t-out="doc.invoice_date or doc.date or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <td><span class="migal-caps">Documento del cliente</span><br/>
+                                    <strong t-out="doc.partner_id.vat or '-'"/></td>
+                                <td><span class="migal-caps">Vencimiento</span><br/>
+                                    <strong t-out="doc.invoice_date_due or '-'"/></td>
+                            </tr>
+                            <tr t-if="doc.invoice_origin or doc.ref">
+                                <td colspan="2"><span class="migal-caps">Referencia</span><br/>
+                                    <span t-out="doc.invoice_origin or doc.ref"/></td>
+                            </tr>
+                            <tr t-if="doc.reversed_entry_id">
+                                <td colspan="2"><span class="migal-caps">Documento rectificado</span><br/>
+                                    <strong t-out="doc.reversed_entry_id.name"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="migal-section">Detalle de conceptos</div>
+                    <table class="migal-table">
+                        <thead><tr><th style="width:9%;">N.°</th><th>Descripción</th>
+                            <th class="migal-right">Cantidad</th><th class="migal-right">Unitario</th>
+                            <th class="migal-right">Importe</th></tr></thead>
+                        <tbody>
+                            <t t-set="n" t-value="0"/>
+                            <t t-foreach="doc.invoice_line_ids" t-as="line">
+                                <t t-if="line.display_type in (False, 'product')">
+                                    <t t-set="n" t-value="n + 1"/>
+                                    <tr>
+                                        <td t-out="n"/>
+                                        <td><span t-out="line.name"/><div t-if="line.discount" class="migal-muted">Descuento: <t t-out="'{:g}'.format(line.discount)"/>%</div></td>
+                                        <td class="migal-right" t-out="'{:,.2f}'.format(line.quantity)"/>
+                                        <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(line.price_unit)"/></td>
+                                        <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(line.price_subtotal)"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <tr t-if="not n"><td colspan="5" class="migal-muted">Sin líneas comerciales registradas.</td></tr>
+                        </tbody>
+                    </table>
+                    <table class="migal-summary">
+                        <tr><td style="width:62%;"/><td>Subtotal</td>
+                            <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_untaxed)"/></td></tr>
+                        <tr><td/><td>Impuestos</td>
+                            <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_tax)"/></td></tr>
+                        <tr><td/><td class="migal-total">Total</td>
+                            <td class="migal-right migal-total"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_total)"/></td></tr>
+                        <tr t-if="doc.move_type == 'out_invoice' and doc.amount_residual"><td/><td>Saldo pendiente</td>
+                            <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_residual)"/></td></tr>
+                    </table>
+                    <div class="migal-note" t-if="doc.state == 'draft'">Borrador: documento aún no contabilizado.</div>
+                    <div class="migal-note">
+                        Vista comercial MIGAL. Para efectos tributarios, utilice la representación electrónica oficial
+                        emitida y validada por el sistema de facturación. Este diseño no sustituye el CPE ni su QR fiscal.
+                    </div>
+                    <t t-call="migal_reportes.migal_a4_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+
+    <template id="report_comprobante_58">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="s" t-value="doc.currency_id.symbol or 'S/'"/>
+                <t t-set="titulo" t-value="doc.l10n_latam_document_type_id.name if 'l10n_latam_document_type_id' in doc._fields and doc.l10n_latam_document_type_id else ('NOTA DE CRÉDITO' if doc.move_type in ('out_refund','in_refund') else 'COMPROBANTE')"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-ticket">
+                    <t t-call="migal_reportes.migal_ticket_estilos"/>
+                    <t t-call="migal_reportes.migal_ticket_cabecera"/>
+                    <div class="title center" t-out="titulo"/>
+                    <div class="center"><strong t-out="doc.name or '-'"/></div>
+                    <div class="center minor">Emisión: <t t-out="doc.invoice_date or doc.date or '-'"/></div>
+                    <div t-if="doc.state == 'draft'" class="center"><strong>BORRADOR</strong></div>
+                    <div class="rule"/>
+                    <div><strong>Cliente:</strong> <t t-out="doc.partner_id.display_name"/></div>
+                    <div t-if="doc.partner_id.vat">RUC/DNI: <t t-out="doc.partner_id.vat"/></div>
+                    <div t-if="doc.reversed_entry_id">Ref.: <t t-out="doc.reversed_entry_id.name"/></div>
+                    <div class="rule"/>
+                    <t t-foreach="doc.invoice_line_ids" t-as="line">
+                        <div class="entry" t-if="line.display_type in (False, 'product')">
+                            <div class="entry-name"><strong t-out="line.name"/></div><div t-if="line.discount" class="minor">Desc. <t t-out="'{:g}'.format(line.discount)"/>%</div>
+                            <div class="entry-line"><span class="entry-left"><t t-out="'{:g}'.format(line.quantity)"/>
+                                × <t t-out="'{:,.2f}'.format(line.price_unit)"/></span>
+                                <span class="entry-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(line.price_subtotal)"/></span></div>
+                        </div>
+                    </t>
+                    <div class="rule"/>
+                    <table class="ticket-row">
+                        <tr><td>Subtotal</td><td class="amount"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_untaxed)"/></td></tr>
+                        <tr><td>Impuestos</td><td class="amount"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_tax)"/></td></tr>
+                        <tr><td class="total">TOTAL</td><td class="amount total"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_total)"/></td></tr>
+                    </table>
+                    <div class="rule"/>
+                    <div class="minor center">Vista comercial; no reemplaza CPE ni QR fiscal. Solicite el comprobante electrónico oficial.</div>
+                    <t t-call="migal_reportes.migal_ticket_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+</odoo>

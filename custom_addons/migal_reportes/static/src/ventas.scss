@@ -1,0 +1,49 @@
+.o_form_renderer:has(.o_migal_ventas_mensajes) .o-mail-Form-chatter .o-mail-Chatter-sendMessage {
+    display: none !important;
+}
+
+.o_migal_venta_resumen {
+    padding: 0.75rem;
+    min-width: 0;
+}
+
+.o_form_renderer.flex-nowrap > .o_form_sheet_bg:has(~ .o_migal_venta_resumen) {
+    min-width: 0;
+}
+
+.o_form_renderer.flex-nowrap > .o_migal_venta_resumen {
+    flex: 0 0 clamp(16rem, 23vw, 24rem);
+    overflow: auto;
+}
+
+.o_form_renderer:has(.o_migal_ventas_mensajes[open]) > .o_migal_venta_resumen {
+    display: none;
+}
+
+.o_migal_venta_resumen_tarjeta {
+    background-color: var(--o-view-background-color, #fff);
+    border: 1px solid #d5cbe5;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.o_migal_venta_resumen_fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+}
+
+.o_migal_venta_resumen_fila > .o_field_widget {
+    margin: 0;
+    min-width: 0;
+    text-align: end;
+    overflow-wrap: anywhere;
+}
+
+.o_migal_venta_resumen_seccion {
+    border-top: 1px solid #d5cbe5;
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+}

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_migal_reportes_settings" model="ir.ui.view">
+        <field name="name">migal.reportes.res.config.settings.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="MIGAL Reportes" name="migal_reportes" logo="/migal_reportes/static/img/logo_migal.png" groups="base.group_system">
+                    <block title="Identidad de los documentos" name="migal_branding">
+                        <setting string="Información legal" help="Razón social, RUC, dirección y datos oficiales se editan en la ficha de la empresa de Odoo; no se pueden ocultar datos fiscales obligatorios.">
+                            <div class="text-muted">Los datos legales se obtienen de Ajustes → Empresas. Los métodos de pago del estado de cuenta se editan desde los ajustes del Agente MIGAL. Esta pantalla controla elementos de presentación.</div>
+                        </setting>
+                        <setting string="Subtítulo del encabezado A4">
+                            <field name="migal_reportes_subtitulo" placeholder="Ferretería · Materiales para tus proyectos"/>
+                        </setting>
+                        <setting string="Teléfono en el documento">
+                            <field name="migal_reportes_mostrar_telefono"/>
+                        </setting>
+                        <setting string="Correo en el documento">
+                            <field name="migal_reportes_mostrar_correo"/>
+                        </setting>
+                        <setting string="Sitio web en el documento">
+                            <field name="migal_reportes_mostrar_web"/>
+                        </setting>
+                        <setting string="Logotipo en ticket 58 mm">
+                            <field name="migal_reportes_mostrar_logo_ticket"/>
+                        </setting>
+                    </block>
+                    <block title="Acceso rápido a documentos" name="migal_quick_actions">
+                        <setting string="Mostrar solo reportes MIGAL en Imprimir" help="Oculta otras opciones del menú Imprimir en cotizaciones, entregas y pagos. No elimina documentos y puedes desactivarlo. En facturas y boletas se mantiene el reporte oficial exigido para la emisión tributaria.">
+                            <field name="migal_reportes_solo_migal"/>
+                        </setting>
+                    </block>
+                    <block title="Pies de página y presentación" name="migal_layout_settings">
+                        <setting string="Mensaje de pie A4">
+                            <field name="migal_reportes_pie_a4"/>
+                        </setting>
+                        <setting string="Mensaje final del ticket">
+                            <field name="migal_reportes_pie_ticket"/>
+                        </setting>
+                        <setting string="Distribución compacta en A4" help="Reduce espacios en documentos extensos sin eliminar información.">
+                            <field name="migal_reportes_a4_compacto"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_migal_reportes_ajustes" model="ir.actions.act_window">
+        <field name="name">Configurar plantillas MIGAL</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'migal_reportes'}</field>
+    </record>
+</odoo>

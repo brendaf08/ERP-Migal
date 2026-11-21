@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="migal_reportes.InicioVentas">
+        <div class="h-100 overflow-auto">
+            <main class="o_migal_inicio_ventas mx-auto p-4 p-md-5">
+                <h1 class="mb-4">Ventas</h1>
+                <div class="d-flex flex-column flex-md-row gap-3">
+                    <button type="button" class="btn border rounded-3 p-4 text-start flex-fill o_migal_venta_opcion"
+                            t-on-click="nuevaCotizacion">
+                        <span class="d-block fw-bold fs-5 mb-1">Cotización</span>
+                        <span>Crea una cotización.</span>
+                    </button>
+                    <button type="button" class="btn border rounded-3 p-4 text-start flex-fill o_migal_venta_opcion"
+                            t-on-click="solicitudes">
+                        <span class="d-block fw-bold fs-5 mb-1">Solicitud de orden</span>
+                        <span>Elige una cotización para crear su solicitud.</span>
+                    </button>
+                    <button type="button" class="btn border rounded-3 p-4 text-start flex-fill o_migal_venta_opcion"
+                            t-on-click="ordenes">
+                        <span class="d-block fw-bold fs-5 mb-1">Orden de venta</span>
+                        <span>Consulta órdenes confirmadas desde una solicitud.</span>
+                    </button>
+                </div>
+                <p t-if="tablero.error" class="alert alert-warning mt-4" role="status">
+                    El tablero no pudo cargar los registros. Puedes abrirlos desde los accesos de Ventas.
+                </p>
+                <div t-else="" class="o_migal_ventas_tablero mt-4">
+                    <t t-call="migal_reportes.PanelVentas">
+                        <t t-set="tipo" t-value="'cotizaciones'"/>
+                        <t t-set="titulo">Cotizaciones abiertas</t>
+                        <t t-set="vacio">No hay cotizaciones abiertas.</t>
+                        <t t-set="ver_todas">Ver cotizaciones</t>
+                    </t>
+                    <t t-call="migal_reportes.PanelVentas">
+                        <t t-set="tipo" t-value="'ordenes'"/>
+                        <t t-set="titulo">Órdenes confirmadas</t>
+                        <t t-set="vacio">No hay órdenes confirmadas.</t>
+                        <t t-set="ver_todas">Ver órdenes</t>
+                    </t>
+                </div>
+            </main>
+        </div>
+    </t>
+
+    <t t-name="migal_reportes.PanelVentas">
+        <t t-set="panel" t-value="tablero[tipo]"/>
+        <section t-if="panel" class="o_migal_ventas_panel">
+            <header class="d-flex justify-content-between align-items-center gap-2 p-3">
+                <div>
+                    <h2 class="h6 mb-1" t-esc="titulo"/>
+                    <span class="fs-3 fw-semibold" t-esc="panel.total"/>
+                </div>
+                <button type="button" class="btn btn-link btn-sm px-0" t-on-click="() => this.verTodas(tipo)">
+                    <t t-esc="ver_todas"/>
+                </button>
+            </header>
+            <div t-if="panel.registros.length" class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <caption class="visually-hidden">Cinco registros más recientes</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Referencia</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col" class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="panel.registros" t-as="registro" t-key="registro.id">
+                            <td class="text-nowrap">
+                                <button type="button" class="btn btn-link btn-sm p-0"
+                                        t-on-click="() => this.abrirVenta(registro.id, registro.nombre)">
+                                    <t t-esc="registro.nombre"/>
+                                </button>
+                                <div class="small text-muted">
+                                    <t t-if="tipo === 'cotizaciones'" t-esc="registro.estado"/>
+                                    <t t-else="" t-esc="registro.fecha"/>
+                                </div>
+                            </td>
+                            <td t-esc="registro.cliente"/>
+                            <td class="text-end text-nowrap" t-esc="registro.importe"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p t-else="" class="text-muted m-3" t-esc="vacio"/>
+        </section>
+    </t>
+</templates>

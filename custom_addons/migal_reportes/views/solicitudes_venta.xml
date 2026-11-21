@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_venta_flujo_solicitud" model="ir.ui.view">
+        <field name="name">migal.sale.order.request.workflow</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <xpath expr="(//header//button[@name='action_confirm'])[1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="(//header//button[@name='action_confirm'])[2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header//button[@name='action_migal_whatsapp']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header//button[@name='action_migal_cobertura']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header//button[@name='action_mark_sale_request_subject']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header//button[@name='action_create_sale_order_request_from_quotation']" position="replace">
+                <field name="migal_solicitud_activa" invisible="1"/>
+                <button name="action_migal_crear_solicitud" type="object" string="Crear solicitud"
+                        class="btn-primary" invisible="not id or migal_solicitud_activa or state not in ('draft', 'sent')"
+                        groups="sale_order_request.group_sale_order_request_salesperson"/>
+            </xpath>
+            <xpath expr="//sheet/div[@name='button_box']" position="inside">
+                <button name="action_migal_abrir_solicitud" type="object" string="Solicitud"
+                        title="Abrir solicitud de orden de venta" class="oe_stat_button"
+                        icon="fa-file-text-o" invisible="not id"/>
+                <button name="action_migal_ir_cotizacion" type="object" string="Cotización"
+                        class="oe_stat_button" icon="fa-file-o"
+                        invisible="not id or state != 'sale' or context.get('migal_ver_como_cotizacion')"/>
+                <button name="action_migal_ir_orden" type="object" string="Orden de venta"
+                        class="oe_stat_button" icon="fa-shopping-cart"
+                        invisible="not id or (state == 'sale' and not context.get('migal_ver_como_cotizacion'))"/>
+            </xpath>
+            <xpath expr="//button[@name='action_migal_abrir_solicitud']" position="after">
+                <xpath expr="//sheet/div[@name='button_box']/button[@name='action_view_invoice']" position="move"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_migal_solicitud_form" model="ir.ui.view">
+        <field name="name">migal.sale.order.request.form</field>
+        <field name="model">sale.order.request</field>
+        <field name="inherit_id" ref="sale_order_request.view_sale_order_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="o_migal_solicitud" separator=" "/>
+            </xpath>
+            <xpath expr="//header/field[@name='state']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_request_validation']" position="attributes">
+                <attribute name="string">Enviar a aprobación</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_accept']" position="attributes">
+                <attribute name="name">action_migal_elegir_comprobante</attribute>
+                <attribute name="string">Aceptar y confirmar</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_cancel']" position="attributes">
+                <attribute name="class">btn-secondary</attribute>
+            </xpath>
+            <xpath expr="//sheet/div[hasclass('oe_title')]" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="action_migal_ir_cotizacion" type="object" string="Cotización"
+                            class="oe_stat_button" icon="fa-file-o" invisible="not id or not sale_order_id"/>
+                    <button name="action_migal_ir_orden" type="object" string="Orden de venta"
+                            class="oe_stat_button" icon="fa-shopping-cart" invisible="not id"/>
+                </div>
+            </xpath>
+            <xpath expr="//sheet/div[hasclass('oe_title')]" position="after">
+                <field name="state" widget="badge" readonly="1"
+                       decoration-warning="state == 'pending_approval'"
+                       decoration-success="state in ('approved', 'accepted', 'confirmed')"
+                       decoration-danger="state == 'rejected'"
+                       decoration-muted="state in ('draft', 'superseded', 'cancel')"/>
+            </xpath>
+            <xpath expr="//sheet/group[1]" position="replace">
+                <group>
+                    <group>
+                        <field name="sale_order_id" readonly="1"/>
+                        <field name="sale_order_revision_id" string="Revisión" readonly="1"
+                               invisible="sale_order_revision_id == sale_order_id"/>
+                        <field name="delivery_mode" string="Entrega" readonly="state != 'draft'"/>
+                    </group>
+                    <group>
+                        <field name="requester_id" string="Solicitante" readonly="1"/>
+                        <field name="request_date" string="Fecha" readonly="1"/>
+                        <field name="stock_sufficient" string="Stock suficiente" readonly="1"
+                               invisible="not stock_checked_date"/>
+                        <field name="stock_checked_date" invisible="1"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//sheet/group[field[@name='line_ids']]" position="replace">
+                <separator string="Productos"/>
+                <field name="line_ids" readonly="1" nolabel="1">
+                    <list create="0" edit="0" delete="0">
+                        <field name="product_id"/>
+                        <field name="qty" string="Solicitado"/>
+                        <field name="product_uom_id" string="Unidad" optional="show"/>
+                        <field name="stock_qty" string="Disponible" optional="show"
+                               column_invisible="not parent.stock_checked_date"/>
+                        <field name="stock_sufficient" string="Stock suficiente" optional="hide"/>
+                        <field name="sale_order_line_id" optional="hide"/>
+                    </list>
+                </field>
+                <details class="mt-3">
+                    <summary>Más datos</summary>
+                    <group>
+                        <group>
+                            <field name="company_id" readonly="1"/>
+                            <field name="stock_checked_date" string="Stock evaluado" readonly="1"
+                                   invisible="not stock_checked_date"/>
+                        </group>
+                        <group>
+                            <field name="approval_date" string="Aprobada el" readonly="1" invisible="not approval_date"/>
+                            <field name="accepted_date" string="Aceptada el" readonly="1" invisible="not accepted_date"/>
+                        </group>
+                    </group>
+                </details>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_migal_solicitud_list" model="ir.ui.view">
+        <field name="name">migal.sale.order.request.list</field>
+        <field name="model">sale.order.request</field>
+        <field name="inherit_id" ref="sale_order_request.view_sale_order_request_tree"/>
+        <field name="arch" type="xml">
+            <field name="sale_order_revision_id" position="attributes"><attribute name="optional">hide</attribute></field>
+            <field name="stock_sufficient" position="attributes"><attribute name="optional">hide</attribute></field>
+            <field name="company_id" position="attributes"><attribute name="optional">hide</attribute></field>
+            <field name="requester_id" position="attributes"><attribute name="optional">hide</attribute></field>
+            <field name="delivery_mode" position="attributes"><attribute name="string">Entrega</attribute></field>
+            <field name="state" position="attributes">
+                <attribute name="widget">badge</attribute>
+                <attribute name="decoration-warning">state == 'pending_approval'</attribute>
+                <attribute name="decoration-success">state in ('approved', 'accepted', 'confirmed')</attribute>
+                <attribute name="decoration-danger">state == 'rejected'</attribute>
+            </field>
+        </field>
+    </record>
+
+    <template id="solicitud_aviso_aprobacion">
+        <div>
+            <div class="alert alert-warning d-flex align-items-center flex-wrap gap-2 mb-2" role="status"
+                 invisible="validation_status in ('validated', 'rejected') or hide_reviews or not review_ids">
+                <field name="next_review" readonly="1" nolabel="1" invisible="not next_review"/>
+                <span invisible="next_review">Aprobación pendiente</span>
+                <button name="validate_tier" type="object" string="Aprobar" class="btn btn-success btn-sm"
+                        invisible="not can_review"/>
+                <button name="reject_tier" type="object" string="Rechazar" class="btn btn-outline-danger btn-sm"
+                        invisible="not can_review"/>
+            </div>
+            <div class="alert alert-danger mb-2" role="status"
+                 invisible="validation_status != 'rejected' or hide_reviews or not review_ids">
+                Aprobación rechazada. Consulta el detalle de aprobaciones.
+            </div>
+        </div>
+    </template>
+</odoo>

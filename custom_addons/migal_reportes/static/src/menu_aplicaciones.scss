@@ -1,0 +1,39 @@
+.o_migal_apps_menu {
+    width: min(32rem, calc(100vw - 1.5rem));
+}
+
+.o_migal_apps_grid,
+.o_migal_apps_preferencias {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.o_migal_apps_grid {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.o_migal_apps_grid .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    white-space: normal;
+}
+
+.o_migal_apps_icon {
+    width: 1.45rem;
+    height: 1.45rem;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.o_migal_apps_preferencias {
+    gap: 0 1rem;
+}
+
+@media (max-width: 400px) {
+    .o_migal_apps_preferencias {
+        grid-template-columns: 1fr;
+    }
+}

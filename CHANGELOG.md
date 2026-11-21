@@ -19,7 +19,7 @@ Esta sección reúne avances que todavía no forman parte de un hito académico 
 
 No incluir borradores ni resultados pendientes de aprobación.
 
-Sin entradas documentadas por ahora.
+- **Personalización comercial de Odoo 19:** se incorpora [MIGAL Reportes](custom_addons/migal_reportes/), con documentos A4 y 58 mm, impresión rápida y ajustes en cotizaciones, solicitudes, órdenes, cobros, emisión externa y punto de venta. Se actualiza la ficha de contactos y el comportamiento de las relaciones nuevas entre contactos.
 
 ## 2026-11-07 — Corrección, pruebas de frontera y cierre de la consolidación documental
 

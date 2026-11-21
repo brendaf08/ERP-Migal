@@ -1,6 +1,6 @@
 {
     'name': 'Múltiples Relaciones entre Contactos',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.3',
     'summary': 'Asocia un mismo contacto con múltiples contactos o empresas',
     'description': """
 Múltiples Relaciones entre Contactos
@@ -14,11 +14,10 @@ Características principales
 ---------------------------
 
 * Un contacto puede estar asociado a múltiples contactos o empresas a la vez.
-* La relación es realmente bidireccional: si asocias una persona con una
-  empresa, la empresa aparece en la ficha de la persona y la persona aparece
-  en la ficha de la empresa.
-* Se muestra como una sección tipo «Contactos», con tarjetas, alta y edición
-  inline y posibilidad de seleccionar contactos o empresas existentes.
+* Las asociaciones nuevas se guardan en el sentido en que se agregan.
+* La ficha permite seleccionar contactos o empresas existentes.
+* Los vínculos ya guardados se conservan, incluidos los pares creados por la
+  versión bidireccional.
 * No crea duplicados de ``res.partner``.
 * Es totalmente independiente de la relación estándar de empresa matriz
   (``parent_id`` / ``child_ids``), que no se modifica.
@@ -32,7 +31,6 @@ Características principales
     'data': [
         'views/partner_relation_multi_views.xml',
     ],
-    'post_init_hook': 'post_init_hook',
     'installable': True,
     'auto_install': False,
     'application': False,

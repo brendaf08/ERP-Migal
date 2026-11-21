@@ -1,0 +1,41 @@
+.o_migal_apps_menu {
+    width: 18rem;
+    max-width: calc(100vw - 1.5rem);
+}
+
+.o_migal_apps_lista {
+    max-height: 56vh;
+    overflow-y: auto;
+}
+
+.o_migal_apps_lista .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2rem;
+    white-space: normal;
+}
+
+.o_migal_apps_icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.o_app_menu_sidebar .o_migal_apps_icon {
+    margin-inline-end: 0.5rem;
+}
+
+.o_migal_apps_preferencias {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 1rem;
+}
+
+@media (max-width: 400px) {
+    .o_migal_apps_preferencias {
+        grid-template-columns: 1fr;
+    }
+}

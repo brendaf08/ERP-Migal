@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <record id="action_cotizacion_a4" model="ir.actions.report">
+        <field name="name">MIGAL · Cotización / orden A4</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_cotizacion_a4</field>
+        <field name="report_file">migal_reportes.report_cotizacion_a4</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_a4"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'MIGAL - Cotizacion - %s' % object.name</field>
+    </record>
+    <record id="action_cotizacion_58" model="ir.actions.report">
+        <field name="name">MIGAL · Cotización / orden 58 mm</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_cotizacion_58</field>
+        <field name="report_file">migal_reportes.report_cotizacion_58</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_ticket58"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'MIGAL - Cotizacion ticket - %s' % object.name</field>
+    </record>
+
+    <template id="report_cotizacion_a4">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="s" t-value="doc.currency_id.symbol or 'S/'"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-a4">
+                    <t t-call="migal_reportes.migal_a4_estilos"/>
+                    <t t-call="migal_reportes.migal_a4_cabecera"/>
+                    <div class="migal-caps">Documento comercial</div>
+                    <h1 t-out="'Orden de venta' if doc.state in ('sale', 'done') else 'Cotización'"/>
+                    <div class="migal-muted">Referencia <strong t-out="doc.name"/></div>
+                    <div class="migal-panel">
+                        <table class="migal-info">
+                            <tr>
+                                <td style="width:56%;"><span class="migal-caps">Cliente</span><br/>
+                                    <strong t-out="doc.partner_id.display_name"/></td>
+                                <td><span class="migal-caps">Fecha</span><br/>
+                                    <strong t-field="doc.date_order" t-options="{&quot;widget&quot;:&quot;date&quot;}"/></td>
+                            </tr>
+                            <tr>
+                                <td><span class="migal-caps">Documento del cliente</span><br/>
+                                    <strong t-out="doc.partner_id.vat or '-'"/></td>
+                                <td><span class="migal-caps">Vigencia</span><br/>
+                                    <strong t-out="str(doc.validity_date) if doc.validity_date else 'Consultar'"/></td>
+                            </tr>
+                            <tr t-if="doc.client_order_ref">
+                                <td colspan="2"><span class="migal-caps">Referencia del cliente</span><br/>
+                                    <span t-out="doc.client_order_ref"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="migal-section">Productos y servicios</div>
+                    <table class="migal-table">
+                        <thead><tr><th style="width:9%;">N.°</th><th>Descripción</th>
+                            <th class="migal-right">Cantidad</th><th class="migal-right">Precio</th>
+                            <th class="migal-right">Importe</th></tr></thead>
+                        <tbody>
+                            <t t-set="n" t-value="0"/>
+                            <t t-foreach="doc.order_line" t-as="line">
+                                <t t-if="not line.display_type">
+                                    <t t-set="n" t-value="n + 1"/>
+                                    <tr>
+                                        <td t-out="n"/>
+                                        <td><span t-out="line.name"/><div t-if="line.discount" class="migal-muted">Descuento aplicado: <t t-out="'{:g}'.format(line.discount)"/>%</div></td>
+                                        <td class="migal-right"><t t-out="'{:,.2f}'.format(line.product_uom_qty)"/></td>
+                                        <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(line.price_unit)"/></td>
+                                        <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(line.price_subtotal)"/></td>
+                                    </tr>
+                                </t>
+                            </t>
+                            <tr t-if="not n"><td colspan="5" class="migal-muted">Sin productos registrados.</td></tr>
+                        </tbody>
+                    </table>
+                    <table class="migal-summary">
+                        <tr><td style="width:62%;"/><td>Subtotal</td>
+                            <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_untaxed)"/></td></tr>
+                        <tr><td/><td>Impuestos</td><td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_tax)"/></td></tr>
+                        <tr><td/><td class="migal-total">Total</td>
+                            <td class="migal-right migal-total"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_total)"/></td></tr>
+                    </table>
+                    <div class="migal-note" t-if="doc.note" t-out="doc.note"/>
+                    <div class="migal-note" t-if="doc.state in ('draft','sent')">
+                        Propuesta comercial: sujeta a vigencia, disponibilidad y confirmación de la empresa.
+                        No constituye reserva de stock ni comprobante de pago.
+                    </div>
+                    <t t-call="migal_reportes.migal_a4_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+
+    <template id="report_cotizacion_58">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="s" t-value="doc.currency_id.symbol or 'S/'"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-ticket">
+                    <t t-call="migal_reportes.migal_ticket_estilos"/>
+                    <t t-call="migal_reportes.migal_ticket_cabecera"/>
+                    <div class="title center" t-out="'ORDEN DE VENTA' if doc.state in ('sale','done') else 'COTIZACIÓN'"/>
+                    <div class="center"><strong t-out="doc.name"/></div>
+                    <div class="center minor">Fecha: <t t-field="doc.date_order" t-options="{&quot;widget&quot;:&quot;date&quot;}"/></div>
+                    <div class="rule"/>
+                    <div><strong>Cliente:</strong> <t t-out="doc.partner_id.display_name"/></div>
+                    <div t-if="doc.partner_id.vat">RUC/DNI: <t t-out="doc.partner_id.vat"/></div>
+                    <div t-if="doc.validity_date">Válida hasta: <t t-out="doc.validity_date"/></div>
+                    <div class="rule"/>
+                    <t t-foreach="doc.order_line" t-as="line">
+                        <div class="entry" t-if="not line.display_type">
+                            <div class="entry-name"><strong t-out="line.name"/></div><div t-if="line.discount" class="minor">Desc. <t t-out="'{:g}'.format(line.discount)"/>%</div>
+                            <div class="entry-line"><span class="entry-left"><t t-out="'{:g}'.format(line.product_uom_qty)"/>
+                                × <t t-out="'{:,.2f}'.format(line.price_unit)"/></span>
+                                <span class="entry-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(line.price_subtotal)"/></span></div>
+                        </div>
+                    </t>
+                    <div class="rule"/>
+                    <table class="ticket-row">
+                        <tr><td>Subtotal</td><td class="amount"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_untaxed)"/></td></tr>
+                        <tr><td>Impuestos</td><td class="amount"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_tax)"/></td></tr>
+                        <tr><td class="total">TOTAL</td><td class="amount total"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount_total)"/></td></tr>
+                    </table>
+                    <div class="rule"/>
+                    <div class="center minor">Sujeto a disponibilidad y confirmación. No constituye comprobante de pago.</div>
+                    <t t-call="migal_reportes.migal_ticket_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+</odoo>
