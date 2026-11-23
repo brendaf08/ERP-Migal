@@ -27,6 +27,7 @@ el quant.company_id coincide con el company_ctx de la consulta.
 
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged, TransactionCase
+from .revision_anterior import assert_version_anterior, mantiene_versiones_vigentes
 
 
 @tagged("post_install", "-at_install")
@@ -562,7 +563,7 @@ class TestB3FlujoFuncionalStockReal(TransactionCase):
 
         # La cotización original fue cancelada al crear la revisión
         cotizacion = self.env["sale.order"].browse(cotizacion.id)
-        self.assertEqual(cotizacion.state, "cancel")
+        assert_version_anterior(self, cotizacion, nueva)
 
     # ------------------------------------------------------------------
     # 5.4: Revalidación de stock
