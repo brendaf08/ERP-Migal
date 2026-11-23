@@ -212,7 +212,7 @@ class TestAgenteMigal(TransactionCase):
     def test_llm_no_puede_saltar_permisos_ni_contrato(self):
         self._activar_llm()
 
-        def llm_falso(texto, *, api_key, model, ejecutar_herramienta, history=None, proveedor=None):
+        def llm_falso(texto, *, api_key, model, ejecutar_herramienta, history=None, proveedor=None, herramientas=None):
             r1 = ejecutar_herramienta("generar_estado_cuenta", {"cliente": "PC3 Cliente Demo"})
             r2 = ejecutar_herramienta("confirmar_venta", {"cotizacion": "S00001"})
             return "Resumen", [("generar_estado_cuenta", {}, r1), ("confirmar_venta", {}, r2)]

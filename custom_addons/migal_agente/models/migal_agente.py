@@ -27,7 +27,6 @@ TOOL_IMPL = {
     "preparar_whatsapp_cotizacion": ("migal.agente.tool.whatsapp", "preparar"),
     "registrar_envio_whatsapp": ("migal.agente.tool.whatsapp", "registrar"),
     "generar_qr_cotizacion": ("migal.agente.tool.whatsapp", "qr"),
-    "evaluar_cobertura_preliminar": ("migal.agente.tool.cobertura", "evaluar"),
     "generar_estado_cuenta": ("migal.agente.tool.estado.cuenta", "generar"),
     "compartir_estado_cuenta": ("migal.agente.tool.estado.cuenta", "compartir"),
 }
@@ -96,10 +95,11 @@ class MigalAgente(models.AbstractModel):
         entrada = {"tool": nombre, "arguments": args, "source": "odoo_orm"}
         t0 = time.perf_counter()
         try:
-            spec = contracts.TOOLS.get(nombre)
+            spec = self._spec(nombre)
             if not spec:
-                raise contracts.ToolInputError("Herramienta no autorizada: %s" % nombre)
-            limpio = contracts.validate_args(nombre, args)
+                raise contracts.ToolInputError("Herramienta no autorizada o no disponible: %s" % nombre)
+            entrada["agente"] = spec.get("agente")
+            limpio = contracts.validate_args(nombre, args, spec=spec)
             permitido, roles = guardrails.check_permission(self.env.user, spec, contracts.ROLE_GROUPS)
             if not permitido:
                 resultado = self.env["migal.agente.tool.base"]._resultado(
@@ -108,8 +108,11 @@ class MigalAgente(models.AbstractModel):
                         ", ".join(roles) or "ninguno", nombre.replace("_", " "), ", ".join(spec["roles"])),
                     reglas=["AUT-ROL"], datos={"roles_usuario": roles, "roles_requeridos": spec["roles"]})
             else:
-                model_name, method = TOOL_IMPL[nombre]
-                resultado = getattr(self.env[model_name], method)(**limpio)
+                if spec.get("nucleo"):
+                    model_name, method = TOOL_IMPL[nombre]
+                    resultado = getattr(self.env[model_name], method)(**limpio)
+                else:
+                    resultado = self._ejecutar_registrada(nombre, spec, limpio)
         except contracts.ToolInputError as exc:
             resultado = self.env["migal.agente.tool.base"]._resultado(
                 False, "entrada_invalida", "Datos incompletos o inválidos", str(exc))
@@ -165,6 +168,7 @@ class MigalAgente(models.AbstractModel):
             try:
                 texto_llm, llamadas = llm.run(
                     texto, api_key=cfg["api_key"], model=cfg["model"], proveedor=cfg["proveedor"],
+                    herramientas=self._herramientas_para_usuario(),
                     ejecutar_herramienta=lambda n, a: self.ejecutar_herramienta(n, a, traza=traza))
                 resultados = [r for (_n, _a, r) in llamadas]
             except llm.LLMUnavailable as exc:
@@ -174,14 +178,28 @@ class MigalAgente(models.AbstractModel):
 
         nombre = None
         if modo == "reglas":
-            nombre, args = intent.parse(texto)
+            # Primero las frases específicas de los agentes especialistas instalados; luego el intérprete general.
+            normalizado = guardrails.normalize(texto)
+            for agente in self._agentes().values():
+                reconocido = agente._reconocer(normalizado)
+                if reconocido:
+                    nombre, args = reconocido[0], dict(reconocido[1])
+                    break
+            else:
+                nombre, args = intent.parse(texto)
             if nombre == "ayuda":
                 html = self._render_ayuda(aviso_llm)
                 log = self._registrar(texto, canal, modo, traza, html, resultado="ayuda", session_id=session_id)
                 return html, log
             cliente = args.pop("_cliente", None)
             previo = []
-            if "cotizacion" in contracts.TOOLS[nombre]["input_schema"]["properties"]:
+            spec = self._spec(nombre)
+            if not spec:
+                html = Markup("<p>Esa función todavía no está disponible: el agente correspondiente no está "
+                              "instalado.</p>")
+                log = self._registrar(texto, canal, modo, traza, html, resultado="ayuda", session_id=session_id)
+                return html, log
+            if "cotizacion" in spec["input_schema"]["properties"]:
                 if not args.get("cotizacion") and cliente:
                     return self._resolver_por_cliente(texto, canal, session_id, nombre, args, cliente)
                 if not args.get("cotizacion"):
@@ -194,7 +212,7 @@ class MigalAgente(models.AbstractModel):
                     resp = self._preguntar_version_si_ambigua(texto, canal, session_id, nombre, args)
                     if resp:
                         return resp
-            faltan = [r for r in contracts.TOOLS[nombre]["input_schema"]["required"] if not args.get(r)]
+            faltan = [r for r in spec["input_schema"].get("required", []) if not args.get(r)]
             if faltan:
                 html = self._render_falta_dato(nombre, faltan)
                 log = self._registrar(texto, canal, modo, traza, html, resultado="ayuda", session_id=session_id)
@@ -420,7 +438,7 @@ class MigalAgente(models.AbstractModel):
     # Bitácora y escalamiento
     # ------------------------------------------------------------------
     def _registrar(self, texto, canal, modo, traza, html, *, resultado, reglas=None, escalar=None,
-                   session_id=None, res_model=None, res_id=None):
+                   session_id=None, res_model=None, res_id=None, agente=None):
         reglas = list(reglas or [])
         escalar = list(escalar or [])
         roles = guardrails.user_roles(self.env.user, contracts.ROLE_GROUPS)
@@ -428,6 +446,7 @@ class MigalAgente(models.AbstractModel):
             "session_id": session_id or uuid.uuid4().hex[:12],
             "user_id": self.env.user.id,
             "roles": ",".join(roles),
+            "agente": agente or next((t.get("agente") for t in traza if t.get("agente")), False),
             "canal": canal,
             "modo": modo,
             "input_prompt": (texto or "")[:3000],
@@ -535,6 +554,8 @@ class MigalAgente(models.AbstractModel):
                 partes.append(renderer["estado_cuenta"](datos))
             elif datos.get("detalle_cotizacion"):
                 partes.append(self._render_cotizacion(datos))
+            elif datos.get("tabla"):
+                partes.append(self._render_tabla(datos["tabla"]))
             elif datos.get("opciones"):
                 partes.append(self._render_opciones(datos, ""))
         for aviso in res.get("avisos") or []:
@@ -618,6 +639,20 @@ class MigalAgente(models.AbstractModel):
         if info:
             html += Markup("<p><small><b>Informativo (no suma al saldo):</b></small></p><ul><small>%s</small></ul>") % info
         return html
+
+    def _render_tabla(self, tabla):
+        """Tabla genérica para los agentes: {"columnas": [...], "filas": [[...], ...]}."""
+        columnas = tabla.get("columnas") or []
+        filas = tabla.get("filas") or []
+        if not filas:
+            return Markup("<p><small><i>Sin resultados.</i></small></p>")
+        cab = Markup("").join(Markup("<th>%s</th>") % c for c in columnas)
+        cuerpo = Markup("").join(
+            Markup("<tr>%s</tr>") % Markup("").join(Markup("<td>%s</td>") % ("" if v is None else v) for v in fila)
+            for fila in filas[:50])
+        extra = Markup("<p><small>Se muestran 50 de %s.</small></p>") % len(filas) if len(filas) > 50 else ""
+        return Markup("<table class='table table-sm table-bordered'><thead><tr>%s</tr></thead><tbody>%s</tbody>"
+                      "</table>%s") % (cab, cuerpo, extra)
 
     def _li_version(self, n, v, mostrar_version=False):
         etiqueta = ""

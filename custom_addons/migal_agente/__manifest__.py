@@ -1,8 +1,8 @@
 {
     "name": "Agente MIGAL",
-    "version": "19.0.1.2.0",
+    "version": "19.0.2.0.0",
     "category": "Sales/Sales",
-    "summary": "Agente de atención comercial O2C integrado en Odoo: WhatsApp, cobertura preliminar y estado de cuenta",
+    "summary": "Orquestador multiagente de MIGAL: registro de agentes, contratos, consultas, eventos, chat y bitácora",
     "description": """
 Agente MIGAL (PC3)
 ==================
@@ -14,10 +14,13 @@ Estructura de agente:
   cotizaciones y clientes.
 * **Orquestador** (``migal.agente``): interpreta la solicitud, selecciona la
   herramienta, aplica guardarraíles y compone la respuesta.
+* **Registro de agentes** (ADR-007): descubre los módulos ``migal_agente_<codigo>``
+  instalados, media sus consultas y eventos según ``agent/catalogo.py``
+  (INT-02) y simula las consultas que su dueño aún no implementa.
 * **Herramientas** con contrato JSON Schema y permisos por rol:
   ``preparar_whatsapp_cotizacion``, ``registrar_envio_whatsapp``,
-  ``evaluar_cobertura_preliminar``, ``generar_estado_cuenta``,
-  ``buscar_cotizaciones`` y ``consultar_cotizacion``.
+  ``generar_estado_cuenta``, ``buscar_cotizaciones`` y ``consultar_cotizacion``
+  más las de cada agente instalado (la cobertura pasó a cadena de suministro).
 * **Cotizaciones por cliente y versiones**: «cotización de Luis» lista las
   cotizaciones abiertas que coinciden y pide elegir (cotización y versión).
   Una versión anterior sigue vigente hasta que vence su plazo.

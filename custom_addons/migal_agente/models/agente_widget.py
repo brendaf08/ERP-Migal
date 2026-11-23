@@ -369,7 +369,7 @@ class MigalAgenteWidget(models.AbstractModel):
             order = self.env["sale.order"].browse(res_id).exists()
             from ..agent import intent
             nombre, args = intent.parse(texto)
-            if order and "cotizacion" in contracts.TOOLS.get(nombre, {}).get("input_schema", {}).get("properties", {}) \
+            if order and "cotizacion" in (self._spec(nombre) or {}).get("input_schema", {}).get("properties", {}) \
                     and not args.get("cotizacion"):
                 texto = "%s %s" % (texto, order.name)
         html, log = self.procesar_mensaje(texto, canal="widget", session_id="widget-%s" % self.env.uid)
