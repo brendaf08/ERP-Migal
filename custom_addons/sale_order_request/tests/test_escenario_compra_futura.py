@@ -72,7 +72,10 @@ class TestEscenarioCompraFutura(TransactionCase):
         qty = 20.0
         product = self.product.with_company(self.company)
         self.assertLessEqual(product.free_qty, 5.0)
-        self.assertFalse(self.env["purchase.order"].search([("partner_id", "!=", False), ("state", "not in", ("cancel",))]))
+        # Sin compra registrada para este producto (la base puede tener otras compras, p. ej. datos [PRUEBA]).
+        self.assertFalse(self.env["purchase.order"].search([
+            ("partner_id", "!=", False), ("state", "not in", ("cancel",)),
+            ("order_line.product_id", "=", self.product.id)]))
 
         env_sales = self.env(user=self.user_sales)
         so = env_sales["sale.order"].create({
