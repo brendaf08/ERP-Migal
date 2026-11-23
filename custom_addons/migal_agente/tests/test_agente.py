@@ -20,6 +20,8 @@ class TestAgenteMigal(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.hoy = fields.Date.context_today(cls.env.user)
+        # Las pruebas nunca llaman a un servicio de IA real (aunque la base tenga una clave configurada).
+        cls.env["ir.config_parameter"].sudo().set_param("migal_agente.llm_enabled", "False")
         cls.ven = new_test_user(cls.env, login="ven_pc3", groups="sales_team.group_sale_salesman,stock.group_stock_user")
         cls.fco = new_test_user(cls.env, login="fco_pc3", groups="account.group_account_invoice,sales_team.group_sale_salesman")
         cls.ger = new_test_user(cls.env, login="ger_pc3", groups="sales_team.group_sale_manager,account.group_account_manager")
@@ -205,12 +207,12 @@ class TestAgenteMigal(TransactionCase):
             html, log = self._agente(self.ven).procesar_mensaje("cobertura %s" % order.name, canal="prueba")
         self.assertEqual(log.modo, "reglas")
         self.assertEqual(log.resultado, "ok")
-        self.assertIn("LLM no disponible", str(html))
+        self.assertNotIn("LLM", str(html), "La caída del servicio de IA no se muestra al usuario")
 
     def test_llm_no_puede_saltar_permisos_ni_contrato(self):
         self._activar_llm()
 
-        def llm_falso(texto, *, api_key, model, ejecutar_herramienta, history=None):
+        def llm_falso(texto, *, api_key, model, ejecutar_herramienta, history=None, proveedor=None):
             r1 = ejecutar_herramienta("generar_estado_cuenta", {"cliente": "PC3 Cliente Demo"})
             r2 = ejecutar_herramienta("confirmar_venta", {"cotizacion": "S00001"})
             return "Resumen", [("generar_estado_cuenta", {}, r1), ("confirmar_venta", {}, r2)]
@@ -236,7 +238,7 @@ class TestAgenteMigal(TransactionCase):
         order = self._cotizacion([(self.p_stock, 3), (self.p_pintura, 2)])
         agente = self._agente(self.ven)
         ctx = agente.widget_contexto("sale.order", order.id)
-        self.assertEqual([a["id"] for a in ctx["acciones"]], ["procesar_cotizacion", "qr", "cobertura"])
+        self.assertEqual([a["id"] for a in ctx["acciones"]][:3], ["procesar_cotizacion", "qr", "cobertura"])  # otros módulos pueden agregar más
         res = agente.widget_ejecutar("procesar_cotizacion", "sale.order", order.id, {"incluir_disponibilidad": True})
         self.assertTrue(res["ok"], res["final"])
         titulos = " | ".join(p["titulo"] for p in res["pasos"])
@@ -256,7 +258,8 @@ class TestAgenteMigal(TransactionCase):
         self.assertFalse(res["ok"])
         res = self._agente(self.fco).widget_ejecutar("estado_cuenta", "res.partner", self.cliente.id, {})
         self.assertTrue(res["ok"], res["final"])
-        self.assertIn("/report/pdf/migal_agente.report_estado_cuenta/", res["pdf_url"])
+        # migal_reportes reemplaza el PDF por su versión A4 cuando está instalado.
+        self.assertRegex(res["pdf_url"], r"/report/pdf/migal_(agente.report_estado_cuenta|reportes.report_estado_cuenta_a4)/")
 
     def test_widget_mensaje_usa_la_cotizacion_abierta(self):
         order = self._cotizacion([(self.p_stock, 1)])

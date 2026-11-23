@@ -40,9 +40,7 @@ class MigalAgenteToolCobertura(models.AbstractModel):
             if not ok:
                 bloqueos.append(detalle)
 
-        add("Revisión vigente", order == vigente,
-            "Es la revisión vigente." if order == vigente else
-            "%s fue reemplazada por %s; evalúe la revisión vigente." % (order.name, vigente.name))
+        add("Revisión vigente", *self._control_version(order, vigente))
         add("Cotización abierta", order.state in ("draft", "sent"),
             "Cotización enviada/en borrador, aún no aceptada." if order.state in ("draft", "sent") else
             "La cotización ya no está abierta (estado «%s»). La evaluación formal se registra en la "
@@ -87,7 +85,7 @@ class MigalAgenteToolCobertura(models.AbstractModel):
         for product, qty in requeridos.items():
             uom = product.uom_id
             item = {
-                "producto": product.display_name, "producto_id": product.id,
+                "producto": product.display_name, "producto_id": product.id, "nombre": product.name,
                 "categoria": product.categ_id.complete_name, "cantidad": qty, "uom": uom.name,
                 "fisico": 0.0, "comprometido": 0.0, "disponible": 0.0, "reposicion": 0.0, "faltante": 0.0,
                 "llegadas": "", "fecha_posible": "", "estado": "", "detalle": "",
@@ -174,21 +172,7 @@ class MigalAgenteToolCobertura(models.AbstractModel):
             estado = "cubierta"
             resumen = "El stock disponible en tienda cubre todos los productos de la cotización."
 
-        cliente = order.partner_id.name
-        if estado in ("cubierta", "cubierta_condicionada"):
-            mensaje_cliente = ("Hola %s, según nuestro stock y las reposiciones previstas podríamos atender su pedido "
-                               "completo para el %s. Se lo confirmamos al aceptar la cotización."
-                               % (cliente, fecha.strftime("%d/%m/%Y")))
-        elif fecha_atencion:
-            mensaje_cliente = ("Hola %s, para el %s no llegamos con todo el pedido; según nuestras reposiciones "
-                               "previstas podríamos atenderlo completo desde el %s (fecha estimada). Si lo necesita "
-                               "antes, lo consultamos con nuestro almacén."
-                               % (cliente, fecha.strftime("%d/%m/%Y"), fecha_atencion.strftime("%d/%m/%Y")))
-        elif lineas:
-            mensaje_cliente = ("Hola %s, la mayor parte de su pedido está disponible; algunos productos requieren "
-                               "confirmar su abastecimiento y le daremos la fecha al aceptar la cotización." % cliente)
-        else:
-            mensaje_cliente = ""
+        mensaje_cliente = self._mensaje_cliente(order, lineas, hoy)
 
         return self._resultado(
             True, estado, "Cobertura preliminar de %s" % order.name, resumen,
@@ -204,6 +188,62 @@ class MigalAgenteToolCobertura(models.AbstractModel):
             })
 
     # ------------------------------------------------------------------
+    UNIDADES_CORTAS = {"Unidades": "und", "Units": "und", "Unidad": "und", "Unit": "und"}
+
+    def _mensaje_cliente(self, order, lineas, hoy):
+        """Mensaje para el cliente, producto por producto: qué se entrega hoy, qué llega y desde cuándo, y qué
+        queda por confirmar. Editable por VEN; las fechas son estimadas (RN-015)."""
+        if not lineas:
+            return ""
+        partner = order.partner_id
+        nombre = (partner.name or "").split(" ")[0] if partner.company_type == "person" else partner.name
+
+        def cant(l):
+            return "%s %s" % ("{:,.2f}".format(l["cantidad"]).rstrip("0").rstrip("."),
+                              self.UNIDADES_CORTAS.get(l["uom"], l["uom"].lower()))
+
+        def fmt(iso):
+            return fields.Date.to_date(iso).strftime("%d/%m/%Y")
+
+        inmediato, por_fecha, por_confirmar = [], {}, []
+        for l in lineas:
+            fp = l.get("fecha_posible")
+            if l["estado"] in ("stock", "no_inventariable") or (fp and fields.Date.to_date(fp) <= hoy):
+                inmediato.append(l)
+            elif fp:
+                por_fecha.setdefault(fp, []).append(l)
+            else:
+                por_confirmar.append(l)
+
+        partes = ["Hola %s, le comparto la disponibilidad de su cotización %s:" % (nombre, order.name)]
+        if inmediato:
+            partes += ["", "✅ Disponible para entrega inmediata:"]
+            partes += ["• %s – %s" % (l["nombre"], cant(l)) for l in inmediato]
+        for fp in sorted(por_fecha):
+            partes += ["", "🕒 Disponible desde el %s:" % fmt(fp)]
+            for l in por_fecha[fp]:
+                parcial = (" (hoy tenemos %s)" % "{:g}".format(l["disponible"])) if l.get("disponible") else ""
+                partes.append("• %s – %s%s" % (l["nombre"], cant(l), parcial))
+        if por_confirmar:
+            partes += ["", "⏳ Por confirmar su abastecimiento con nuestro almacén:"]
+            partes += ["• %s – %s" % (l["nombre"], cant(l)) for l in por_confirmar]
+
+        partes.append("")
+        ultima = max(por_fecha) if por_fecha else None
+        if not por_fecha and not por_confirmar:
+            partes.append("Podemos atender todo su pedido de inmediato.")
+        elif inmediato and not por_confirmar:
+            partes.append("Si le conviene, le entregamos hoy lo disponible y el resto desde el %s, o todo junto "
+                          "desde esa fecha." % fmt(ultima))
+        elif not por_confirmar:
+            partes.append("Podríamos atender su pedido completo desde el %s." % fmt(ultima))
+        else:
+            partes.append("Le confirmamos la fecha de lo pendiente apenas tengamos respuesta de abastecimiento%s."
+                          % (", y podemos adelantarle lo disponible" if inmediato else ""))
+        partes.append("Las fechas son estimadas y se confirman al aceptar la cotización.")
+        partes.append(order.company_id.name or "")
+        return "\n".join(partes).strip()
+
     def _fin_dia_utc(self, fecha):
         """Fin del día local (zona del usuario) en UTC, para comparar con las fechas de los movimientos."""
         tz = pytz.timezone(self.env.user.tz or self.env.context.get("tz") or "America/Lima")

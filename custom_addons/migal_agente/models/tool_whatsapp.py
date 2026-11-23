@@ -43,9 +43,7 @@ class MigalAgenteToolWhatsapp(models.AbstractModel):
                 bloqueos.append(detalle)
 
         add("Cotización localizada", True, order.name)
-        add("Revisión vigente", order == vigente,
-            "Es la revisión vigente." if order == vigente else
-            "%s fue reemplazada; la revisión vigente es %s. Envíe esa versión." % (order.name, vigente.name))
+        add("Revisión vigente", *self._control_version(order, vigente))
         add("Estado de la cotización", order.state in ("draft", "sent"),
             "Cotización en estado %s." % dict(order._fields["state"]._description_selection(self.env)).get(order.state)
             if order.state in ("draft", "sent") else

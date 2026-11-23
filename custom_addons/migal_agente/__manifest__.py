@@ -1,6 +1,6 @@
 {
     "name": "Agente MIGAL",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "category": "Sales/Sales",
     "summary": "Agente de atención comercial O2C integrado en Odoo: WhatsApp, cobertura preliminar y estado de cuenta",
     "description": """
@@ -16,7 +16,11 @@ Estructura de agente:
   herramienta, aplica guardarraíles y compone la respuesta.
 * **Herramientas** con contrato JSON Schema y permisos por rol:
   ``preparar_whatsapp_cotizacion``, ``registrar_envio_whatsapp``,
-  ``evaluar_cobertura_preliminar`` y ``generar_estado_cuenta``.
+  ``evaluar_cobertura_preliminar``, ``generar_estado_cuenta``,
+  ``buscar_cotizaciones`` y ``consultar_cotizacion``.
+* **Cotizaciones por cliente y versiones**: «cotización de Luis» lista las
+  cotizaciones abiertas que coinciden y pide elegir (cotización y versión).
+  Una versión anterior sigue vigente hasta que vence su plazo.
 * **Guardarraíles deterministas**: vetan descuentos, confirmaciones,
   reservas, crédito y facturación (RN-004, RN-006, RN-015) y escalan a GER.
 * **Bitácora** (``migal.agente.log``) con el contrato de ``audit_log.jsonl``.
@@ -42,6 +46,7 @@ registro de envíos de WhatsApp confirmados por VEN.
     "data": [
         "security/ir.model.access.csv",
         "data/agente_data.xml",
+        "data/agente_cron.xml",
         "report/estado_cuenta_report.xml",
         "wizard/whatsapp_wizard_views.xml",
         "wizard/cobertura_wizard_views.xml",

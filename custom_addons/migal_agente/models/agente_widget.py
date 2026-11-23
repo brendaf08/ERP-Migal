@@ -86,6 +86,26 @@ class MigalAgenteWidget(models.AbstractModel):
         return ctx
 
     # ------------------------------------------------------------------
+    # Acciones que abren otra pantalla (los módulos que dependen del agente las agregan)
+    # ------------------------------------------------------------------
+    @api.model
+    def widget_abrir(self, accion, res_model=False, res_id=False, params=None):
+        record = self.env[res_model].browse(res_id).exists() if res_model and res_id else None
+        if not record:
+            return False
+        record.check_access("read")
+        resultado = self._widget_abrir(accion, record, params=params or {})
+        if resultado:
+            # Igual que los botones de Odoo (call_button): el cliente web necesita «views».
+            from odoo.addons.web.controllers.utils import clean_action
+            resultado = clean_action(dict(resultado), self.env)
+        return resultado
+
+    def _widget_abrir(self, accion, record, params=None):
+        """Devuelve la acción de ventana para ``accion`` o False. Los módulos la extienden."""
+        return False
+
+    # ------------------------------------------------------------------
     # Ejecución de acciones: devuelve pasos para animar
     # ------------------------------------------------------------------
     @api.model

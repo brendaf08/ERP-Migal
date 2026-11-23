@@ -29,7 +29,7 @@
                         <div class="fw-bold">Agente MIGAL</div>
                         <small class="opacity-75">
                             <t t-if="state.pensando">pensando…</t>
-                            <t t-elif="state.ctx">modo <t t-esc="state.ctx.modo"/></t>
+                            <t t-elif="state.ctx">en línea</t>
                         </small>
                     </div>
                     <button class="btn btn-link text-white p-1" title="Cerrar" t-on-click="alternar">
@@ -129,9 +129,13 @@
                             </button>
                             <a class="btn btn-link btn-sm" t-att-href="res.qr.url" target="_blank" rel="noopener">Ver versión digital</a>
                         </div>
+                        <button t-if="res.documento" class="btn btn-outline-primary btn-sm mb-2 w-100"
+                                t-on-click="() => this.abrirDocumento(res.documento)">
+                            <i t-attf-class="fa {{res.documento.icon}} me-1"/><t t-esc="res.documento.label"/>
+                        </button>
                         <div t-if="res.sugerencia" class="o_migal_sugerencia">
                             <label class="small fw-bold">💬 Mensaje sugerido para el cliente (editable, no es un compromiso)</label>
-                            <textarea class="form-control form-control-sm o_migal_mensaje" rows="4" t-model="state.sugerencia"/>
+                            <textarea class="form-control form-control-sm o_migal_mensaje" rows="9" t-model="state.sugerencia"/>
                             <div class="o_migal_botones">
                                 <button class="btn btn-outline-secondary btn-sm" t-on-click="copiarSugerencia">
                                     <i t-attf-class="fa {{state.copiado ? 'fa-check' : 'fa-copy'}} me-1"/><t t-if="state.copiado">Copiado</t><t t-else="">Copiar</t>

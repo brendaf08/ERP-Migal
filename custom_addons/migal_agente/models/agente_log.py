@@ -21,7 +21,7 @@ class MigalAgenteLog(models.Model):
          ("prueba", "Prueba automatizada")],
         default="chat", readonly=True,
     )
-    modo = fields.Selection([("reglas", "Reglas deterministas"), ("llm", "LLM + reglas")],
+    modo = fields.Selection([("reglas", "Estándar"), ("llm", "Con IA")],
                             default="reglas", readonly=True)
     input_prompt = fields.Text(string="Entrada", readonly=True)
     tools_invoked = fields.Text(string="Herramientas invocadas (JSON)", readonly=True)
