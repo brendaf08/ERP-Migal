@@ -33,6 +33,7 @@ Una **solicitud de orden de venta condicionada** vuelve a CRM conforme a INT-01 
 | RN-019 | La posible duplicidad de contactos se revisa antes de crear otro registro; no se presupone un bloqueo automático por nombre o teléfono. | ADR-006 | VEN | Control propuesto |
 | RN-020 | El tipo de comprobante se consulta cuando sea relevante para la operación; el momento y los datos exigibles se definirán con MIGAL. | Alcance, PEN-003 | VEN/FCO | Propuesta pendiente de validación |
 | RN-021 | Un reclamo inicial conserva la referencia a la venta y sus evidencias; el proceso completo de devoluciones se documentará por separado. | EV-047, [alcance](../arquitectura/alcance.md) | VEN/GER | Propuesta funcional |
+| RN-022 | Un envío de mensajes a varios clientes (campaña, promoción o recordatorio masivo) requiere la aprobación previa de GER; los agentes solo preparan el borrador y la lista. | [Seguridad de agentes](../arquitectura/seguridad/seguridad-agentes.md), EV-057 | GER/VEN | Propuesta |
 
 ## 3. Controles y evidencias
 
