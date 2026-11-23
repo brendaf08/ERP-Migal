@@ -32,6 +32,7 @@ La situación de los eventos se basa en la información empresarial disponible y
 | EV-006 | Cotización aceptada                 | El cliente manifiesta conformidad con una propuesta y sus condiciones.                                                             | Actual    |
 | EV-007 | Cotización rechazada                | El cliente comunica que no acepta la propuesta presentada.                                                                         | Actual    |
 | EV-008 | Cotización vencida                  | Finaliza el período de vigencia establecido para una propuesta sin que se haya acordado su continuidad o renovación.               | Propuesto |
+| EV-057 | Campaña comercial aprobada | GER aprueba una campaña o promoción preparada para un segmento de clientes, con sus productos y vigencia. | Propuesto |
 
 ### 2.2. Evaluación y autorización de pedidos de venta
 
@@ -99,6 +100,7 @@ La emisión de una guía de remisión es diferente de la emisión de un comproba
 | EV-038 | Comprobante de venta emitido    | Se emite el comprobante correspondiente a una operación comercial.                            | Mixto     |
 | EV-039 | Comprobante corregido o anulado | Se formaliza la corrección o anulación de un comprobante mediante el procedimiento aplicable. | Mixto     |
 | EV-040 | Comprobante de compra recibido  | La empresa recibe el documento que sustenta una adquisición realizada al proveedor.           | Actual    |
+| EV-058 | Inconsistencia contable detectada | Una revisión identifica una diferencia entre comprobantes, recepciones, pagos o saldos que debe regularizarse. | Propuesto |
 
 ### 2.8. Pagos, créditos y cobranzas
 

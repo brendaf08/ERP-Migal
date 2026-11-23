@@ -1,13 +1,13 @@
 {
     "name": "MIGAL | Reportes corporativos A4 y 58 mm",
-    "version": "19.0.1.25.0",
+    "version": "19.0.1.26.0",
     "category": "Reporting",
     "summary": "Plantillas coordinadas de impresión A4 y ticket térmico 58 mm para MIGAL",
     "author": "ERP MIGAL",
     "website": "https://github.com/brendaf08/ERP-Migal",
     "license": "LGPL-3",
     "depends": [
-        "migal_agente", "mail", "account", "sale_management", "sale_stock", "stock",
+        "migal_agente", "migal_agente_suministro", "mail", "account", "sale_management", "sale_stock", "stock",
         "sale_order_request", "base_accounting_kit", "partner_relation_multi", "contacts", "l10n_pe", "point_of_sale",
     ],
     "data": [

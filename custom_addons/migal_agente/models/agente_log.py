@@ -16,8 +16,11 @@ class MigalAgenteLog(models.Model):
     session_id = fields.Char(required=True, readonly=True, index=True)
     user_id = fields.Many2one("res.users", string="Usuario", default=lambda s: s.env.user, readonly=True)
     roles = fields.Char(string="Roles del usuario", readonly=True)
+    agente = fields.Char(string="Agente", readonly=True, index=True,
+                         help="Agente que actuó (código del catálogo de contratos).")
     canal = fields.Selection(
         [("chat", "Chat (Conversaciones)"), ("widget", "Asistente flotante"), ("boton", "Botón / asistente"),
+         ("consulta", "Consulta entre agentes"), ("evento", "Evento entre agentes"),
          ("prueba", "Prueba automatizada")],
         default="chat", readonly=True,
     )

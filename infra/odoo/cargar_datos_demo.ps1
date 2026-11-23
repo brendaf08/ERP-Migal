@@ -1,10 +1,11 @@
 ﻿# Carga los datos de demostracion opcionales [SIM] sobre la base restaurada (se puede repetir):
 #  - Ventas + Punto de Venta para el estado de cuenta (cliente "PRUEBA - Inversiones del Norte")
 #  - Stock, reposiciones y la cotizacion "[SIM-COB] Obra Pinedo" para la cobertura preliminar
+#  - Datos [PRUEBA] para los agentes: proveedores, compras, facturas de proveedor, CRM y cobranzas
 # Uso:  .\cargar_datos_demo.ps1
 $ErrorActionPreference = 'Continue'
 Set-Location $PSScriptRoot
-foreach ($nombre in @('datos_demo_estado_cuenta', 'datos_demo_cobertura')) {
+foreach ($nombre in @('datos_demo_estado_cuenta', 'datos_demo_cobertura', 'datos_prueba_agentes')) {
     Write-Host "== $nombre"
     docker compose cp "..\..\herramientas\$nombre.py" "odoo:/tmp/$nombre.py" 2>$null
     if ($LASTEXITCODE -ne 0) { Write-Error "No se pudo copiar $nombre.py (esta levantado el contenedor odoo?)."; exit 1 }

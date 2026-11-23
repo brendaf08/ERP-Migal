@@ -13,9 +13,13 @@ Correspondencia rol MIGAL -> grupo Odoo (Odoo 19 Community):
 """
 
 ROLE_GROUPS = {
+    # Roles oficiales: arquitectura/seguridad/modelo-autorizacion.md
     "VEN": "sales_team.group_sale_salesman",
+    "ALM": "stock.group_stock_user",
+    "CMP": "purchase.group_purchase_user",
     "FCO": "account.group_account_invoice",
     "GER": "sales_team.group_sale_manager",
+    "SIS": "base.group_system",
 }
 
 ORDER_REF = {
@@ -129,25 +133,6 @@ TOOLS = {
         "roles": ["VEN", "GER"],
         "escritura": "Token de acceso del portal de la cotización (si aún no existe).",
     },
-    "evaluar_cobertura_preliminar": {
-        "description": (
-            "Revisa por producto y cantidad si una cotización vigente puede cubrirse con el stock "
-            "disponible en tienda y las reposiciones previstas hasta la fecha solicitada. Aplica la "
-            "regla habitual para cementos, agregados, fierros y ladrillos. No reserva stock, no crea "
-            "SOV ni compras y no garantiza entregas."
-        ),
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "cotizacion": ORDER_REF,
-                "fecha_requerida": DATE,
-            },
-            "required": ["cotizacion"],
-            "additionalProperties": False,
-        },
-        "roles": ["VEN", "GER"],
-        "escritura": "Ninguna (solo bitácora).",
-    },
     "generar_estado_cuenta": {
         "description": (
             "Genera el estado de cuenta de un cliente para un período a partir de la contabilidad "
@@ -176,13 +161,17 @@ class ToolInputError(ValueError):
     """Los argumentos no cumplen el contrato de la herramienta."""
 
 
-def validate_args(tool_name, args):
-    """Validación estricta y sin dependencias del subconjunto de JSON Schema usado."""
+def validate_args(tool_name, args, spec=None):
+    """Validación estricta y sin dependencias del subconjunto de JSON Schema usado.
+
+    ``spec``: contrato de la herramienta (las de los agentes llegan por el registro del orquestador).
+    """
     import re
 
-    if tool_name not in TOOLS:
+    spec = spec or TOOLS.get(tool_name)
+    if not spec:
         raise ToolInputError("Herramienta no registrada: %s" % tool_name)
-    schema = TOOLS[tool_name]["input_schema"]
+    schema = spec["input_schema"]
     if not isinstance(args, dict):
         raise ToolInputError("Los argumentos deben ser un objeto.")
     props = schema["properties"]
@@ -197,7 +186,16 @@ def validate_args(tool_name, args):
         if value in (None, ""):
             continue
         spec = props[key]
-        if spec["type"] == "string":
+        if spec["type"] in ("integer", "number"):
+            try:
+                value = int(value) if spec["type"] == "integer" else float(value)
+            except (TypeError, ValueError):
+                raise ToolInputError("«%s» debe ser un número." % key)
+            if "minimum" in spec and value < spec["minimum"] or "maximum" in spec and value > spec["maximum"]:
+                raise ToolInputError("Valor fuera de rango para «%s»." % key)
+        elif spec["type"] == "boolean":
+            value = value in (True, "true", "True", "1", 1, "si", "sí")
+        elif spec["type"] == "string":
             if not isinstance(value, str):
                 raise ToolInputError("«%s» debe ser texto." % key)
             value = value.strip()
@@ -209,8 +207,13 @@ def validate_args(tool_name, args):
     return clean
 
 
-def llm_tool_specs():
-    """Definición de herramientas en el formato de tool use de la API de mensajes."""
+def llm_tool_specs(herramientas=None):
+    """Definición de herramientas en el formato de tool use de la API de mensajes.
+
+    ``herramientas``: lista ya filtrada por el orquestador (registro + roles del usuario).
+    """
+    if herramientas is not None:
+        return herramientas
     return [
         {"name": name, "description": spec["description"], "input_schema": spec["input_schema"]}
         for name, spec in TOOLS.items()

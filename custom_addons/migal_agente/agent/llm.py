@@ -108,14 +108,14 @@ def _gemini_post_con_respaldo(api_key, modelos, cuerpo, estado):
     raise LLMUnavailable("Sin modelos de Gemini configurados.")
 
 
-def run_gemini(text, *, api_key, model, ejecutar_herramienta, history=None):
+def run_gemini(text, *, api_key, model, ejecutar_herramienta, history=None, herramientas=None):
     """Mismo contrato que ``run`` usando la API de Gemini (function calling)."""
     if not api_key:
         raise LLMUnavailable("Falta la clave de Gemini.")
     modelos = [m.strip() for m in (model or GEMINI_MODELO_POR_DEFECTO).split(",") if m.strip()]
     estado = {}
     declaraciones = [{"name": s["name"], "description": s["description"],
-                      "parameters": _esquema_gemini(s["input_schema"])} for s in contracts.llm_tool_specs()]
+                      "parameters": _esquema_gemini(s["input_schema"])} for s in contracts.llm_tool_specs(herramientas)]
     contents = list(history or []) + [{"role": "user", "parts": [{"text": text}]}]
     llamadas = []
     for _round in range(MAX_TOOL_ROUNDS + 1):
@@ -148,7 +148,7 @@ def run_gemini(text, *, api_key, model, ejecutar_herramienta, history=None):
     return "", llamadas
 
 
-def run(text, *, api_key, model, ejecutar_herramienta, history=None, proveedor="anthropic"):
+def run(text, *, api_key, model, ejecutar_herramienta, history=None, proveedor="anthropic", herramientas=None):
     """Ejecuta un turno con tool use.
 
     :param ejecutar_herramienta: callable(nombre, args) -> dict (resultado ya protegido).
@@ -157,7 +157,7 @@ def run(text, *, api_key, model, ejecutar_herramienta, history=None, proveedor="
     """
     if proveedor == "gemini":
         return run_gemini(text, api_key=api_key, model=model, ejecutar_herramienta=ejecutar_herramienta,
-                          history=history)
+                          history=history, herramientas=herramientas)
     try:
         import anthropic
     except ImportError as exc:  # pragma: no cover - depende del entorno
@@ -166,7 +166,7 @@ def run(text, *, api_key, model, ejecutar_herramienta, history=None, proveedor="
         raise LLMUnavailable("Falta la API key del LLM.")
 
     client = anthropic.Anthropic(api_key=api_key, timeout=45.0, max_retries=1)
-    tools = [dict(spec, strict=True) for spec in contracts.llm_tool_specs()]
+    tools = [dict(spec, strict=True) for spec in contracts.llm_tool_specs(herramientas)]
     messages = list(history or []) + [{"role": "user", "content": text}]
     llamadas = []
 

@@ -27,6 +27,14 @@ VETOS = [
      "El registro y la conciliación de pagos los ejecuta FCO; el agente solo informa.", "FCO"),
     ("RN-010", r"\b(anula(r)?|cancela(r)?)\b.{0,30}\b(venta|orden|pedido|factura)",
      "La anulación de operaciones la decide Gerencia.", "GER"),
+    ("RN-012", r"\b(confirm\w*|aprueb\w*|aprob\w*|emit\w*|envia\w*)\b.{0,30}\b(orden(es)? de compra|compra al proveedor|pedido al proveedor)",
+     "Preparar una compra es de CMP; confirmarla con el proveedor la autoriza Gerencia.", "GER"),
+    ("RN-014", r"\b(paga(r|le|les)?|transfier\w*|deposit\w*)\b.{0,30}\b(proveedor(es)?|factura(s)?|obligacion(es)?)",
+     "Los pagos a proveedores los ejecuta FCO y los supervisa Gerencia; el agente solo propone.", "FCO"),
+    ("RN-017", r"\b(ajusta(r)?|corrige|corregir|modifica(r)?|cuadra(r)?)\b.{0,25}\b(stock|inventario|existencias)",
+     "Los ajustes de inventario los registra ALM y los extraordinarios los autoriza Gerencia.", "GER"),
+    ("RN-022", r"\b(envia\w*|manda\w*|difund\w*)\b.{0,40}\b(a todos( los clientes)?|masiv\w*|difusion|campana a)",
+     "Los envíos masivos o campañas requieren la aprobación de Gerencia; el agente solo los redacta.", "GER"),
 ]
 
 
