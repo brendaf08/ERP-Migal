@@ -2124,7 +2124,9 @@ class TierTierValidation(CommonTierValidation):
         )
 
 
-@tagged("at_install")
+# post_install: con at_install el registro aún no tiene los campos de módulos posteriores
+# (compras, contabilidad) cuyas columnas obligatorias ya existen en la base de MIGAL.
+@tagged("post_install", "-at_install")
 class TierTierValidationView(CommonTierValidation):
     def test_view_manual(self):
         view = self.env[self.test_record._name].get_view(False, "form")
