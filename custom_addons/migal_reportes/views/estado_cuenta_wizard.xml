@@ -6,10 +6,8 @@
         <field name="inherit_id" ref="migal_agente.view_migal_estado_cuenta_wizard_form"/>
         <field name="arch" type="xml">
             <xpath expr="//footer/button[@name='action_imprimir']" position="replace">
-                <button name="action_imprimir_migal_a4" type="object" string="Descargar PDF A4"
-                        class="btn-secondary" invisible="not generado"/>
-                <button name="action_imprimir_migal_58" type="object" string="Descargar Ticket 58 mm"
-                        class="btn-secondary" invisible="not generado"/>
+                <button name="action_migal_vista_previa" type="object" string="Ver e imprimir"
+                        class="btn-secondary" icon="fa-print" invisible="not generado"/>
             </xpath>
         </field>
     </record>

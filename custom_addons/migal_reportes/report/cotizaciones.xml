@@ -46,7 +46,7 @@
                                 <td><span class="migal-caps">Documento del cliente</span><br/>
                                     <strong t-out="doc.partner_id.vat or '-'"/></td>
                                 <td><span class="migal-caps">Vigencia</span><br/>
-                                    <strong t-out="str(doc.validity_date) if doc.validity_date else 'Consultar'"/></td>
+                                    <strong t-if="doc.validity_date" t-field="doc.validity_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/><strong t-else="">Consultar</strong></td>
                             </tr>
                             <tr t-if="doc.client_order_ref">
                                 <td colspan="2"><span class="migal-caps">Referencia del cliente</span><br/>
@@ -104,11 +104,11 @@
                     <t t-call="migal_reportes.migal_ticket_cabecera"/>
                     <div class="title center" t-out="'ORDEN DE VENTA' if doc.state in ('sale','done') else 'COTIZACIÓN'"/>
                     <div class="center"><strong t-out="doc.name"/></div>
-                    <div class="center minor">Fecha: <t t-field="doc.date_order" t-options="{&quot;widget&quot;:&quot;date&quot;}"/></div>
+                    <div class="center minor">Fecha: <span t-field="doc.date_order" t-options="{&quot;widget&quot;:&quot;date&quot;}"/></div>
                     <div class="rule"/>
                     <div><strong>Cliente:</strong> <t t-out="doc.partner_id.display_name"/></div>
                     <div t-if="doc.partner_id.vat">RUC/DNI: <t t-out="doc.partner_id.vat"/></div>
-                    <div t-if="doc.validity_date">Válida hasta: <t t-out="doc.validity_date"/></div>
+                    <div t-if="doc.validity_date">Válida hasta: <span t-field="doc.validity_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/></div>
                     <div class="rule"/>
                     <t t-foreach="doc.order_line" t-as="line">
                         <div class="entry" t-if="not line.display_type">

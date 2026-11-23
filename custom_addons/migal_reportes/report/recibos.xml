@@ -41,7 +41,7 @@
                                 <td><span class="migal-caps">Diario</span><br/><strong t-out="doc.journal_id.display_name or '-'"/></td></tr>
                             <tr><td><span class="migal-caps">Operación</span><br/>
                                     <strong t-out="'Recibido' if doc.payment_type == 'inbound' else 'Enviado'"/></td>
-                                <td><span class="migal-caps">Estado</span><br/><strong t-out="doc.state"/></td></tr>
+                                <td><span class="migal-caps">Estado</span><br/><strong t-field="doc.state"/></td></tr>
                         </table>
                     </div>
                     <table class="migal-summary">
@@ -71,7 +71,7 @@
                     <div>Cliente: <t t-out="doc.partner_id.display_name or '-'"/></div>
                     <div t-if="referencia">Concepto: <t t-out="referencia"/></div>
                     <div>Diario: <t t-out="doc.journal_id.display_name or '-'"/></div>
-                    <div>Estado: <t t-out="doc.state"/></div>
+                    <div>Estado: <span t-field="doc.state"/></div>
                     <div class="rule"/>
                     <div class="entry-line total"><span class="entry-left">IMPORTE</span>
                         <span class="entry-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount)"/></span></div>

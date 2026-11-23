@@ -180,7 +180,9 @@ class MigalReportesImprimirWizard(models.TransientModel):
             wizard.action_generar()  # Mantiene permisos, bitácora y cálculo del agente.
             if not wizard.generado:
                 raise UserError(_("No se pudo generar el estado de cuenta. Verifica los permisos o datos del cliente."))
-            return wizard.action_imprimir_migal_a4() if self.formato == "a4" else wizard.action_imprimir_migal_58()
+            return self.env["migal.reportes.vista.previa"].abrir(
+                wizard, "action_estado_cuenta_a4", "action_estado_cuenta_58",
+                titulo=_("Estado de cuenta · %s") % self.partner_id.display_name, formato=self.formato)
         field = {"cotizacion":"sale_order_id", "comprobante":"account_move_id", "entrega":"picking_id", "recibo":"payment_id"}[codigo]
         record = self[field].exists()
         if not record:
@@ -192,5 +194,5 @@ class MigalReportesImprimirWizard(models.TransientModel):
             "entrega": ("action_entrega_a4", "action_entrega_58"),
             "recibo": ("action_recibo_a4", "action_recibo_58"),
         }
-        xmlid = xmlids[codigo][0 if self.formato == "a4" else 1]
-        return self.env.ref("migal_reportes.%s" % xmlid).report_action(record)
+        a4, ticket = xmlids[codigo]
+        return self.env["migal.reportes.vista.previa"].abrir(record, a4, ticket, formato=self.formato)

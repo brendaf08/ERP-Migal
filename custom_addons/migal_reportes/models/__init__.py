@@ -4,7 +4,11 @@ from . import report_models
 from . import configuracion
 from . import catalogo
 from . import impresion_rapida
+from . import vista_previa
+from . import ticket_alto
+from . import diagnostico
 from . import botones_impresion
 from . import solicitudes_venta
 from . import cobros_venta
 from . import contactos
+from . import logo_empresa

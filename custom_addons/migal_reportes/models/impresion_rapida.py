@@ -3,6 +3,10 @@ from odoo import fields, models, _
 from odoo.exceptions import UserError
 
 
+def _vista_previa(registro, a4, ticket, titulo=None):
+    return registro.env["migal.reportes.vista.previa"].abrir(registro, a4, ticket, titulo=titulo)
+
+
 def _imprimir(registro, a4, ticket, formato):
     registro.ensure_one()
     registro.check_access("read")
@@ -15,19 +19,8 @@ class MigalVentaReportes(models.Model):
 
     def action_migal_imprimir(self):
         self.ensure_one()
-        self.check_access("read")
-        return {
-            "type": "ir.actions.act_window",
-            "name": _("Imprimir"),
-            "res_model": "migal.reportes.imprimir.wizard",
-            "views": [(self.env.ref("migal_reportes.view_migal_venta_formatos").id, "form")],
-            "target": "new",
-            "context": {
-                **self.env.context,
-                "default_documento_id": self.env.ref("migal_reportes.catalogo_cotizacion").id,
-                "default_sale_order_id": self.id,
-            },
-        }
+        titulo = (_("Cotización %s") if self.state in ("draft", "sent") else _("Orden %s")) % self.name
+        return _vista_previa(self, "action_cotizacion_a4", "action_cotizacion_58", titulo)
 
     def action_migal_descargar_a4(self):
         return _imprimir(self, "action_cotizacion_a4", "action_cotizacion_58", "a4")
@@ -47,6 +40,12 @@ class MigalFacturaReportes(models.Model):
             raise UserError(_("Primero contabiliza el documento. Este reporte es una vista comercial, no el CPE oficial."))
         return _imprimir(self, "action_comprobante_a4", "action_comprobante_58", formato)
 
+    def action_migal_vista_previa(self):
+        self.ensure_one()
+        if self.move_type not in ("out_invoice", "out_refund", "out_receipt") or self.state != "posted":
+            return self._migal_reportar("a4")  # muestra la validación correspondiente
+        return _vista_previa(self, "action_comprobante_a4", "action_comprobante_58")
+
     def action_migal_descargar_a4(self):
         return self._migal_reportar("a4")
 
@@ -57,6 +56,9 @@ class MigalFacturaReportes(models.Model):
 class MigalEntregaReportes(models.Model):
     _inherit = "stock.picking"
 
+    def action_migal_vista_previa(self):
+        return _vista_previa(self, "action_entrega_a4", "action_entrega_58")
+
     def action_migal_descargar_a4(self):
         return _imprimir(self, "action_entrega_a4", "action_entrega_58", "a4")
 
@@ -66,6 +68,9 @@ class MigalEntregaReportes(models.Model):
 
 class MigalPagoReportes(models.Model):
     _inherit = "account.payment"
+
+    def action_migal_vista_previa(self):
+        return _vista_previa(self, "action_recibo_a4", "action_recibo_58")
 
     def action_migal_descargar_a4(self):
         return _imprimir(self, "action_recibo_a4", "action_recibo_58", "a4")
@@ -90,9 +95,14 @@ class MigalClienteReportes(models.Model):
         wiz.action_generar()  # Reutiliza permisos y bitácora del Agente MIGAL.
         if not wiz.generado:
             raise UserError(_("El estado de cuenta no pudo generarse; revisa el cliente o tus permisos."))
+        if formato == "vista":
+            return wiz.action_migal_vista_previa()
         if formato == "a4":
             return wiz.action_imprimir_migal_a4()
         return wiz.action_imprimir_migal_58()
+
+    def action_migal_estado_vista(self):
+        return self._migal_estado_rapido("vista")
 
     def action_migal_estado_a4(self):
         return self._migal_estado_rapido("a4")

@@ -1,6 +1,6 @@
 {
     "name": "MIGAL | Reportes corporativos A4 y 58 mm",
-    "version": "19.0.1.23.0",
+    "version": "19.0.1.25.0",
     "category": "Reporting",
     "summary": "Plantillas coordinadas de impresión A4 y ticket térmico 58 mm para MIGAL",
     "author": "ERP MIGAL",
@@ -13,6 +13,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/catalogo.xml",
+        "data/logo_empresa.xml",
         "report/paperformats.xml",
         "report/layouts.xml",
         "report/estado_cuenta.xml",
@@ -20,8 +21,10 @@
         "report/comprobantes.xml",
         "report/entregas.xml",
         "report/recibos.xml",
+        "report/diagnostico.xml",
         "views/estado_cuenta_wizard.xml",
         "views/impresion_rapida.xml",
+        "views/vista_previa.xml",
         "views/contactos.xml",
         "views/solicitudes_venta.xml",
         "views/cobros_venta.xml",

@@ -48,7 +48,7 @@
                                 <td><span class="migal-caps">Documento del cliente</span><br/>
                                     <strong t-out="doc.partner_id.vat or '-'"/></td>
                                 <td><span class="migal-caps">Vencimiento</span><br/>
-                                    <strong t-out="doc.invoice_date_due or '-'"/></td>
+                                    <strong t-if="doc.invoice_date_due" t-field="doc.invoice_date_due"/><strong t-else="">-</strong></td>
                             </tr>
                             <tr t-if="doc.invoice_origin or doc.ref">
                                 <td colspan="2"><span class="migal-caps">Referencia</span><br/>
