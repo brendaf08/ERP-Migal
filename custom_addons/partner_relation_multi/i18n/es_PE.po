@@ -14,22 +14,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. module: partner_relation_multi
-#: model:res.partner,field_description:partner_relation_multi.field_res_partner__related_contact_ids
-msgid "Contactos Asociados"
-msgstr "Contactos Asociados"
-
-#. module: partner_relation_multi
-#: model:res.partner,field_description:partner_relation_multi.field_res_partner__related_contact_ids
-msgid ""
-"Contactos o empresas asociados a este contacto. La relación es simétrica: se "
-"ve desde las dos fichas y funciona tanto para personas como para empresas. "
-"Es independiente de la empresa matriz (parent_id)."
-msgstr ""
-"Contactos o empresas asociados a este contacto. La relación es simétrica: se "
-"ve desde las dos fichas y funciona tanto para personas como para empresas. "
-"Es independiente de la empresa matriz (parent_id)."
-
-#. module: partner_relation_multi
 #: code:addons/partner_relation_multi/models/partner_relation_multi.py:0
 msgid "Un contacto no puede estar asociado a sí mismo."
 msgstr "Un contacto no puede estar asociado a sí mismo."

@@ -6,6 +6,8 @@ from . import tool_base
 from . import tool_whatsapp
 from . import tool_cobertura
 from . import tool_estado_cuenta
+from . import tool_cotizacion
+from . import agente_seleccion
 from . import migal_agente
 from . import agente_widget
 from . import discuss_channel

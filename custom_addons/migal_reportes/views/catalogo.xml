@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_migal_reportes_catalogo_list" model="ir.ui.view">
+        <field name="name">migal.reportes.catalogo.list</field>
+        <field name="model">migal.reportes.catalogo</field>
+        <field name="arch" type="xml">
+            <list string="Plantillas de documentos" create="false" delete="false" edit="false" default_order="secuencia">
+                <field name="nombre"/>
+                <field name="area"/>
+                <field name="descripcion"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_migal_reportes_catalogo_form" model="ir.ui.view">
+        <field name="name">migal.reportes.catalogo.form</field>
+        <field name="model">migal.reportes.catalogo</field>
+        <field name="arch" type="xml">
+            <form string="Plantilla corporativa MIGAL" create="false" delete="false" edit="false">
+                <header>
+                    <button name="action_imprimir_con_datos" type="object" string="Imprimir con datos de Odoo" class="btn-primary"/>
+                    <button name="action_configurar" type="object" string="Configurar diseño" groups="base.group_system" class="btn-secondary"/>
+                    <button name="action_empresa" type="object" string="Datos de la empresa" groups="base.group_system" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <field name="codigo" invisible="1"/>
+                    <field name="secuencia" invisible="1"/>
+                    <div class="o_migal_encabezado">
+                        <div class="oe_title"><h1><field name="nombre" readonly="1"/></h1></div>
+                        <group>
+                            <group><field name="area" readonly="1"/></group>
+                            <group><field name="descripcion" readonly="1"/></group>
+                        </group>
+                    </div>
+                    <div class="alert alert-info" role="alert">Estas vistas son muestras ilustrativas con datos ficticios. El botón «Imprimir con datos de Odoo» genera un PDF real usando un registro autorizado. Los campos tributarios obligatorios no se ocultan.</div>
+                    <group col="2">
+                        <group string="Vista A4"><field name="vista_a4" nolabel="1" widget="html" readonly="1"/></group>
+                        <group string="Vista 58 mm"><field name="vista_58" nolabel="1" widget="html" readonly="1"/></group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_migal_reportes_catalogo" model="ir.actions.act_window">
+        <field name="name">Plantillas de documentos</field>
+        <field name="res_model">migal.reportes.catalogo</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('codigo', '!=', 'comprobante')]</field>
+    </record>
+    <record id="view_migal_reportes_imprimir_form" model="ir.ui.view">
+        <field name="name">migal.reportes.imprimir.wizard.form</field>
+        <field name="model">migal.reportes.imprimir.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Imprimir documento MIGAL">
+                <group>
+                    <field name="documento_id" domain="[('codigo', '!=', 'comprobante')]"/>
+                    <field name="codigo" invisible="1"/>
+                    <field name="formato" widget="radio"/>
+                    <field name="partner_id" invisible="codigo != 'estado'" required="codigo == 'estado'"/>
+                    <field name="fecha_desde" invisible="codigo != 'estado'" required="codigo == 'estado'"/>
+                    <field name="fecha_hasta" invisible="codigo != 'estado'" required="codigo == 'estado'"/>
+                    <field name="sale_order_id" invisible="codigo != 'cotizacion'" required="codigo == 'cotizacion'"/>
+                    <field name="account_move_id" invisible="codigo != 'comprobante'" required="codigo == 'comprobante'" domain="[('move_type','in',['out_invoice','out_refund','out_receipt'])]"/>
+                    <field name="picking_id" invisible="codigo != 'entrega'" required="codigo == 'entrega'"/>
+                    <field name="payment_id" invisible="codigo != 'recibo'" required="codigo == 'recibo'"/>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="codigo != 'comprobante'">La vista comercial no sustituye el comprobante electrónico válido ante SUNAT. Utiliza la representación fiscal oficial para entregar al cliente.</div>
+                <footer>
+                    <button name="action_imprimir" type="object" string="Generar PDF" class="btn-primary"/>
+                    <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_migal_reportes_imprimir_rapido" model="ir.actions.act_window">
+        <field name="name">Impresión rápida MIGAL</field>
+        <field name="res_model">migal.reportes.imprimir.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_migal_reportes_root" name="MIGAL" sequence="46" groups="base.group_user"/>
+    <menuitem id="menu_migal_reportes_rapido" name="Impresión rápida" parent="menu_migal_reportes_root" sequence="5" action="action_migal_reportes_imprimir_rapido"/>
+    <menuitem id="menu_migal_reportes_catalogo" name="Plantillas de documentos" parent="menu_migal_reportes_root" sequence="10" action="action_migal_reportes_catalogo"/>
+    <menuitem id="menu_migal_reportes_config" name="Configuración de plantillas" parent="menu_migal_reportes_root" sequence="20" action="action_migal_reportes_ajustes" groups="base.group_system"/>
+</odoo>

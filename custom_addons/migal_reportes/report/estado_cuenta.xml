@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <record id="action_estado_cuenta_a4" model="ir.actions.report">
+        <field name="name">MIGAL · Estado de cuenta A4</field>
+        <field name="model">migal.agente.estado.cuenta.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_estado_cuenta_a4</field>
+        <field name="report_file">migal_reportes.report_estado_cuenta_a4</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_a4"/>
+        <field name="print_report_name">'MIGAL - Estado de cuenta A4 - %s' % object.partner_id.name</field>
+    </record>
+    <record id="action_estado_cuenta_58" model="ir.actions.report">
+        <field name="name">MIGAL · Estado de cuenta 58 mm</field>
+        <field name="model">migal.agente.estado.cuenta.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_estado_cuenta_58</field>
+        <field name="report_file">migal_reportes.report_estado_cuenta_58</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_ticket58"/>
+        <field name="print_report_name">'MIGAL - Estado de cuenta ticket - %s' % object.partner_id.name</field>
+    </record>
+
+    <template id="report_estado_cuenta_a4">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="res_company"/>
+                <t t-set="d" t-value="doc.get_datos()"/>
+                <t t-set="s" t-value="d.get('simbolo') or 'S/'"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-a4">
+                    <t t-call="migal_reportes.migal_a4_estilos"/>
+                    <t t-call="migal_reportes.migal_a4_cabecera"/>
+                    <div class="migal-caps">Control de cuentas por cobrar</div>
+                    <h1>Estado de cuenta</h1>
+                    <div class="migal-muted">Detalle de movimientos y obligaciones pendientes</div>
+                    <div class="migal-panel">
+                        <table class="migal-info">
+                            <tr>
+                                <td style="width:56%;"><span class="migal-caps">Cliente</span><br/>
+                                    <strong t-out="d.get('cliente') or '-'"/></td>
+                                <td><span class="migal-caps">Documento</span><br/>
+                                    <strong t-out="d.get('documento_identidad') or '-'"/></td>
+                            </tr>
+                            <tr>
+                                <td><span class="migal-caps">Período</span><br/>
+                                    <strong><t t-out="d.get('fecha_desde_txt') or d.get('fecha_desde')"/> al
+                                        <t t-out="d.get('fecha_hasta_txt') or d.get('fecha_hasta')"/></strong></td>
+                                <td><span class="migal-caps">Fecha de consulta</span><br/>
+                                    <strong t-out="d.get('fecha_consulta_txt') or d.get('fecha_consulta')"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="migal-section">Movimientos del período</div>
+                    <table class="migal-table">
+                        <thead><tr>
+                            <th style="width:16%;">Fecha</th><th style="width:23%;">Documento</th>
+                            <th>Concepto</th><th class="migal-right">Movimiento</th>
+                            <th class="migal-right">Saldo</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr>
+                                <td t-out="d.get('fecha_desde_txt') or d.get('fecha_desde')"/>
+                                <td colspan="3" class="migal-strong">Saldo anterior</td>
+                                <td class="migal-right migal-strong"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('saldo_anterior') or 0)"/></td>
+                            </tr>
+                            <tr t-foreach="d.get('movimientos') or []" t-as="mov">
+                                <td t-out="mov.get('fecha_txt') or mov.get('fecha')"/>
+                                <td t-out="mov.get('documento')"/>
+                                <td t-out="mov.get('tipo_cliente') or mov.get('tipo')"/>
+                                <td class="migal-right" t-attf-class="migal-right {{'migal-paid' if (mov.get('importe') or 0) &lt; 0 else ''}}">
+                                    <t t-out="'−' if (mov.get('importe') or 0) &lt; 0 else '+'"/>
+                                    <t t-out="s"/> <t t-out="'{:,.2f}'.format(abs(mov.get('importe') or 0))"/>
+                                </td>
+                                <td class="migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(mov.get('saldo') or 0)"/></td>
+                            </tr>
+                            <tr t-if="not d.get('movimientos')"><td colspan="5" class="migal-muted">Sin movimientos registrados en el período.</td></tr>
+                            <tr>
+                                <td t-out="d.get('fecha_hasta_txt') or d.get('fecha_hasta')"/>
+                                <td colspan="3" class="migal-strong">Saldo al cierre del período</td>
+                                <td class="migal-right migal-strong"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('saldo_periodo') or 0)"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="migal-summary">
+                        <colgroup><col style="width:62%;"/><col/><col/></colgroup>
+                        <tr t-if="d.get('total_sin_aplicar')"><td/><td>Abonos sin aplicar</td>
+                            <td class="migal-right migal-paid">− <t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('total_sin_aplicar') or 0)"/></td></tr>
+                        <tr><td/><td class="migal-total">Total pendiente</td>
+                            <td class="migal-total migal-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('total_pendiente') or 0)"/></td></tr>
+                        <tr t-if="d.get('total_vencido')"><td/><td class="migal-danger">Con plazo excedido</td>
+                            <td class="migal-right migal-danger"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('total_vencido') or 0)"/></td></tr>
+                    </table>
+                    <div class="migal-note" t-if="d.get('total_sin_aplicar')">
+                        Los abonos sin aplicar se descuentan del total pendiente, pero requieren conciliación contable.
+                    </div>
+                    <t t-if="d.get('metodos_pago')">
+                        <div class="migal-section">Medios de pago</div>
+                        <div class="migal-note" style="margin-top:2mm;">
+                            <div t-foreach="d.get('metodos_pago')" t-as="metodo" style="margin-bottom:2mm;">
+                                <strong t-out="metodo.get('metodo')"/>:
+                                <t t-out="' · '.join(metodo.get('lineas') or [])"/>
+                            </div>
+                            <div t-if="d.get('pago_titular')">Titular: <strong t-out="d.get('pago_titular')"/></div>
+                        </div>
+                    </t>
+                    <t t-call="migal_reportes.migal_a4_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+
+    <template id="report_estado_cuenta_58">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="res_company"/>
+                <t t-set="d" t-value="doc.get_datos()"/>
+                <t t-set="s" t-value="d.get('simbolo') or 'S/'"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-ticket">
+                    <t t-call="migal_reportes.migal_ticket_estilos"/>
+                    <t t-call="migal_reportes.migal_ticket_cabecera"/>
+                    <div class="title center">ESTADO DE CUENTA</div>
+                    <div class="center minor">Consulta: <t t-out="d.get('fecha_consulta_txt') or d.get('fecha_consulta')"/></div>
+                    <div class="rule"/>
+                    <div><strong>Cliente:</strong> <span t-out="d.get('cliente') or '-'"/></div>
+                    <div t-if="d.get('documento_identidad')">Doc.: <t t-out="d.get('documento_identidad')"/></div>
+                    <div>Desde: <t t-out="d.get('fecha_desde_txt') or d.get('fecha_desde')"/></div>
+                    <div>Hasta: <t t-out="d.get('fecha_hasta_txt') or d.get('fecha_hasta')"/></div>
+                    <div class="rule"/>
+                    <table class="ticket-row"><tr><td>Saldo anterior</td>
+                        <td class="amount"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('saldo_anterior') or 0)"/></td></tr></table>
+                    <div class="rule"/>
+                    <div><strong>MOVIMIENTOS</strong></div>
+                    <div t-if="not d.get('movimientos')" class="minor">Sin movimientos en el período.</div>
+                    <div t-foreach="d.get('movimientos') or []" t-as="mov" class="entry">
+                        <div class="entry-name"><t t-out="mov.get('fecha_txt') or mov.get('fecha')"/> · <t t-out="mov.get('documento')"/></div>
+                        <div class="minor" t-out="mov.get('tipo_cliente') or mov.get('tipo')"/>
+                        <div class="entry-line"><span class="entry-left">Movimiento</span>
+                            <span class="entry-right"><t t-out="'−' if (mov.get('importe') or 0) &lt; 0 else '+'"/>
+                                <t t-out="s"/> <t t-out="'{:,.2f}'.format(abs(mov.get('importe') or 0))"/></span></div>
+                    </div>
+                    <div class="rule"/>
+                    <table class="ticket-row"><tr><td>Saldo al cierre</td>
+                        <td class="amount"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('saldo_periodo') or 0)"/></td></tr></table>
+                    <div class="rule"/>
+                    <table class="ticket-row">
+                        <tr t-if="d.get('total_sin_aplicar')"><td>Abonos sin aplicar</td>
+                            <td class="amount">− <t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('total_sin_aplicar') or 0)"/></td></tr>
+                        <tr><td class="total">TOTAL PENDIENTE</td><td class="amount total"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('total_pendiente') or 0)"/></td></tr>
+                        <tr t-if="d.get('total_vencido')"><td class="minor">Con plazo excedido</td>
+                            <td class="amount"><t t-out="s"/> <t t-out="'{:,.2f}'.format(d.get('total_vencido') or 0)"/></td></tr>
+                    </table>
+                    <t t-if="d.get('metodos_pago')">
+                        <div class="rule"/><strong>MEDIOS DE PAGO</strong>
+                        <div t-foreach="d.get('metodos_pago')" t-as="mp" class="entry minor">
+                            <strong t-out="mp.get('metodo')"/>
+                            <div t-foreach="mp.get('lineas') or []" t-as="linea" t-out="linea"/>
+                        </div>
+                        <div t-if="d.get('pago_titular')" class="minor">Titular: <t t-out="d.get('pago_titular')"/></div>
+                    </t>
+                    <div class="foot">Consulta informativa · No acredita pago.</div>
+                    <t t-call="migal_reportes.migal_ticket_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+
+    <!-- Los estados de cuenta públicos con token mantienen su URL y caducidad,
+         pero pasan a la identidad corporativa A4 sin tocar la seguridad original. -->
+    <template id="migal_publicado_a4" inherit_id="migal_agente.report_estado_cuenta_publicado">
+        <xpath expr="//t[@t-call='migal_agente.report_estado_cuenta']" position="attributes">
+            <attribute name="t-call">migal_reportes.report_estado_cuenta_a4</attribute>
+        </xpath>
+    </template>
+</odoo>

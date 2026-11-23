@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="migal_reportes_wizard_estado_cuenta_form" model="ir.ui.view">
+        <field name="name">migal.reportes.estado.cuenta.wizard</field>
+        <field name="model">migal.agente.estado.cuenta.wizard</field>
+        <field name="inherit_id" ref="migal_agente.view_migal_estado_cuenta_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//footer/button[@name='action_imprimir']" position="replace">
+                <button name="action_migal_vista_previa" type="object" string="Ver e imprimir"
+                        class="btn-secondary" icon="fa-print" invisible="not generado"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

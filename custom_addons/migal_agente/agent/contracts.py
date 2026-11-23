@@ -28,10 +28,46 @@ ORDER_REF = {
 DATE = {"type": "string", "description": "Fecha ISO AAAA-MM-DD.", "pattern": r"^\d{4}-\d{2}-\d{2}$"}
 
 TOOLS = {
+    "buscar_cotizaciones": {
+        "description": (
+            "Busca las cotizaciones abiertas (borrador o enviadas) de los clientes que coinciden con un "
+            "nombre, RUC/DNI o referencia. Devuelve una opción por cotización, agrupadas por cliente, con "
+            "sus versiones disponibles (una versión anterior sigue disponible hasta que vence). Úsala "
+            "cuando el usuario nombra al cliente en vez de la referencia; si hay varias opciones, "
+            "muéstralas y pide al usuario que elija."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "cliente": {"type": "string", "minLength": 2, "maxLength": 120,
+                            "description": "Nombre, RUC/DNI o referencia interna del cliente."},
+            },
+            "required": ["cliente"],
+            "additionalProperties": False,
+        },
+        "roles": ["VEN", "GER"],
+        "escritura": "Ninguna (solo bitácora).",
+    },
+    "consultar_cotizacion": {
+        "description": (
+            "Muestra el detalle de una versión de cotización: cliente, estado, vigencia, productos, "
+            "precios, total y las demás versiones disponibles de la misma cotización. Si la referencia "
+            "no indica versión (S00637) y hay varias disponibles, pregunta cuál (S00637, S00637-01...)."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {"cotizacion": ORDER_REF},
+            "required": ["cotizacion"],
+            "additionalProperties": False,
+        },
+        "roles": ["VEN", "GER"],
+        "escritura": "Ninguna (solo bitácora).",
+    },
     "preparar_whatsapp_cotizacion": {
         "description": (
             "Prepara el enlace de WhatsApp (wa.me) con un mensaje editable para enviar una "
-            "cotización. Comprueba que sea la revisión vigente, que no tenga aprobaciones "
+            "cotización. Comprueba que la versión siga disponible (la más reciente, o una anterior aún "
+            "vigente), que no tenga aprobaciones "
             "pendientes y que el contacto tenga un número válido en formato internacional. "
             "No envía nada: VEN revisa, adjunta el PDF y envía desde WhatsApp."
         ),
@@ -81,8 +117,8 @@ TOOLS = {
     "generar_qr_cotizacion": {
         "description": (
             "Atención presencial: genera un código QR que abre en el celular del cliente la versión "
-            "digital (PDF, solo lectura) de la cotización, sin pedirle su número. Comprueba que sea la "
-            "revisión vigente, que esté vigente y sin autorizaciones pendientes."
+            "digital (PDF, solo lectura) de la cotización, sin pedirle su número. Comprueba que la "
+            "versión siga disponible, que esté vigente y sin autorizaciones pendientes."
         ),
         "input_schema": {
             "type": "object",

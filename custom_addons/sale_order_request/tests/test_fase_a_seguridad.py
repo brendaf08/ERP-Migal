@@ -44,6 +44,7 @@ from psycopg2.errors import UniqueViolation
 
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import tagged, TransactionCase
+from .revision_anterior import assert_version_anterior, mantiene_versiones_vigentes
 
 
 @tagged("post_install", "-at_install")
@@ -663,8 +664,9 @@ class TestSaleOrderRequestPhaseASecurity(TransactionCase):
         )
         self.assertEqual(solicitud_original.state, "superseded")
 
-        # La cotización original pasó a cancel (revisión anterior archivada)
-        self.assertEqual(cotizacion.state, "cancel")
+        # La cotización original pasó a cancel (revisión anterior archivada),
+        # o sigue vigente hasta vencer si migal_agente está instalado
+        assert_version_anterior(self, cotizacion)
 
         # Intentar confirmar la revisión original (obsoleta): debe bloquearse
         with self.assertRaises(UserError):
@@ -879,8 +881,7 @@ class TestSaleOrderRequestPhaseASecurity(TransactionCase):
         nueva = env_admin["sale.order"].browse(nueva.id)
 
         self.assertEqual(nueva.name, nombre_base + "-01")
-        self.assertEqual(cotizacion.state, "cancel")
-        self.assertEqual(cotizacion.active, False)
+        assert_version_anterior(self, cotizacion, nueva)
 
     # ------------------------------------------------------------------
     # B-07: creación de orden directamente confirmada

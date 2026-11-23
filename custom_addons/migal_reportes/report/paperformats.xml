@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Márgenes generosos para documentos formales; no altera el formato global de Odoo. -->
+    <record id="paperformat_migal_a4" model="report.paperformat">
+        <field name="name">MIGAL · A4 corporativo</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">14</field>
+        <field name="margin_bottom">13</field>
+        <field name="margin_left">14</field>
+        <field name="margin_right">14</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+    <!-- Rollo térmico de 58 mm. Alto por segmento: 200 mm; documentos extensos se paginan. -->
+    <record id="paperformat_migal_ticket58" model="report.paperformat">
+        <field name="name">MIGAL · Ticket térmico 58 mm</field>
+        <field name="format">custom</field>
+        <field name="page_width">58</field>
+        <field name="page_height">200</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">2</field>
+        <field name="margin_bottom">2</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+</odoo>

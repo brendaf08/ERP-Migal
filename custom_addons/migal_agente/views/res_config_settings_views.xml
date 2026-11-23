@@ -23,16 +23,20 @@
                             <div class="mt-2"><label for="migal_pago_bbva_cci" string="BBVA CCI"/><field name="migal_pago_bbva_cci"/></div>
                         </setting>
                     </block>
-                    <block title="Capa LLM opcional">
-                        <setting help="Interpreta lenguaje libre y redacta respuestas. Las reglas deterministas siguen decidiendo: el LLM nunca aprueba, confirma ni escribe.">
+                    <block title="Inteligencia artificial">
+                        <setting help="El agente entiende mensajes escritos con libertad y redacta sus respuestas.">
                             <field name="migal_llm_enabled"/>
                         </setting>
-                        <setting help="Los datos de cada consulta se envían al proveedor del LLM. Requiere revisión de privacidad y aprobación de GER.">
+                        <setting help="El texto de las consultas o la foto de la lista escaneada se envían al proveedor elegido. Requiere aprobación de GER.">
                             <field name="migal_llm_data_ack"/>
                         </setting>
-                        <setting string="Credenciales y modelo" help="Sin API key válida el agente responde en modo de reglas.">
+                        <setting string="Proveedor y clave" help="Con Google Gemini la misma clave sirve para el chat y para escanear listas.">
                             <div class="mt-2">
-                                <label for="migal_llm_api_key" string="API key"/>
+                                <label for="migal_llm_proveedor" string="Proveedor"/>
+                                <field name="migal_llm_proveedor"/>
+                            </div>
+                            <div class="mt-2">
+                                <label for="migal_llm_api_key" string="Clave de API"/>
                                 <field name="migal_llm_api_key" password="True"/>
                             </div>
                             <div class="mt-2">

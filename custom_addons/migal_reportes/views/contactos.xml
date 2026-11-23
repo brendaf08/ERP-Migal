@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_partner_compact" model="ir.ui.view">
+        <field name="name">migal.res.partner.compact</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority" eval="100"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form/sheet/group/group/div[hasclass('o_address_format')]" position="replace">
+                <div class="d-grid gap-2">
+                    <field name="street" placeholder="Calle" readonly="type == 'contact' and parent_id"/>
+                    <field name="l10n_pe_district" placeholder="Distrito"
+                           domain="city_id and [('city_id', '=', city_id)] or []"
+                           options="{'no_open': True, 'no_create': True}"
+                           invisible="country_code != 'PE'" readonly="type == 'contact' and parent_id"/>
+                    <field name="city_id" placeholder="Ciudad" domain="[('country_id', '=', country_id)]"
+                           options="{'no_open': True, 'no_create': True}"
+                           invisible="not country_enforce_cities" readonly="type == 'contact' and parent_id"/>
+                    <field name="city" placeholder="Ciudad"
+                           invisible="country_enforce_cities and (city_id or not city)"
+                           readonly="type == 'contact' and parent_id"/>
+                    <field name="country_enforce_cities" invisible="1"/>
+                    <field name="country_code" invisible="1"/>
+                </div>
+            </xpath>
+            <xpath expr="/form/sheet/group/group/field[@name='function']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="/form/sheet/div[.//field[@name='image_1920']]" position="before">
+                <div class="o_migal_encabezado o_migal_contacto_encabezado"/>
+            </xpath>
+            <xpath expr="/form/sheet/div[hasclass('o_migal_contacto_encabezado')]" position="inside">
+                <xpath expr="/form/sheet/div[.//field[@name='image_1920']]" position="move"/>
+                <xpath expr="/form/sheet/group[.//field[@name='street']]" position="move"/>
+            </xpath>
+            <xpath expr="/form/sheet/div[hasclass('o_migal_contacto_encabezado')]//field[@name='image_1920']" position="before">
+                <div class="o_migal_contacto_foto"/>
+            </xpath>
+            <xpath expr="/form/sheet/div[hasclass('o_migal_contacto_encabezado')]//div[hasclass('o_migal_contacto_foto')]" position="inside">
+                <xpath expr="/form/sheet/div[hasclass('o_migal_contacto_encabezado')]//field[@name='image_1920']" position="move"/>
+                <span class="o_migal_contacto_cinta o_migal_contacto_cinta_interna"
+                      invisible="migal_marcador_contacto != 'migal'">MIGAL</span>
+                <span class="o_migal_contacto_cinta o_migal_contacto_cinta_maestro"
+                      invisible="migal_marcador_contacto != 'maestro'">Maestro de obra</span>
+            </xpath>
+            <xpath expr="/form/sheet/notebook" position="attributes">
+                <attribute name="class" add="o_migal_encabezado_pestanas" separator=" "/>
+            </xpath>
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Detalles" name="migal_contact_details">
+                    <notebook>
+                        <page string="Datos adicionales" name="migal_contact_extra">
+                            <group>
+                                <field name="migal_marcador_contacto" placeholder="Sin clasificar"/>
+                                <field name="country_id" options="{'no_open': True, 'no_create': True}"
+                                       readonly="type == 'contact' and parent_id"/>
+                                <field name="state_id" domain="[('country_id', '=', country_id)]"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       readonly="type == 'contact' and parent_id"/>
+                                <field name="zip" readonly="type == 'contact' and parent_id"/>
+                                <field name="street2" readonly="type == 'contact' and parent_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='migal_contact_extra']/group" position="inside">
+                <xpath expr="/form/sheet/div[hasclass('o_migal_contacto_encabezado')]/group//field[@name='website']" position="move"/>
+                <xpath expr="/form/sheet/div[hasclass('o_migal_contacto_encabezado')]/group//field[@name='category_id']" position="move"/>
+                <xpath expr="/form/sheet/div[hasclass('o_migal_contacto_encabezado')]/group//field[@name='lang']" position="move"/>
+            </xpath>
+            <xpath expr="//page[@name='migal_contact_extra']/group" position="after">
+                <xpath expr="/form/sheet/div[field[@name='properties']]" position="move"/>
+            </xpath>
+            <xpath expr="//page[@name='migal_contact_details']/notebook" position="inside">
+                <xpath expr="//sheet/notebook/page[@name='sales_purchases']" position="move"/>
+                <xpath expr="//sheet/notebook/page[@name='customer_statement_page']" position="move"/>
+                <xpath expr="//sheet/notebook/page[@name='supplier_statement']" position="move"/>
+                <xpath expr="//sheet/notebook/page[@name='accounting']" position="move"/>
+                <xpath expr="//sheet/notebook/page[@name='internal_notes']" position="move"/>
+            </xpath>
+            <xpath expr="//page[@name='migal_contact_extra']//field[@name='website']" position="attributes">
+                <attribute name="placeholder"/>
+            </xpath>
+            <xpath expr="//page[@name='migal_contact_extra']//field[@name='category_id']" position="attributes">
+                <attribute name="placeholder"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_migal_contact_cards" model="ir.ui.view">
+        <field name="name">migal.res.partner.kanban</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="mode">primary</field>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <xpath expr="/kanban/templates" position="before">
+                <field name="migal_marcador_contacto"/>
+            </xpath>
+            <xpath expr="//t[@t-name='card']" position="replace">
+                <t t-name="card" class="flex-row align-items-center gap-3">
+                    <div class="o_migal_contacto_foto o_migal_contacto_foto_tarjeta">
+                        <field name="avatar_128" widget="image" alt="Foto del contacto"
+                               options="{'size': [52, 52], 'img_class': 'rounded object-fit-cover'}"/>
+                        <span class="o_migal_contacto_cinta o_migal_contacto_cinta_interna"
+                              t-if="record.migal_marcador_contacto.raw_value === 'migal'">MIGAL</span>
+                        <span class="o_migal_contacto_cinta o_migal_contacto_cinta_maestro"
+                              t-if="record.migal_marcador_contacto.raw_value === 'maestro'"
+                              title="Maestro de obra">Maestro</span>
+                    </div>
+                    <div class="min-w-0">
+                        <field name="display_name" class="fw-semibold"/>
+                        <div t-if="record.phone.raw_value" class="text-muted">
+                            <field name="phone"/>
+                        </div>
+                    </div>
+                </t>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_migal_contact_directory_filter" model="ir.ui.view">
+        <field name="name">migal.res.partner.directory.search</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_company']" position="after">
+                <separator/>
+                <filter name="migal_contactos_principales" string="Personas y empresas"
+                        domain="[('type', '=', 'contact'), ('parent_id', '=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_migal_contact_directory_list" model="ir.ui.view">
+        <field name="name">migal.res.partner.directory.list</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="mode">primary</field>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <xpath expr="/list/field[@name='complete_name']" position="after">
+                <field name="migal_marcador_contacto" widget="badge"
+                       decoration-info="migal_marcador_contacto == 'fraternidad_amical'"
+                       decoration-warning="migal_marcador_contacto == 'maestro'"
+                       decoration-success="migal_marcador_contacto == 'cliente'"
+                       decoration-muted="migal_marcador_contacto in ('migal', 'obra')"/>
+            </xpath>
+            <xpath expr="/list/field[@name='email']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="domain">[('type', '=', 'contact'), ('parent_id', '=', False)]</field>
+        <field name="context">{'default_is_company': True, 'migal_contact_defaults': True}</field>
+    </record>
+    <record id="contacts.action_contacts_view_kanban" model="ir.actions.act_window.view">
+        <field name="view_id" ref="view_migal_contact_cards"/>
+        <field name="sequence" eval="0"/>
+    </record>
+    <record id="contacts.action_contacts_view_tree" model="ir.actions.act_window.view">
+        <field name="view_id" ref="view_migal_contact_directory_list"/>
+        <field name="sequence" eval="1"/>
+    </record>
+
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="context">{'search_default_customer': 1, 'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1, 'search_default_migal_contactos_principales': 1, 'migal_contact_defaults': True}</field>
+        <field name="view_id" ref="view_migal_contact_cards"/>
+    </record>
+</odoo>

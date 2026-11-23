@@ -10,3 +10,4 @@ access_migal_agente_cob_wizard,migal.agente.cobertura.wizard,model_migal_agente_
 access_migal_agente_ec_wizard,migal.agente.estado.cuenta.wizard,model_migal_agente_estado_cuenta_wizard,base.group_user,1,1,1,1
 access_migal_agente_ec_pub_fco,migal.agente.estado.cuenta.publicacion fco,model_migal_agente_estado_cuenta_publicacion,account.group_account_invoice,1,1,0,0
 access_migal_agente_ec_pub_ger,migal.agente.estado.cuenta.publicacion ger,model_migal_agente_estado_cuenta_publicacion,sales_team.group_sale_manager,1,1,0,0
+access_migal_agente_seleccion_system,migal.agente.seleccion system,model_migal_agente_seleccion,base.group_system,1,1,1,1

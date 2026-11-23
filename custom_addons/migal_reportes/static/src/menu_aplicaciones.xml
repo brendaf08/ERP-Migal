@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="migal_reportes.MenuApps" t-inherit="web.NavBar.AppsMenu" t-inherit-mode="extension">
+        <xpath expr="//Dropdown/t[@t-set-slot='content']/DropdownItem[@t-foreach='apps']" position="replace">
+            <div class="o_migal_apps_menu">
+                <div class="px-3 pt-2 pb-1 fw-semibold">Aplicaciones</div>
+                <div t-if="this.migalAppsVisibles.length" class="o_migal_apps_lista">
+                    <DropdownItem
+                        t-foreach="this.migalAppsVisibles"
+                        t-as="app"
+                        t-key="app.id"
+                        class="{ 'o_app': true, focus: menuService.getCurrentApp() === app }"
+                        onSelected="() => this.onNavBarDropdownItemSelection(app)"
+                        attrs="{ href: getMenuItemHref(app), 'data-menu-xmlid': app.xmlid, 'data-section': app.id }">
+                        <img t-if="app.webIconData" t-att-src="app.webIconData" alt="" width="16" height="16" class="o_migal_apps_icon"/>
+                        <span t-esc="app.name"/>
+                    </DropdownItem>
+                </div>
+                <p t-else="" class="px-3 my-2 text-muted">No hay aplicaciones visibles.</p>
+                <div class="border-top mt-2 pt-1">
+                    <DropdownItem onSelected="() => this.migalEditarAplicaciones()">
+                        Editar menú
+                    </DropdownItem>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="migal_reportes.MenuAppsMovil" t-inherit="web.NavBar.AppsMenu.Sidebar" t-inherit-mode="extension">
+        <xpath expr="//t[@t-foreach='apps']" position="attributes">
+            <attribute name="t-foreach">this.migalAppsVisibles</attribute>
+        </xpath>
+        <xpath expr="//li[@t-att-data-menu-xmlid='app.xmlid']//img" position="attributes">
+            <attribute name="style"/>
+            <attribute name="class">o_migal_apps_icon</attribute>
+            <attribute name="width">16</attribute>
+            <attribute name="height">16</attribute>
+            <attribute name="alt"></attribute>
+        </xpath>
+        <xpath expr="//nav[contains(@class, 'o_burger_menu_content')]/ul" position="after">
+            <div t-if="state.isAllAppsMenuOpened" class="p-3 border-top">
+                <button type="button" class="btn btn-secondary" t-on-click="migalEditarAplicaciones">Editar menú</button>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="migal_reportes.ConfigurarApps">
+        <Dialog title="'Aplicaciones visibles'">
+            <div class="o_migal_apps_preferencias">
+                <label t-foreach="props.apps" t-as="app" t-key="app.key"
+                       class="d-flex align-items-center gap-2 py-2">
+                    <input type="checkbox" class="form-check-input m-0 flex-shrink-0"
+                           t-att-checked="!state.hidden.includes(app.key)"
+                           t-on-change="(ev) => this.setVisible(app.key, ev.target.checked)"/>
+                    <span t-esc="app.name"/>
+                </label>
+            </div>
+            <t t-set-slot="footer">
+                <button type="button" class="btn btn-primary" t-on-click="guardar">Guardar</button>
+                <button type="button" class="btn btn-secondary" t-on-click="mostrarTodas">Mostrar todas</button>
+                <button type="button" class="btn btn-secondary" t-on-click="() => props.close()">Cancelar</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

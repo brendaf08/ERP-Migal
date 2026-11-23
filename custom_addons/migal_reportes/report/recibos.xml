@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <record id="action_recibo_a4" model="ir.actions.report">
+        <field name="name">MIGAL · Recibo de pago A4</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_recibo_a4</field>
+        <field name="report_file">migal_reportes.report_recibo_a4</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_a4"/>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_recibo_58" model="ir.actions.report">
+        <field name="name">MIGAL · Recibo de pago 58 mm</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_recibo_58</field>
+        <field name="report_file">migal_reportes.report_recibo_58</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_ticket58"/>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_recibo_a4">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="s" t-value="doc.currency_id.symbol or 'S/'"/>
+                <t t-set="referencia" t-value="doc.memo if 'memo' in doc._fields else (doc.ref if 'ref' in doc._fields else '')"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-a4">
+                    <t t-call="migal_reportes.migal_a4_estilos"/>
+                    <t t-call="migal_reportes.migal_a4_cabecera"/>
+                    <div class="migal-caps">Tesorería</div><h1>Constancia interna de pago</h1>
+                    <div class="migal-muted">Referencia <strong t-out="doc.name or '-'"/></div>
+                    <div class="migal-panel">
+                        <table class="migal-info">
+                            <tr><td style="width:57%;"><span class="migal-caps">Cliente / proveedor</span><br/>
+                                    <strong t-out="doc.partner_id.display_name or '-'"/></td>
+                                <td><span class="migal-caps">Fecha</span><br/><strong t-out="doc.date or '-'"/></td></tr>
+                            <tr><td><span class="migal-caps">Concepto</span><br/>
+                                    <span t-out="referencia or '-'"/></td>
+                                <td><span class="migal-caps">Diario</span><br/><strong t-out="doc.journal_id.display_name or '-'"/></td></tr>
+                            <tr><td><span class="migal-caps">Operación</span><br/>
+                                    <strong t-out="'Recibido' if doc.payment_type == 'inbound' else 'Enviado'"/></td>
+                                <td><span class="migal-caps">Estado</span><br/><strong t-field="doc.state"/></td></tr>
+                        </table>
+                    </div>
+                    <table class="migal-summary">
+                        <tr><td style="width:55%;"/><td class="migal-total">Importe</td>
+                            <td class="migal-right migal-total"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount)"/></td></tr>
+                    </table>
+                    <div class="migal-note">Constancia de uso interno. Consulte el asiento o conciliación contable para
+                        verificar la aplicación del pago. Este documento no sustituye la boleta ni la factura electrónica.</div>
+                    <t t-call="migal_reportes.migal_a4_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+    <template id="report_recibo_58">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="s" t-value="doc.currency_id.symbol or 'S/'"/>
+                <t t-set="referencia" t-value="doc.memo if 'memo' in doc._fields else (doc.ref if 'ref' in doc._fields else '')"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-ticket">
+                    <t t-call="migal_reportes.migal_ticket_estilos"/>
+                    <t t-call="migal_reportes.migal_ticket_cabecera"/>
+                    <div class="title center">CONSTANCIA DE PAGO</div>
+                    <div class="center"><strong t-out="doc.name or '-'"/></div>
+                    <div class="rule"/>
+                    <div>Fecha: <t t-out="doc.date or '-'"/></div>
+                    <div>Cliente: <t t-out="doc.partner_id.display_name or '-'"/></div>
+                    <div t-if="referencia">Concepto: <t t-out="referencia"/></div>
+                    <div>Diario: <t t-out="doc.journal_id.display_name or '-'"/></div>
+                    <div>Estado: <span t-field="doc.state"/></div>
+                    <div class="rule"/>
+                    <div class="entry-line total"><span class="entry-left">IMPORTE</span>
+                        <span class="entry-right"><t t-out="s"/> <t t-out="'{:,.2f}'.format(doc.amount)"/></span></div>
+                    <div class="rule"/>
+                    <div class="minor center">Constancia interna; no reemplaza comprobantes electrónicos.</div>
+                    <t t-call="migal_reportes.migal_ticket_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+</odoo>

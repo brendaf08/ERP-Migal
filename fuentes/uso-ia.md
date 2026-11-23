@@ -12,6 +12,8 @@ La revisión y aprobación del contenido generado con apoyo de IA son responsabi
 | GitHub Copilot (revisor de PR) | Revisión automática de los Pull Requests. | Revisiones de `copilot-pull-request-reviewer[bot]` en los PR #5 al #19. |
 | Herramientas LLM (ChatGPT / Claude) | Asistencia en la programación en Python, depuración de errores y generación de datos sintéticos (JSON) para el entorno de pruebas del Agente Comercial O2C. | Commits de implementación del agente comercial integrados en el PR #19. |
 
+| ChatGPT (OpenAI) | Apoyo en la elaboración y corrección del addon de reportes y las personalizaciones comerciales de Odoo 19. | Cambios en `migal_reportes` y `partner_relation_multi`. Validación estática durante la publicación. |
+
 Los PRs registran además una aprobación humana antes de su integración en la rama principal.
 
 ## 2. Usos declarados sin evidencia en el repositorio

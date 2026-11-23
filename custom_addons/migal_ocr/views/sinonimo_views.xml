@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_ocr_sinonimo_list" model="ir.ui.view">
+        <field name="name">migal.ocr.sinonimo.list</field>
+        <field name="model">migal.ocr.sinonimo</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="termino"/>
+                <field name="equivale"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_migal_ocr_sinonimo" model="ir.actions.act_window">
+        <field name="name">Términos ferreteros</field>
+        <field name="res_model">migal.ocr.sinonimo</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Agregue cómo llaman los clientes a sus productos</p>
+            <p>Por ejemplo «huincha» equivale a «wincha». Se usan al escanear listas, además de la jerga incluida.</p>
+        </field>
+    </record>
+</odoo>

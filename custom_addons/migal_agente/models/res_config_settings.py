@@ -5,14 +5,17 @@ class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
     migal_llm_enabled = fields.Boolean(
-        string="Activar capa LLM", config_parameter="migal_agente.llm_enabled",
-        help="El agente usará un LLM para interpretar lenguaje libre y redactar. Las decisiones siguen "
-             "siendo de las reglas deterministas.")
+        string="Usar IA en el chat", config_parameter="migal_agente.llm_enabled",
+        help="El agente entiende mensajes escritos con libertad y redacta sus respuestas con IA.")
     migal_llm_data_ack = fields.Boolean(
-        string="Autorizo enviar datos al proveedor LLM", config_parameter="migal_agente.llm_data_ack",
-        help="Obligatorio para activar el LLM: los datos de la consulta (clientes, cotizaciones, saldos) "
-             "se envían al servicio externo. Requiere revisión de privacidad y aprobación de GER.")
-    migal_llm_api_key = fields.Char(string="API key del LLM", config_parameter="migal_agente.llm_api_key")
+        string="Autorizo enviar datos al proveedor de IA", config_parameter="migal_agente.llm_data_ack",
+        help="Necesario para usar IA: el texto de la consulta (clientes, cotizaciones, saldos) o la foto de la "
+             "lista escaneada se envían al proveedor elegido. Requiere aprobación de GER.")
+    migal_llm_proveedor = fields.Selection(
+        [("gemini", "Google Gemini"), ("anthropic", "Anthropic Claude")], string="Proveedor de IA",
+        config_parameter="migal_agente.llm_proveedor", default="gemini",
+        help="Google Gemini también se usa para leer las listas escaneadas (fotos y PDF).")
+    migal_llm_api_key = fields.Char(string="Clave de API", config_parameter="migal_agente.llm_api_key")
     migal_url_publica = fields.Char(
         string="URL pública para clientes", config_parameter="migal_agente.url_publica",
         help="Dirección con la que el celular del cliente llega a Odoo (por ejemplo http://192.168.1.50:8069 en la "
@@ -24,5 +27,5 @@ class ResConfigSettings(models.TransientModel):
     migal_pago_bcp_cci = fields.Char(string="BCP - CCI", config_parameter="migal_agente.pago_bcp_cci")
     migal_pago_bbva_cuenta = fields.Char(string="BBVA - N.º de cuenta", config_parameter="migal_agente.pago_bbva_cuenta")
     migal_pago_bbva_cci = fields.Char(string="BBVA - CCI", config_parameter="migal_agente.pago_bbva_cci")
-    migal_llm_model = fields.Char(string="Modelo LLM", config_parameter="migal_agente.llm_model",
-                                  default="claude-opus-5-5")
+    migal_llm_model = fields.Char(string="Modelo del chat", config_parameter="migal_agente.llm_model",
+                                  help="Vacío: gemini-3.6-flash con Gemini, claude-opus-5-5 con Claude.")

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account.menu_action_move_out_invoice_type" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="account.menu_action_move_out_refund_type" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="account.menu_action_move_in_invoice_type" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="account.menu_action_move_in_refund_type" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="account.menu_action_account_invoice_report_all" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="account.account_invoicing_menu" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="account.open_account_journal_dashboard_kanban" model="ir.actions.act_window">
+        <field name="domain">[('type', 'not in', ('sale', 'purchase'))]</field>
+    </record>
+    <record id="sale.action_view_sale_advance_payment_inv" model="ir.actions.act_window">
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+    <record id="view_migal_venta_lista_emision_externa" model="ir.ui.view">
+        <field name="name">sale.order.list.migal.emision.externa</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="/list/field[@name='invoice_status']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_migal_venta_busqueda_emision_externa" model="ir.ui.view">
+        <field name="name">sale.order.search.migal.emision.externa</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='to_invoice']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_migal_contacto_emision_externa" model="ir.ui.view">
+        <field name="name">res.partner.form.migal.emision.externa</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="view_migal_partner_compact"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_partner_invoices']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='accounting']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='accounting_disabled']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_migal_pdv_orden_emision_externa" model="ir.ui.view">
+        <field name="name">pos.order.form.migal.emision.externa</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_pos_order_invoice']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_view_invoice']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_migal_pdv_lista_emision_externa" model="ir.ui.view">
+        <field name="name">pos.order.list.migal.emision.externa</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_create_invoices']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="/list/field[@name='invoice_status']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

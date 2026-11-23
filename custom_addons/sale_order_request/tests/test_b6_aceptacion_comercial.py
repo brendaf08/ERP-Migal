@@ -13,6 +13,7 @@ Resultados: PASS / FAIL / BLOCKED / NOT RUN.
 
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged, TransactionCase
+from .revision_anterior import assert_version_anterior, mantiene_versiones_vigentes
 
 
 @tagged("post_install", "-at_install")
@@ -358,7 +359,7 @@ class TestB6AceptacionComercial(TransactionCase):
 
         # Cotización original pasa a cancel
         cotizacion = self.env["sale.order"].browse(cotizacion.id)
-        self.assertEqual(cotizacion.state, "cancel")
+        assert_version_anterior(self, cotizacion)
 
         # Nueva revisión está en draft y conserva sale_request_subject
         nueva = solicitud_nueva.sale_order_revision_id

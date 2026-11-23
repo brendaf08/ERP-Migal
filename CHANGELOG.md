@@ -19,7 +19,11 @@ Esta sección reúne avances que todavía no forman parte de un hito académico 
 
 No incluir borradores ni resultados pendientes de aprobación.
 
-Sin entradas documentadas por ahora.
+- **Personalización comercial de Odoo 19:** se incorpora [MIGAL Reportes](custom_addons/migal_reportes/), con documentos A4 y 58 mm, impresión rápida y ajustes en cotizaciones, solicitudes, órdenes, cobros, emisión externa y punto de venta. Se actualiza la ficha de contactos y el comportamiento de las relaciones nuevas entre contactos.
+- **Agente MIGAL — cotizaciones por cliente y versiones:** el agente reconoce «cotización de Luis» en todas sus funciones (consultar, WhatsApp, QR, cobertura, registrar envío) y pide elegir cuando hay varias cotizaciones o versiones; tolera errores de escritura, plurales y períodos («de octubre», «mes pasado»); recuerda la cotización de la conversación. La versión anterior de una cotización sigue disponible hasta que vence su vigencia (no se puede confirmar; se cierra al vencer o al confirmar otra versión). Chat con Google Gemini opcional (function calling y modelos de respaldo).
+- **Escanear lista de productos:** se incorpora [migal_ocr](custom_addons/migal_ocr/), adaptación a Odoo del OCR y fuzzy matching de MIGAL SmartOps ([plan](arquitectura/integraciones/plan-implementacion-migal-ocr.md)): Gemini transcribe la foto o PDF, el emparejador propone el producto con su % de coincidencia y sugerencias del mismo tipo, y las líneas se agregan a la cotización sumando los repetidos. Incluye términos ferreteros editables y el fierro corrugado que piden las notas de venta reales.
+- **Reportes y diagnóstico:** vista previa del PDF antes de imprimir (A4 y ticket 58 mm de alto variable), diagnóstico de disponibilidad en PDF con mensaje por producto para el cliente, logotipo MIGAL actualizado y correcciones en las plantillas de ticket y de entrega para Odoo 19.
+- **Entorno Docker:** `actualizar.ps1`/`actualizar.sh` aplican los módulos a una base existente; la restauración los ejecuta al terminar y quita el aviso de base neutralizada.
 
 ## 2026-11-07 — Corrección, pruebas de frontera y cierre de la consolidación documental
 

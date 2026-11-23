@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Diagnóstico de disponibilidad de una cotización (cálculo del Agente MIGAL, consulta informativa). -->
+    <record id="action_diagnostico_cobertura" model="ir.actions.report">
+        <field name="name">MIGAL · Diagnóstico de disponibilidad</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_diagnostico_cobertura</field>
+        <field name="report_file">migal_reportes.report_diagnostico_cobertura</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_a4"/>
+        <field name="print_report_name">'MIGAL - Disponibilidad - %s' % object.name</field>
+    </record>
+
+    <template id="report_diagnostico_cobertura">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <t t-set="diag" t-value="doc.migal_diagnostico_cobertura((data or {}).get('fecha'))"/>
+                <t t-set="d" t-value="diag.get('datos') or {}"/>
+                <t t-set="colores" t-value="{'stock': '#198754', 'reposicion': '#b8860b', 'regla': '#0d6efd', 'faltante': '#c0392b', 'no_inventariable': '#6c757d'}"/>
+                <t t-set="textos" t-value="{'stock': 'Con stock', 'reposicion': 'Llega a tiempo', 'regla': 'Regla habitual', 'faltante': 'Faltante', 'no_inventariable': 'No inventariable'}"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id"><div class="page migal-a4">
+                    <t t-call="migal_reportes.migal_a4_estilos"/>
+                    <style>
+                        .migal-chips td { padding: 8px 10px; border: 1px solid #dde3ec; text-align: center; }
+                        .migal-chips .num { font-size: 18px; font-weight: bold; display: block; }
+                        .migal-estado { font-weight: bold; white-space: nowrap; }
+                        .migal-detalle td { font-size: 10px; color: #5b6575; padding-top: 0 !important; border-top: 0 !important; }
+                        .migal-mensaje { white-space: pre-line; border: 1px dashed #9aa7bd; padding: 10px 12px; margin-top: 6px; font-size: 11px; }
+                    </style>
+                    <t t-call="migal_reportes.migal_a4_cabecera"/>
+                    <div class="migal-caps">Consulta de disponibilidad</div>
+                    <h1>Diagnóstico de disponibilidad</h1>
+                    <div class="migal-muted">Cotización <strong t-out="doc.name"/></div>
+                    <div class="migal-panel">
+                        <table class="migal-info">
+                            <tr>
+                                <td style="width:56%;"><span class="migal-caps">Cliente</span><br/>
+                                    <strong t-out="doc.partner_id.display_name"/></td>
+                                <td><span class="migal-caps">Fecha evaluada</span><br/>
+                                    <strong t-out="d.get('fecha_requerida') and '%s/%s/%s' % (d['fecha_requerida'][8:10], d['fecha_requerida'][5:7], d['fecha_requerida'][:4]) or '-'"/>
+                                    <div class="migal-muted" t-out="d.get('origen_fecha') or ''"/></td>
+                            </tr>
+                            <tr>
+                                <td><span class="migal-caps">Almacén</span><br/><strong t-out="d.get('almacen') or '-'"/></td>
+                                <td><span class="migal-caps">Se puede atender todo desde</span><br/>
+                                    <strong t-out="d.get('fecha_atencion') and '%s/%s/%s (estimado)' % (d['fecha_atencion'][8:10], d['fecha_atencion'][5:7], d['fecha_atencion'][:4]) or 'Por confirmar'"/></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <t t-set="conteo" t-value="d.get('conteo') or {}"/>
+                    <table class="migal-chips" style="width:100%; border-collapse:collapse; margin: 6px 0 10px 0;">
+                        <tr>
+                            <t t-foreach="['stock', 'reposicion', 'regla', 'faltante']" t-as="k">
+                                <td><span class="num" t-attf-style="color:{{colores[k]}}" t-out="conteo.get(k, 0)"/>
+                                    <span class="migal-muted" t-out="textos[k]"/></td>
+                            </t>
+                        </tr>
+                    </table>
+
+                    <div class="migal-section">Productos</div>
+                    <table class="migal-table">
+                        <thead><tr>
+                            <th>Producto</th><th class="migal-right">Pide</th><th class="migal-right">En stock</th>
+                            <th class="migal-right">Comprometido</th><th class="migal-right">Libre</th>
+                            <th class="migal-right">Llega</th><th class="migal-right">Falta</th>
+                            <th>Resultado</th><th class="migal-right">Se cubre</th>
+                        </tr></thead>
+                        <tbody>
+                            <t t-foreach="d.get('lineas') or []" t-as="l">
+                                <tr>
+                                    <td t-out="l['producto']"/>
+                                    <td class="migal-right"><t t-out="'{:g}'.format(l['cantidad'])"/> <t t-out="l['uom']"/></td>
+                                    <td class="migal-right" t-out="'{:g}'.format(l['fisico'])"/>
+                                    <td class="migal-right" t-out="'{:g}'.format(l['comprometido'])"/>
+                                    <td class="migal-right" t-out="'{:g}'.format(l['disponible'])"/>
+                                    <td class="migal-right" t-out="'{:g}'.format(l['reposicion'])"/>
+                                    <td class="migal-right" t-out="'{:g}'.format(l['faltante'])"/>
+                                    <td><span class="migal-estado" t-attf-style="color:{{colores.get(l['estado'], '#333')}}" t-out="textos.get(l['estado'], l['estado'])"/></td>
+                                    <td class="migal-right" t-out="l.get('fecha_posible') and '%s/%s' % (l['fecha_posible'][8:10], l['fecha_posible'][5:7]) or '-'"/>
+                                </tr>
+                                <tr class="migal-detalle"><td colspan="9" t-out="l['detalle']"/></tr>
+                            </t>
+                            <tr t-if="not d.get('lineas')"><td colspan="9" class="migal-muted">La cotización no tiene productos.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="migal-note"><strong>Resumen: </strong><t t-out="diag.get('mensaje') or ''"/></div>
+                    <t t-if="d.get('mensaje_cliente')">
+                        <div class="migal-section">Mensaje sugerido para el cliente</div>
+                        <div class="migal-mensaje" t-out="d['mensaje_cliente'].replace('✅ ', '').replace('🕒 ', '').replace('⏳ ', '')"/>
+                    </t>
+                    <div class="migal-note">
+                        Consulta informativa con el stock, las entregas comprometidas y las reposiciones previstas a la fecha
+                        de emisión. No reserva stock, no confirma la venta ni garantiza la entrega.
+                    </div>
+                    <t t-call="migal_reportes.migal_a4_pie"/>
+                </div></div>
+            </t>
+        </t>
+    </template>
+</odoo>

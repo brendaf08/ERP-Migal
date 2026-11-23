@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ejemplos editables; la jerga base está en lib/normalizador.py. -->
+    <data noupdate="1">
+        <record id="sin_cinta_embalaje" model="migal.ocr.sinonimo">
+            <field name="termino">cinta de embalaje</field>
+            <field name="equivale">cinta masking</field>
+        </record>
+        <record id="sin_cinta_papel" model="migal.ocr.sinonimo">
+            <field name="termino">cinta de papel</field>
+            <field name="equivale">masking</field>
+        </record>
+        <record id="sin_cinta_metrica" model="migal.ocr.sinonimo">
+            <field name="termino">cinta metrica</field>
+            <field name="equivale">wincha</field>
+        </record>
+        <record id="sin_disco" model="migal.ocr.sinonimo">
+            <field name="termino">disco de corte</field>
+            <field name="equivale">disco corte</field>
+        </record>
+        <record id="sin_punta" model="migal.ocr.sinonimo">
+            <field name="termino">broca</field>
+            <field name="equivale">punta</field>
+        </record>
+        <record id="sin_acople" model="migal.ocr.sinonimo">
+            <field name="termino">conector rapido</field>
+            <field name="equivale">acople rapido</field>
+        </record>
+        <record id="sin_cable_doble" model="migal.ocr.sinonimo">
+            <field name="termino">cable doble</field>
+            <field name="equivale">cable mellizo</field>
+        </record>
+        <record id="sin_clavo_concreto" model="migal.ocr.sinonimo">
+            <field name="termino">clavo de concreto</field>
+            <field name="equivale">clavo albanil</field>
+        </record>
+    </data>
+</odoo>

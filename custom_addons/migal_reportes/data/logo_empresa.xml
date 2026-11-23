@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Al instalar: el logotipo MIGAL pasa a ser el logo de la empresa. -->
+    <data noupdate="1">
+        <function model="res.company" name="_migal_aplicar_logo"/>
+    </data>
+</odoo>

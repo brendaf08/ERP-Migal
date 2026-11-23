@@ -12,6 +12,7 @@ Prueban:
 
 from odoo.exceptions import ValidationError
 from odoo.tests import tagged, TransactionCase
+from .revision_anterior import assert_version_anterior, mantiene_versiones_vigentes
 
 
 @tagged("post_install", "-at_install")
@@ -176,8 +177,7 @@ class TestSaleRevisionTierCompat(TransactionCase):
         self.assertEqual(nueva.unrevisioned_name, nombre_base)
         self.assertEqual(nueva.state, "draft")
         self.assertEqual(nueva.active, True)
-        self.assertEqual(orden.state, "cancel")
-        self.assertEqual(orden.active, False)
+        assert_version_anterior(self, orden, nueva)
         self.assertEqual(orden.current_revision_id, nueva)
         self.assertFalse(nueva.current_revision_id)
         self.assertEqual(self._snap_reviews(nueva), [])
@@ -213,9 +213,8 @@ class TestSaleRevisionTierCompat(TransactionCase):
         )
         self.assertTrue(all(r["reviewed_date"] for r in despues))
 
-        # La orden anterior esta cancelada y archivada
-        self.assertEqual(orden.state, "cancel")
-        self.assertEqual(orden.active, False)
+        # La orden anterior esta cancelada y archivada (o vigente con migal_agente)
+        assert_version_anterior(self, orden, nueva)
 
         # La nueva revision no hereda historial
         self.assertEqual(self._snap_reviews(nueva), [])
@@ -330,19 +329,23 @@ class TestSaleRevisionTierCompat(TransactionCase):
             [nombre_base, nombre_base + "-01", nombre_base + "-02", nombre_base + "-03"],
         )
 
-        # Solo la ultima esta vigente
+        # Solo la ultima esta vigente (con migal_agente las anteriores siguen
+        # abiertas hasta vencer, apuntando a la ultima)
         vigentes = self.env["sale.order"].search(
             [("unrevisioned_name", "=", nombre_base)]
         )
-        self.assertEqual(len(vigentes), 1)
-        self.assertEqual(vigentes, revisiones[-1])
+        if mantiene_versiones_vigentes(self.env):
+            self.assertEqual(len(vigentes), 4)
+        else:
+            self.assertEqual(len(vigentes), 1)
+            self.assertEqual(vigentes, revisiones[-1])
         self.assertEqual(revisiones[-1].state, "draft")
         self.assertEqual(revisiones[-1].active, True)
+        self.assertFalse(revisiones[-1].current_revision_id)
 
         # Las anteriores estan canceladas y archivadas
         for r in revisiones[:-1]:
-            self.assertEqual(r.state, "cancel")
-            self.assertEqual(r.active, False)
+            assert_version_anterior(self, r, revisiones[-1])
 
         # Aprobar tambien la ultima revision (no se aprobo dentro del bucle)
         ultima = revisiones[-1]

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Base visual compartida: azul MIGAL, tipografía limpia, tablas sin saturación. -->
+    <template id="migal_a4_estilos">
+        <style type="text/css">
+            .migal-a4 {font-family: DejaVu Sans, Arial, sans-serif; color:#26364a; font-size:9pt; line-height:1.5;}
+            .migal-a4 * {box-sizing:border-box;}
+            .migal-a4 h1 {font-size:17pt; line-height:1.15; letter-spacing:.3px; color:#073779;
+                margin:0 0 2mm 0; font-weight:bold;}
+            .migal-a4 .migal-muted {color:#65758c;}
+            .migal-a4 .migal-caps {font-size:7.1pt; font-weight:bold; color:#64748b; letter-spacing:.6px; text-transform:uppercase;}
+            .migal-a4 .migal-header {width:100%; margin:0 0 11mm 0; padding-bottom:5mm;
+                border-bottom:2px solid #073779; border-collapse:collapse;}
+            .migal-a4 .migal-header td {vertical-align:middle; padding:0; border:0;}
+            .migal-a4 .migal-header .migal-fiscal {text-align:right; font-size:8pt; color:#48566a; line-height:1.55;}
+            .migal-a4 .migal-panel {background:#f3f7fc; border:1px solid #e4ecf6; border-radius:6px;
+                padding:4mm 5mm; margin:6mm 0 8mm 0;}
+            .migal-a4 .migal-info {width:100%; border-collapse:collapse;}
+            .migal-a4 .migal-info td {padding:1.5mm 4mm 1.5mm 0; vertical-align:top; border:0;}
+            .migal-a4 .migal-info strong {color:#142f52; font-weight:600;}
+            .migal-a4 .migal-table {width:100%; border-collapse:collapse; margin-top:4mm;}
+            .migal-a4 .migal-table thead {display:table-header-group;}
+            .migal-a4 .migal-table th {background:#eef3fa; padding:2.6mm 2mm; font-size:7.4pt;
+                color:#143e71; text-align:left; font-weight:bold; border-bottom:1px solid #cddbec;}
+            .migal-a4 .migal-table td {padding:3mm 2mm; border-bottom:1px solid #e6ebf1;
+                vertical-align:top; overflow-wrap:anywhere;}
+            .migal-a4 .migal-table tr {page-break-inside:avoid;}
+            .migal-a4 .migal-right {text-align:right !important; white-space:nowrap;}
+            .migal-a4 .migal-center {text-align:center !important;}
+            .migal-a4 .migal-strong {font-weight:bold; color:#142f52;}
+            .migal-a4 .migal-section {font-size:9pt; font-weight:bold; color:#073779; margin:9mm 0 2mm 0;}
+            .migal-a4 .migal-summary {width:100%; border-collapse:collapse; margin-top:7mm;
+                page-break-inside:avoid;}
+            .migal-a4 .migal-summary td {padding:1.4mm 2mm; border:0;}
+            .migal-a4 .migal-total {font-size:13pt; font-weight:bold; color:#073779;
+                border-top:2px solid #073779; padding-top:3mm !important;}
+            .migal-a4 .migal-note {margin-top:8mm; padding:3mm 4mm; background:#f7f9fc;
+                color:#4d5e74; border-left:2px solid #8caed0; font-size:8pt; page-break-inside:avoid;}
+            .migal-a4 .migal-footer {border-top:1px solid #e3e8ef; color:#778394;
+                padding-top:3mm; margin-top:10mm; font-size:7pt;}
+            .migal-a4 .migal-paid {color:#166534;}
+            .migal-a4 .migal-danger {color:#ad3549;}
+        </style>
+        <t t-if="company.env['ir.config_parameter'].sudo().get_param('migal_reportes.a4_compacto', 'False') == 'True'">
+            <style type="text/css">
+                .migal-a4 .migal-panel {margin:3mm 0 4mm !important;padding:2mm 3mm !important;}
+                .migal-a4 .migal-table td {padding:1.5mm 2mm !important;}
+                .migal-a4 .migal-section {margin:4mm 0 2mm !important;}
+                .migal-a4 .migal-header {margin-bottom:5mm !important;}
+                .migal-a4 .migal-footer {margin-top:5mm !important;}
+            </style>
+        </t>
+    </template>
+    <template id="migal_ticket_estilos">
+        <style type="text/css">
+            .migal-ticket {font-family:DejaVu Sans Mono, monospace; font-size:7.3pt;
+                line-height:1.35; color:#111; width:50mm; margin:0; padding:0;}
+            .migal-ticket * {box-sizing:border-box;}
+            .migal-ticket .center {text-align:center;}
+            .migal-ticket .right {text-align:right;}
+            .migal-ticket .muted {color:#333;}
+            .migal-ticket .title {font-size:9pt; font-weight:bold; line-height:1.35; margin:3mm 0 1mm;}
+            .migal-ticket .rule {border-top:1px dashed #333; margin:2mm 0; height:1px;}
+            .migal-ticket .minor {font-size:6.7pt;}
+            .migal-ticket .ticket-row {width:100%; border-collapse:collapse; margin:0;}
+            .migal-ticket .ticket-row td {padding:.65mm 0; vertical-align:top; border:0;
+                overflow-wrap:anywhere;}
+            .migal-ticket .ticket-row tr {page-break-inside:avoid;}
+            .migal-ticket .ticket-row .amount {text-align:right; white-space:nowrap; padding-left:1mm;}
+            .migal-ticket .total {font-size:9.5pt; font-weight:bold;}
+            .migal-ticket .entry {margin:2mm 0 2.5mm; page-break-inside:avoid;}
+            .migal-ticket .entry-name {overflow-wrap:anywhere;}
+            .migal-ticket .entry-line {display:table; width:100%; margin-top:.6mm;}
+            .migal-ticket .entry-left {display:table-cell; text-align:left;}
+            .migal-ticket .entry-right {display:table-cell; text-align:right; white-space:nowrap;}
+            .migal-ticket .foot {font-size:6.6pt; text-align:center; margin-top:3mm;}
+        </style>
+    </template>
+
+    <template id="migal_a4_cabecera">
+        <t t-set="mr_config" t-value="company.env['ir.config_parameter'].sudo()"/>
+        <table class="migal-header">
+            <tr>
+                <td style="width:51%;">
+                    <img src="/migal_reportes/static/img/logo_migal.png" alt="Ferre e Inversiones MIGAL"
+                         style="max-width:59mm; max-height:22mm; object-fit:contain;"/>
+                </td>
+                <td class="migal-fiscal" style="width:49%;">
+                    <strong t-esc="company.name"/><br/>
+                    <t t-if="mr_config.get_param('migal_reportes.subtitulo', 'Ferretería · Materiales para tus proyectos')"><span class="migal-muted" t-esc="mr_config.get_param('migal_reportes.subtitulo', 'Ferretería · Materiales para tus proyectos')"/><br/></t>
+                    <t t-if="company.vat">RUC <span t-esc="company.vat"/><br/></t>
+                    <t t-if="company.street"><span t-esc="company.street"/><br/></t>
+                    <t t-if="company.city"><span t-esc="company.city"/><br/></t>
+                    <t t-if="company.phone and mr_config.get_param('migal_reportes.mostrar_telefono', 'True') != 'False'"><span t-esc="company.phone"/><br/></t>
+                    <t t-if="company.email and mr_config.get_param('migal_reportes.mostrar_correo', 'True') != 'False'"><span t-esc="company.email"/><br/></t>
+                    <t t-if="company.website and mr_config.get_param('migal_reportes.mostrar_web', 'False') == 'True'"><span t-esc="company.website"/></t>
+                </td>
+            </tr>
+        </table>
+    </template>
+    <template id="migal_ticket_cabecera">
+        <t t-set="mr_config" t-value="company.env['ir.config_parameter'].sudo()"/>
+        <div class="center">
+            <t t-if="mr_config.get_param('migal_reportes.mostrar_logo_ticket', 'True') != 'False'">
+                <img src="/migal_reportes/static/img/logo_migal_bw.png" alt="MIGAL"
+                     style="width:40mm; max-height:14mm;"/><br/>
+            </t>
+            <strong t-esc="company.name"/>
+            <div t-if="company.vat">RUC <t t-esc="company.vat"/></div>
+            <div class="minor" t-if="company.street"><t t-esc="company.street"/></div>
+            <div class="minor" t-if="company.phone and mr_config.get_param('migal_reportes.mostrar_telefono', 'True') != 'False'">Tel. <t t-esc="company.phone"/></div>
+            <div class="minor" t-if="company.email and mr_config.get_param('migal_reportes.mostrar_correo', 'True') != 'False'"><t t-esc="company.email"/></div>
+            <div class="minor" t-if="company.website and mr_config.get_param('migal_reportes.mostrar_web', 'False') == 'True'"><t t-esc="company.website"/></div>
+        </div>
+        <div class="rule"/>
+    </template>
+    <template id="migal_a4_pie">
+        <div class="migal-footer"><span t-esc="company.env['ir.config_parameter'].sudo().get_param('migal_reportes.pie_a4', 'Documento generado por Ferre &amp; Inversiones MIGAL.')"/></div>
+    </template>
+    <template id="migal_ticket_pie">
+        <div class="rule"/>
+        <div class="foot">Ferre &amp; Inversiones MIGAL<br/><span t-esc="company.env['ir.config_parameter'].sudo().get_param('migal_reportes.pie_ticket', 'Gracias por confiar en MIGAL.')"/></div>
+    </template>
+</odoo>

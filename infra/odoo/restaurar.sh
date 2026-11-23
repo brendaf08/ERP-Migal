@@ -20,6 +20,7 @@ else
   ls restore/*.zip >/dev/null 2>&1 || { echo "Coloque en restore/ el respaldo .zip de Odoo (o el paquete privado)." >&2; exit 1; }
   docker compose run --rm --no-deps --user root --entrypoint python3 odoo /opt/migal/restaurar_respaldo.py
 fi
-docker compose up -d odoo
+# Modulos de la version actual del repositorio sobre la base restaurada.
+bash ./actualizar.sh
 puerto=$(grep -E '^ODOO_PORT=' .env | cut -d= -f2 || true)
 echo "Abra http://localhost:${puerto:-8069} (el primer arranque tarda 1-2 minutos; revise docker compose logs odoo)"

@@ -214,9 +214,24 @@ export class AgenteMigalWidget extends Component {
         return this.accionesVisibles.some((a) => a.periodo);
     }
 
-    ejecutarAccion(acc) {
+    async ejecutarAccion(acc) {
         if (this.formularioSinGuardar()) {
             this.state.sinGuardar = true;
+            return;
+        }
+        if (acc.abrir) {
+            // Acciones que llevan a otra pantalla (por ejemplo, Escanear lista).
+            const { model, resId } = this.registroActual;
+            const accion = await this.orm.call("migal.agente", "widget_abrir", [acc.id, model, resId]);
+            if (accion) {
+                // Al cerrar la ventana (p. ej. tras agregar productos) se recarga la pantalla de fondo.
+                await this.actionService.doAction(accion, {
+                    onClose: async () => {
+                        await this.actionService.doAction("soft_reload");
+                        await this.volver();
+                    },
+                });
+            }
             return;
         }
         if (acc.fecha) {
@@ -227,6 +242,16 @@ export class AgenteMigalWidget extends Component {
             return this.ejecutar(acc.id, { incluir_disponibilidad: this.state.incluirDisp });
         }
         return this.ejecutar(acc.id, acc.periodo ? this.fechasPeriodo : {});
+    }
+
+    async abrirDocumento(documento) {
+        const { model, resId } = this.registroActual;
+        const accion = await this.orm.call("migal.agente", "widget_abrir", [
+            documento.accion, model, resId, documento.params || {},
+        ]);
+        if (accion) {
+            await this.actionService.doAction(accion);
+        }
     }
 
     async ejecutar(accion, params = {}) {

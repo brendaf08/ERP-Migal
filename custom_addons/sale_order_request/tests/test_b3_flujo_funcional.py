@@ -27,6 +27,7 @@ stock insuficiente; con aprobaciones completas la aceptación es permitida
 
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import tagged, TransactionCase
+from .revision_anterior import assert_version_anterior, mantiene_versiones_vigentes
 
 
 @tagged("post_install", "-at_install")
@@ -549,7 +550,7 @@ class TestB3FlujoFuncionalIntegral(TransactionCase):
 
         # La cotización original fue cancelada al crear la revisión
         cotizacion = self.env["sale.order"].browse(cotizacion.id)
-        self.assertEqual(cotizacion.state, "cancel")
+        assert_version_anterior(self, cotizacion, nueva)
 
     # ------------------------------------------------------------------
     # 5.4: Revalidación de stock (stock insuficiente bloquea aceptación)

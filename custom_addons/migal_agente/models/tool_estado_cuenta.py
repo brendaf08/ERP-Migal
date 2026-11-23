@@ -35,6 +35,10 @@ class MigalAgenteToolEstadoCuenta(models.AbstractModel):
             palabras = [w for w in norm.split() if len(w) > 1]
             pool = Partner.search([], limit=5000)
             candidatos = pool.filtered(lambda p: all(w in normalize(p.display_name) for w in palabras))
+            if not candidatos and palabras:
+                # Nombre mal escrito («Luiz», «Brenda Mirano»): coincidencia aproximada por palabra.
+                from .tool_cotizacion import coincide_aproximado
+                candidatos = pool.filtered(lambda p: coincide_aproximado(p.display_name, palabras))
         comerciales = candidatos.mapped("commercial_partner_id")
         return comerciales
 
@@ -148,11 +152,12 @@ class MigalAgenteToolEstadoCuenta(models.AbstractModel):
                                    "No encontré un cliente que coincida con «%s»." % cliente,
                                    datos={"cliente": cliente})
         if len(partners) > 1:
-            opciones = ", ".join(p.display_name for p in partners[:5])
+            opciones = ", ".join(p.display_name for p in partners[:8])
             return self._resultado(False, "ambiguo", "Estado de cuenta",
                                    "Hay varios clientes que coinciden con «%s»: %s. Indique el nombre completo o "
                                    "el RUC/DNI." % (cliente, opciones), datos={"cliente": cliente,
-                                                                               "candidatos": partners[:5].mapped("display_name")})
+                                                                               "candidatos": partners[:5].mapped("display_name"),
+                                                                               "candidatos_ids": partners[:8].ids})
         partner = partners
         hoy = self._hoy()
         hasta = fields.Date.to_date(fecha_hasta) if fecha_hasta else hoy

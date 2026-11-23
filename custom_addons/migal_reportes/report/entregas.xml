@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <record id="action_entrega_a4" model="ir.actions.report">
+        <field name="name">MIGAL · Resumen de entrega A4</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_entrega_a4</field>
+        <field name="report_file">migal_reportes.report_entrega_a4</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_a4"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+    <record id="action_entrega_58" model="ir.actions.report">
+        <field name="name">MIGAL · Resumen de entrega 58 mm</field>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">migal_reportes.report_entrega_58</field>
+        <field name="report_file">migal_reportes.report_entrega_58</field>
+        <field name="paperformat_id" ref="migal_reportes.paperformat_migal_ticket58"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_entrega_a4">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-a4">
+                    <t t-call="migal_reportes.migal_a4_estilos"/>
+                    <t t-call="migal_reportes.migal_a4_cabecera"/>
+                    <div class="migal-caps">Logística</div><h1>Resumen de entrega</h1>
+                    <div class="migal-muted">Operación <strong t-out="doc.name"/></div>
+                    <div class="migal-panel">
+                        <table class="migal-info">
+                            <tr><td style="width:56%;"><span class="migal-caps">Destinatario</span><br/>
+                                    <strong t-out="doc.partner_id.display_name or '-'"/></td>
+                                <td><span class="migal-caps">Estado</span><br/><strong t-field="doc.state"/></td></tr>
+                            <tr><td><span class="migal-caps">Documento de origen</span><br/>
+                                    <span t-out="doc.origin or '-'"/></td>
+                                <td><span class="migal-caps">Fecha prevista</span><br/>
+                                    <span t-if="doc.scheduled_date" t-field="doc.scheduled_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/><span t-else="">-</span></td></tr>
+                        </table>
+                    </div>
+                    <div class="migal-section">Productos de la operación</div>
+                    <table class="migal-table">
+                        <thead><tr><th style="width:11%;">N.°</th><th>Producto</th>
+                            <th class="migal-right">Previsto</th><th>Unidad</th></tr></thead>
+                        <tbody>
+                            <t t-set="n" t-value="0"/>
+                            <t t-foreach="doc.move_ids" t-as="move">
+                                <t t-set="n" t-value="n + 1"/>
+                                <tr><td t-out="n"/><td t-out="move.product_id.display_name"/>
+                                    <td class="migal-right" t-out="'{:,.2f}'.format(move.product_uom_qty)"/>
+                                    <td t-out="move.product_uom.name"/></tr>
+                            </t>
+                            <tr t-if="not n"><td colspan="4" class="migal-muted">Sin productos registrados.</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="migal-note">Documento operativo interno. Las cantidades indicadas son previstas;
+                        valide la entrega real en el albarán oficial de Odoo. No reemplaza una guía de remisión electrónica.</div>
+                    <t t-call="migal_reportes.migal_a4_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+    <template id="report_entrega_58">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="company" t-value="doc.company_id"/>
+                <div class="article" t-att-data-oe-model="doc._name" t-att-data-oe-id="doc.id" t-att-data-oe-lang="doc.env.context.get(&quot;lang&quot;)"><div class="page migal-ticket">
+                    <t t-call="migal_reportes.migal_ticket_estilos"/>
+                    <t t-call="migal_reportes.migal_ticket_cabecera"/>
+                    <div class="title center">RESUMEN DE ENTREGA</div>
+                    <div class="center"><strong t-out="doc.name"/></div>
+                    <div class="rule"/>
+                    <div>Cliente: <t t-out="doc.partner_id.display_name or '-'"/></div>
+                    <div>Origen: <t t-out="doc.origin or '-'"/></div>
+                    <div>Estado: <span t-field="doc.state"/></div>
+                    <div class="rule"/>
+                    <div t-foreach="doc.move_ids" t-as="move" class="entry">
+                        <div class="entry-name"><strong t-out="move.product_id.display_name"/></div>
+                        <div class="right"><t t-out="'{:g}'.format(move.product_uom_qty)"/>
+                            <t t-out="move.product_uom.name"/></div>
+                    </div>
+                    <div class="rule"/>
+                    <div class="minor center">Cantidades previstas. No sustituye la guía de remisión electrónica ni confirma recepción.</div>
+                    <t t-call="migal_reportes.migal_ticket_pie"/>
+                </div>
+            </div></t>
+        </t>
+    </template>
+</odoo>

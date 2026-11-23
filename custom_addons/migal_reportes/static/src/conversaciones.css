@@ -1,0 +1,39 @@
+.o_form_renderer:has(.o_migal_toggle_chatter:not([open])) .o-mail-Form-chatter {
+    display: none !important;
+}
+
+.o_migal_chatter_control {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+}
+
+.o_migal_toggle_chatter > summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border-color, #dee2e6);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.o_migal_toggle_chatter > summary::-webkit-details-marker {
+    display: none;
+}
+
+.o_migal_toggle_chatter > summary:hover,
+.o_migal_toggle_chatter[open] > summary {
+    background-color: var(--secondary-bg, #e9ecef);
+}
+
+.o_migal_toggle_chatter {
+    align-self: center;
+    flex: 0 0 auto;
+}
+
+.o_migal_toggle_chatter > summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}

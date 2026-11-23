@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="migal_reportes.MigalEstadoCuentaWidget" t-inherit="migal_agente.AgenteWidget"
+       t-inherit-mode="extension" owl="1">
+        <xpath expr="//a[@t-if='res.pdf_url']" position="replace">
+            <a t-if="res.pdf_url" class="btn btn-outline-secondary btn-sm"
+               t-att-href="res.pdf_url" t-att-download="res.pdf_nombre" target="_blank">
+                <i class="fa fa-file-pdf-o me-1"/>
+                <t t-if="res.pdf_ticket_url">Descargar PDF A4</t>
+                <t t-else="">Descargar PDF</t>
+            </a>
+            <a t-if="res.pdf_ticket_url" class="btn btn-outline-secondary btn-sm"
+               t-att-href="res.pdf_ticket_url" t-att-download="res.pdf_ticket_nombre" target="_blank">
+                <i class="fa fa-print me-1"/>Descargar Ticket 58 mm
+            </a>
+        </xpath>
+    </t>
+</templates>

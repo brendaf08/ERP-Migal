@@ -18,6 +18,7 @@ Usa usuarios sintéticos creados en la prueba (no usuarios reales de ).
 
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import tagged, TransactionCase
+from .revision_anterior import assert_version_anterior, mantiene_versiones_vigentes
 
 
 @tagged("post_install", "-at_install")
@@ -329,7 +330,7 @@ class TestB4ExcepcionesOperativas(TransactionCase):
 
         # La cotización original pasa a cancel
         cotizacion = self.env["sale.order"].browse(cotizacion.id)
-        self.assertEqual(cotizacion.state, "cancel")
+        assert_version_anterior(self, cotizacion)
 
     def test_b42_no_puede_confirmar_revision_obsoleta(self):
         """No se puede confirmar comercialmente una revisión obsoleta."""
