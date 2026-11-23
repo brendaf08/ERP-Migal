@@ -1,3 +1,7 @@
 # GEMINI.md
 
-Las instrucciones para asistentes de código están en [AGENTS.md](AGENTS.md). Léelo completo antes de empezar y respeta sus reglas obligatorias.
+Instrucciones para Gemini CLI. La fuente única es `AGENTS.md` (se importa abajo) y se aplica completa, incluidas sus reglas obligatorias.
+
+Antes de programar, lee también la ficha del agente en el que trabajas: `producto/agentes/<area>.md` (ventas, marketing, suministro, cobranzas, pagos o contabilidad).
+
+@AGENTS.md

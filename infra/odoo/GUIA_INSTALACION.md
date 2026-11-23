@@ -5,6 +5,8 @@ De una PC vacía a tener **Odoo 19 Community con los módulos de MIGAL, el Agent
 > Validada el 13/11/2026 en Windows 11 + Docker Desktop 29 con el respaldo `ferre_inversiones_migal_revision_2026-11-13_18-40-18.zip`: restauración sin errores (100 módulos, 487 archivos adjuntos, 4 usuarios), inicio de sesión correcto, agente operativo, PDF con estilos, QR público por túnel (contenedor `publicador`) y **29/29 pruebas automáticas aprobadas**.
 >
 > Revalidada el 23/11/2026 con el mismo respaldo y la rama `feat/agente-cotizaciones-versiones`: restauración desde cero con `restaurar.ps1` (incluye `actualizar.ps1`), `migal_reportes` y `migal_ocr` instalados, fierro corrugado y logotipo aplicados, sin aviso de base neutralizada y **235/235 pruebas automáticas aprobadas** (`migal_agente`, `migal_ocr`, `migal_reportes`, `sale_order_request` y revisiones OCA).
+>
+> Revalidada el 23/11/2026 en `main` con la base multiagente (PR #24): restauración desde cero, los seis módulos de agente instalados por `actualizar.ps1`, datos «[PRUEBA]» cargados y **353/353 pruebas automáticas aprobadas** (agentes, núcleo, OCR, reportes, solicitudes, revisiones y validación por niveles).
 
 ---
 
@@ -16,6 +18,7 @@ De una PC vacía a tener **Odoo 19 Community con los módulos de MIGAL, el Agent
 | Módulos | `sale_order_request` (solicitudes de orden de venta), aprobaciones y revisiones OCA, contabilidad (`base_accounting_kit`), `partner_relation_multi` |
 | Agente MIGAL | Avatar flotante, chat (entiende errores de escritura, plurales y «cotización de Luis»), WhatsApp, QR, cobertura preliminar con diagnóstico en PDF y estado de cuenta |
 | Cotizaciones por versiones | La versión anterior de una cotización sigue disponible hasta que vence; el agente pregunta qué cotización y qué versión cuando hay varias |
+| Agentes por área | Orquestador y seis agentes (`migal_agente_ventas`, `_marketing`, `_suministro`, `_cobranzas`, `_pagos`, `_contabilidad`). Guía del equipo: `producto/agentes/README.md` |
 | Escanear lista (`migal_ocr`) | Foto, PDF o texto de la lista del cliente → cada producto del catálogo con su % de coincidencia → se agrega a la cotización |
 | Reportes MIGAL | PDF A4 y ticket 58 mm con vista previa antes de imprimir, logotipo MIGAL |
 | Datos | Catálogo MIGAL, clientes, 54 ventas DEMO, facturas, pagos y solicitudes de prueba |
@@ -39,13 +42,13 @@ git --version
 
 ```powershell
 cd $HOME\Documents
+git config --global core.longpaths true
 git clone https://github.com/brendaf08/ERP-Migal.git
 cd ERP-Migal
-git switch feat/agente-cotizaciones-versiones
 cd infra\odoo
 ```
 
-> Cuando la rama se fusione a `main`, el paso `git switch` ya no hará falta.
+> Trabaja sobre `main` (la rama que queda al clonar). `core.longpaths` evita errores de rutas largas en Windows. Si vas a construir un agente, después de instalar crea tu rama `feat/agente-<area>` desde `main` (ver `producto/agentes/README.md`).
 
 ## 3. Colocar el respaldo
 
@@ -95,7 +98,7 @@ Abra http://localhost:8069
 ```
 
 El script restaura la base y los adjuntos, deja listas las direcciones para que los PDF salgan con estilos y, al final,
-ejecuta `actualizar.ps1`: instala `migal_reportes` y `migal_ocr`, actualiza los demás módulos de `custom_addons`, crea
+ejecuta `actualizar.ps1`: instala los seis agentes, `migal_reportes` y `migal_ocr`, actualiza los demás módulos de `custom_addons`, crea
 los productos de fierro corrugado que piden las notas de venta reales y aplica el logotipo MIGAL. Tarda unos minutos
 más. **No sobrescribe nada**: si la base ya existe, se detiene.
 
@@ -140,9 +143,9 @@ powershell -ExecutionPolicy Bypass -File .\cambiar_clave.ps1
 - [ ] Una cotización → **Imprimir** → vista previa con selector **A4 / Ticket 58 mm**.
 - [ ] Una cotización sin productos → avatar → **Escanear lista del cliente** → pegar `10 bls cemento sol` → **Leer lista** → **Agregar a la cotización**.
 
-## 8. (Opcional) Datos extra para la demo
+## 8. Datos de prueba para la demo y los agentes
 
-El respaldo ya trae los datos del equipo. Si además quieres los casos preparados para la demostración, ejecuta:
+El respaldo ya trae los datos del equipo. Para los casos de la demostración y los datos «[PRUEBA]» que usan los agentes (compras, facturas de proveedor, cartera y CRM), ejecuta:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\cargar_datos_demo.ps1
