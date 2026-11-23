@@ -89,7 +89,10 @@ class SaleOrder(models.Model):
             lambda order: order.state in ("draft", "sent") and not order.migal_comprobante_externo
         )
         if sin_eleccion:
-            sin_eleccion.write({"migal_comprobante_externo": "order"})
+            # Valor por defecto interno al confirmar, no una edición del usuario: con validación por
+            # niveles (sale_tier_validation) no debe bloquear la confirmación de una cotización aprobada,
+            # p. ej. firmada por el cliente en el portal. La validación de la confirmación sigue en super().
+            sin_eleccion.with_context(skip_validation_check=True).write({"migal_comprobante_externo": "order"})
         return super().action_confirm()
 
     @api.constrains("migal_comprobante_externo", "migal_codigo_comprobante", "migal_fecha_comprobante")
