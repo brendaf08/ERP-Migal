@@ -3,6 +3,8 @@
 De una PC vacía a tener **Odoo 19 Community con los módulos de MIGAL, el Agente MIGAL y todos los datos de prueba**, en unos 20 minutos.
 
 > Validada el 13/11/2026 en Windows 11 + Docker Desktop 29 con el respaldo `ferre_inversiones_migal_revision_2026-11-13_18-40-18.zip`: restauración sin errores (100 módulos, 487 archivos adjuntos, 4 usuarios), inicio de sesión correcto, agente operativo, PDF con estilos, QR público por túnel (contenedor `publicador`) y **29/29 pruebas automáticas aprobadas**.
+>
+> Revalidada el 23/11/2026 con el mismo respaldo y la rama `feat/agente-cotizaciones-versiones`: restauración desde cero con `restaurar.ps1` (incluye `actualizar.ps1`), `migal_reportes` y `migal_ocr` instalados, fierro corrugado y logotipo aplicados, sin aviso de base neutralizada y **235/235 pruebas automáticas aprobadas** (`migal_agente`, `migal_ocr`, `migal_reportes`, `sale_order_request` y revisiones OCA).
 
 ---
 
@@ -12,7 +14,10 @@ De una PC vacía a tener **Odoo 19 Community con los módulos de MIGAL, el Agent
 |---|---|
 | Odoo 19 Community | Imagen oficial de Docker, con PostgreSQL 16 |
 | Módulos | `sale_order_request` (solicitudes de orden de venta), aprobaciones y revisiones OCA, contabilidad (`base_accounting_kit`), `partner_relation_multi` |
-| Agente MIGAL | Avatar flotante, chat, WhatsApp, QR, cobertura preliminar y estado de cuenta |
+| Agente MIGAL | Avatar flotante, chat (entiende errores de escritura, plurales y «cotización de Luis»), WhatsApp, QR, cobertura preliminar con diagnóstico en PDF y estado de cuenta |
+| Cotizaciones por versiones | La versión anterior de una cotización sigue disponible hasta que vence; el agente pregunta qué cotización y qué versión cuando hay varias |
+| Escanear lista (`migal_ocr`) | Foto, PDF o texto de la lista del cliente → cada producto del catálogo con su % de coincidencia → se agrega a la cotización |
+| Reportes MIGAL | PDF A4 y ticket 58 mm con vista previa antes de imprimir, logotipo MIGAL |
 | Datos | Catálogo MIGAL, clientes, 54 ventas DEMO, facturas, pagos y solicitudes de prueba |
 | Configuración | Empresa, métodos de pago, roles de usuario y reglas habituales de cobertura (todo viene en el respaldo) |
 
@@ -36,7 +41,7 @@ git --version
 cd $HOME\Documents
 git clone https://github.com/brendaf08/ERP-Migal.git
 cd ERP-Migal
-git switch feature/pc3-agente-docker
+git switch feat/agente-cotizaciones-versiones
 cd infra\odoo
 ```
 
@@ -89,7 +94,21 @@ Listo: 487 archivos de filestore. Usuarios internos: administrador@migal.test, v
 Abra http://localhost:8069
 ```
 
-El script restaura la base y los adjuntos, y deja listas las direcciones para que los PDF salgan con estilos. **No sobrescribe nada**: si la base ya existe, se detiene.
+El script restaura la base y los adjuntos, deja listas las direcciones para que los PDF salgan con estilos y, al final,
+ejecuta `actualizar.ps1`: instala `migal_reportes` y `migal_ocr`, actualiza los demás módulos de `custom_addons`, crea
+los productos de fierro corrugado que piden las notas de venta reales y aplica el logotipo MIGAL. Tarda unos minutos
+más. **No sobrescribe nada**: si la base ya existe, se detiene.
+
+### ¿Ya tenías Odoo instalado con una versión anterior?
+
+No hace falta restaurar de nuevo. Descarga los cambios y actualiza los módulos sobre tu base:
+
+```powershell
+git pull
+powershell -ExecutionPolicy Bypass -File .\actualizar.ps1
+```
+
+Conserva tus datos y claves. Recarga el navegador con **Ctrl+F5** al terminar.
 
 ## 6. Entrar a Odoo
 
@@ -116,6 +135,10 @@ powershell -ExecutionPolicy Bypass -File .\cambiar_clave.ps1
 - [ ] **Ventas** → abre una cotización con productos → avatar → pestaña **Disponibilidad** → **Cobertura preliminar**.
 - [ ] Pestaña **Enviar cotización** → **Cliente a distancia: WhatsApp** → se generan el mensaje y el PDF.
 - [ ] **Contactos** → un cliente con facturas → avatar → **Estado de cuenta** → **Descargar PDF**. El PDF debe tener logo, colores y el recuadro de métodos de pago.
+- [ ] En el chat del agente: «cotización de Luis» → lista de cotizaciones abiertas → responder «1».
+- [ ] **Disponibilidad** → **Ver diagnóstico de disponibilidad** → se abre el PDF; debajo, el mensaje por producto para el cliente.
+- [ ] Una cotización → **Imprimir** → vista previa con selector **A4 / Ticket 58 mm**.
+- [ ] Una cotización sin productos → avatar → **Escanear lista del cliente** → pegar `10 bls cemento sol` → **Leer lista** → **Agregar a la cotización**.
 
 ## 8. (Opcional) Datos extra para la demo
 
@@ -130,6 +153,31 @@ Este comando agrega:
 - **Cobertura:** stock, reposiciones previstas y la cotización «[SIM-COB] Obra Pinedo», con todos los casos (stock, reposición, regla habitual y faltante).
 
 Se puede ejecutar varias veces: no duplica nada.
+
+### 8.1 Inteligencia artificial con Google Gemini
+
+El chat del agente y la lectura de fotos en **Escanear lista** usan Gemini. Sin clave, todo lo demás funciona: el chat
+usa su intérprete propio y en Escanear lista se puede pegar la lista como texto.
+
+1. Crea una clave en Google AI Studio (proyecto con facturación habilitada).
+2. Odoo → **Ajustes** → **Agente MIGAL** → bloque **Inteligencia artificial**.
+3. Proveedor **Google Gemini**, pega la **Clave de API**, marca **Autorizo enviar datos al proveedor de IA** y,
+   si quieres respuestas redactadas por IA en el chat, **Usar IA en el chat**. Guarda.
+
+La clave queda en la base de datos de tu PC, nunca en el repositorio. Si un modelo de Gemini está saturado o sin cuota,
+el sistema pasa al siguiente automáticamente.
+
+### 8.2 Escanear la lista de productos de un cliente
+
+1. Abre una cotización (guárdala si es nueva) y pulsa **Escanear lista**, o usa el avatar del agente.
+2. Sube la foto o el PDF de la lista: se lee al instante. También puedes pegar el texto y pulsar **Leer lista**.
+3. Cada línea muestra el producto propuesto, el **% de coincidencia** (verde, amarillo o rojo) y otras sugerencias del
+   mismo tipo. Cambia lo que haga falta y pulsa **Agregar a la cotización**: los productos repetidos se suman.
+
+La IA solo transcribe; el producto lo propone el emparejador (normalizador ferretero + similitud difusa) y lo confirma la
+persona. Los términos ferreteros propios («huincha», «terokal»…) se editan en **Ventas › Configuración › Términos
+ferreteros**. Las fotos de notas de venta reales para la demo se comparten por el canal privado del equipo: contienen
+datos de clientes y **no se suben a GitHub**.
 
 ## 9. (Opcional) QR que abra desde cualquier celular
 
@@ -154,7 +202,7 @@ Cuando el registro diga `Túnel activo: https://….trycloudflare.com`, los QR y
 | Encender / apagar el QR público | `docker compose --profile qr up -d publicador` / `docker compose stop publicador` |
 | Apagarlo (conserva los datos) | `docker compose --profile qr down` |
 | Ver si hay errores | `docker compose logs --tail 100 odoo` |
-| Actualizar el código del equipo | `git pull` → `docker compose build` → `docker compose up -d` |
+| Actualizar el código del equipo | `git pull` → `powershell -ExecutionPolicy Bypass -File .\actualizar.ps1` |
 | Aplicar cambios de un módulo | `docker compose stop odoo` → `docker compose run --rm --no-deps odoo odoo -d ferre_inversiones_migal -u migal_agente --stop-after-init` → `docker compose up -d` |
 | Correr las pruebas del agente | `docker compose stop odoo` → `docker compose run --rm --no-deps odoo odoo -d ferre_inversiones_migal -u migal_agente --test-tags migal_agente --stop-after-init --http-port=8070` → `docker compose up -d` |
 

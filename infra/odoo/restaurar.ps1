@@ -20,7 +20,9 @@ if (Test-Path -LiteralPath 'restore/ferre_migal_docker.dump') {
     if (-not (Get-ChildItem -LiteralPath 'restore' -Filter '*.zip' -File)) { throw 'Coloque en restore/ el respaldo .zip de Odoo (o el paquete privado).' }
     Invoke-Compose run --rm --no-deps --user root --entrypoint python3 odoo /opt/migal/restaurar_respaldo.py
 }
-Invoke-Compose up -d odoo
+# Modulos de la version actual del repositorio sobre la base restaurada.
+& powershell -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'actualizar.ps1')
+if ($LASTEXITCODE -ne 0) { throw 'No se pudieron actualizar los modulos.' }
 $puerto = '8069'
 $linea = Get-Content .env | Where-Object { $_ -match '^ODOO_PORT=(\d+)' } | Select-Object -First 1
 if ($linea) { $puerto = ($linea -split '=')[1].Trim() }

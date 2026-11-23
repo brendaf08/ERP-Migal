@@ -114,6 +114,10 @@ def main():
              "VALUES ('%s', '%s', 1, 1, now(), now()) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value"
              % (clave, valor), DB)
     psql("DELETE FROM ir_config_parameter WHERE key IN ('migal_agente.url_publica', 'migal_agente.llm_api_key')", DB)
+    # Sin la franja roja «Base de datos neutralizada»: la neutralización sigue vigente
+    # (servidor de correo ficticio y tareas programadas desactivadas), solo se quita el aviso.
+    psql("DELETE FROM ir_config_parameter WHERE key = 'database.is_neutralized'", DB)
+    psql("UPDATE ir_ui_view SET active = false WHERE key = 'web.neutralize_banner'", DB)
 
     usuarios = psql("SELECT login FROM res_users WHERE active AND NOT share ORDER BY id", DB).splitlines()
     print("Listo: %s archivos de filestore. Usuarios internos: %s" % (archivos, ", ".join(usuarios)))
