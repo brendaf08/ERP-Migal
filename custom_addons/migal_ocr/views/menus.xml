@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_migal_ocr_documento" name="Escanear lista" parent="sale.sale_order_menu"
+              action="action_migal_ocr_documento" sequence="5"/>
+    <menuitem id="menu_migal_ocr_sinonimo" name="Términos ferreteros" parent="sale.menu_sale_config"
+              action="action_migal_ocr_sinonimo" sequence="60"/>
+</odoo>

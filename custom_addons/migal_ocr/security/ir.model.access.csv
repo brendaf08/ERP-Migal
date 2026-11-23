@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_migal_ocr_documento_user,migal.ocr.documento user,model_migal_ocr_documento,sales_team.group_sale_salesman,1,1,1,1
+access_migal_ocr_linea_user,migal.ocr.linea user,model_migal_ocr_linea,sales_team.group_sale_salesman,1,1,1,1
+access_migal_ocr_sinonimo_user,migal.ocr.sinonimo user,model_migal_ocr_sinonimo,sales_team.group_sale_salesman,1,0,0,0
+access_migal_ocr_sinonimo_manager,migal.ocr.sinonimo manager,model_migal_ocr_sinonimo,sales_team.group_sale_manager,1,1,1,1

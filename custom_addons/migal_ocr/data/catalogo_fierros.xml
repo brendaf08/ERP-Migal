@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Solo al instalar: crea los fierros que piden las notas de venta reales si aún no existen. -->
+    <data noupdate="1">
+        <function model="product.product" name="_migal_ocr_crear_fierros"/>
+    </data>
+</odoo>

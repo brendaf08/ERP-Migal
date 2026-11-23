@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_migal_ocr_documento_form" model="ir.ui.view">
+        <field name="name">migal.ocr.documento.form</field>
+        <field name="model">migal.ocr.documento</field>
+        <field name="arch" type="xml">
+            <form string="Escanear lista">
+                <header>
+                    <button name="action_leer" type="object" string="Leer lista" class="btn-primary" icon="fa-magic"
+                            invisible="estado not in ('borrador', 'error')"/>
+                    <button name="action_agregar_a_cotizacion" type="object" class="btn-primary" icon="fa-cart-plus"
+                            string="Agregar a la cotización" invisible="estado != 'leido'"/>
+                    <button name="action_volver_a_leer" type="object" string="Volver a leer" icon="fa-refresh"
+                            invisible="estado not in ('leido', 'aplicado')"/>
+                    <field name="estado" widget="statusbar" statusbar_visible="borrador,leido,aplicado"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="estado != 'error' or not mensaje">
+                        <field name="mensaje" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="estado == 'aplicado'"/>
+                            <field name="order_id" readonly="estado == 'aplicado'"
+                                   placeholder="Vacío: se crea una cotización nueva"/>
+                        </group>
+                        <group invisible="estado == 'borrador'">
+                            <field name="coincidencia_promedio" widget="progressbar" string="Coincidencia promedio"/>
+                            <field name="lineas_alta" string="Listas para agregar"/>
+                            <field name="lineas_revisar" string="Para revisar"
+                                   decoration-warning="lineas_revisar &gt; 0"/>
+                            <field name="origen" invisible="not origen"/>
+                            <field name="modelo_ia" invisible="not modelo_ia"/>
+                        </group>
+                    </group>
+                    <group string="1. Suba la lista" invisible="estado not in ('borrador', 'error')">
+                        <field name="archivo" filename="archivo_nombre" widget="migal_ocr_archivo"
+                               string="Foto o PDF"/>
+                        <field name="archivo_nombre" invisible="1"/>
+                        <field name="texto_lista" placeholder="10 bls cemento sol&#10;fierro 1/2 x 20&#10;huincha stanley 5 m - 2"/>
+                    </group>
+                    <notebook invisible="estado == 'borrador'">
+                        <page string="2. Revise los productos" name="lineas">
+                            <field name="linea_ids" readonly="estado == 'aplicado'">
+                                <list editable="bottom" create="0"
+                                      decoration-success="nivel in ('alta', 'manual')"
+                                      decoration-warning="nivel == 'media'"
+                                      decoration-danger="nivel in ('baja', 'ninguna')">
+                                    <field name="secuencia" widget="handle"/>
+                                    <field name="texto_crudo" readonly="1"/>
+                                    <field name="cantidad"/>
+                                    <field name="product_id" options="{'no_create': True}" domain="relacionado_ids and [('id', 'in', relacionado_ids)] or [('sale_ok', '=', True)]"/>
+                                    <field name="uom_id" optional="show"/>
+                                    <field name="coincidencia" widget="progressbar"/>
+                                    <field name="nivel" widget="badge"
+                                           decoration-success="nivel in ('alta', 'manual')"
+                                           decoration-warning="nivel == 'media'"
+                                           decoration-danger="nivel in ('baja', 'ninguna')"/>
+                                    <field name="sugerencias_otras_ids" widget="many2many_tags" string="Sugerencias" optional="show"/>
+                                    <field name="relacionado_ids" column_invisible="1"/>
+                                    <field name="producto_sugerido_id" column_invisible="1"/>
+                                    <field name="texto_normalizado" optional="hide"/>
+                                    <field name="confianza" column_invisible="1"/>
+                                    <field name="alternativas_json" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <p class="text-muted small mt-2">
+                                Verde: coincidencia alta · Amarillo: revisar · Rojo: elija el producto a mano.
+                                Puede cambiar el producto o la cantidad de cualquier línea antes de agregarlas.
+                            </p>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Ventana sobre la cotización: sin cabecera; al subir la foto se lee sola. -->
+    <record id="view_migal_ocr_documento_dialogo" model="ir.ui.view">
+        <field name="name">migal.ocr.documento.dialogo</field>
+        <field name="model">migal.ocr.documento</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <form string="Escanear lista">
+                <field name="estado" invisible="1"/>
+                <field name="order_id" invisible="1"/>
+                <field name="partner_id" invisible="1"/>
+                <div class="alert alert-danger" role="alert" invisible="estado != 'error' or not mensaje">
+                    <field name="mensaje" nolabel="1"/>
+                </div>
+                <div invisible="estado not in ('borrador', 'error')">
+                    <p class="text-muted mb-2">
+                        Suba la foto o el PDF de la lista del cliente: se lee al instante y le propongo cada
+                        producto con su porcentaje de coincidencia. También puede pegar la lista como texto.
+                    </p>
+                    <group>
+                        <field name="archivo" filename="archivo_nombre" widget="migal_ocr_archivo"
+                               string="Foto o PDF" options="{'accepted_file_extensions': 'image/*,.pdf'}"/>
+                        <field name="archivo_nombre" invisible="1"/>
+                        <field name="texto_lista" string="O pegue la lista"
+                               placeholder="10 bls cemento sol&#10;fierro 1/2 x 20&#10;huincha stanley 5 m - 2"/>
+                    </group>
+                </div>
+                <div invisible="estado == 'borrador'" class="d-flex flex-wrap gap-4 mb-2">
+                    <div><span class="text-muted">Coincidencia promedio </span>
+                        <field name="coincidencia_promedio" widget="progressbar" class="d-inline-block"/></div>
+                    <div><span class="text-muted">Listas para agregar: </span><b><field name="lineas_alta"/></b></div>
+                    <div><span class="text-muted">Para revisar: </span><b><field name="lineas_revisar"/></b></div>
+                </div>
+                <field name="linea_ids" invisible="estado == 'borrador'" readonly="estado == 'aplicado'">
+                    <list editable="bottom" create="0"
+                          decoration-success="nivel in ('alta', 'manual')"
+                          decoration-warning="nivel == 'media'"
+                          decoration-danger="nivel in ('baja', 'ninguna')">
+                        <field name="secuencia" widget="handle"/>
+                        <field name="texto_crudo" readonly="1"/>
+                        <field name="cantidad"/>
+                        <field name="product_id" options="{'no_create': True}" domain="relacionado_ids and [('id', 'in', relacionado_ids)] or [('sale_ok', '=', True)]"/>
+                        <field name="coincidencia" widget="progressbar"/>
+                        <field name="nivel" widget="badge"
+                               decoration-success="nivel in ('alta', 'manual')"
+                               decoration-warning="nivel == 'media'"
+                               decoration-danger="nivel in ('baja', 'ninguna')"/>
+                        <field name="sugerencias_otras_ids" widget="many2many_tags" string="Sugerencias" optional="show"/>
+                        <field name="relacionado_ids" column_invisible="1"/>
+                        <field name="producto_sugerido_id" column_invisible="1"/>
+                        <field name="confianza" column_invisible="1"/>
+                        <field name="alternativas_json" column_invisible="1"/>
+                    </list>
+                </field>
+                <p class="text-muted small" invisible="estado == 'borrador'">
+                    Verde: listo · Amarillo: revisar · Rojo: elija el producto. Puede cambiar el producto o la cantidad
+                    de cualquier línea.
+                </p>
+                <footer>
+                    <button name="action_agregar_a_cotizacion" type="object" string="Agregar a la cotización"
+                            class="btn-primary" icon="fa-cart-plus" invisible="estado != 'leido'"/>
+                    <button name="action_leer" type="object" string="Leer lista" class="btn-primary" icon="fa-magic"
+                            invisible="estado not in ('borrador', 'error')"/>
+                    <button name="action_volver_a_leer" type="object" string="Volver a leer" icon="fa-refresh"
+                            invisible="estado != 'leido'"/>
+                    <button string="Cerrar" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_migal_ocr_documento_list" model="ir.ui.view">
+        <field name="name">migal.ocr.documento.list</field>
+        <field name="model">migal.ocr.documento</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="create_date" string="Fecha"/>
+                <field name="partner_id"/>
+                <field name="order_id"/>
+                <field name="total_lineas" string="Líneas"/>
+                <field name="coincidencia_promedio" widget="progressbar"/>
+                <field name="estado" widget="badge" decoration-success="estado == 'aplicado'"
+                       decoration-info="estado == 'leido'" decoration-danger="estado == 'error'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_migal_ocr_documento" model="ir.actions.act_window">
+        <field name="name">Escanear lista</field>
+        <field name="res_model">migal.ocr.documento</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Escanee la lista de productos de un cliente</p>
+            <p>Suba una foto o PDF (o pegue el texto) y el sistema propone cada producto con su porcentaje de
+               coincidencia.</p>
+        </field>
+    </record>
+
+    <record id="seq_migal_ocr_documento" model="ir.sequence">
+        <field name="name">Listas escaneadas</field>
+        <field name="code">migal.ocr.documento</field>
+        <field name="prefix">LISTA/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

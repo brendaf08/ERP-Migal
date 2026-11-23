@@ -1,6 +1,6 @@
 FROM odoo:19
 USER root
-RUN pip install --no-cache-dir --break-system-packages qifparse==0.5
+RUN pip install --no-cache-dir --break-system-packages qifparse==0.5 rapidfuzz==3.13.0
 COPY iniciar.py /opt/migal/iniciar.py
 COPY filestore.py /opt/migal/filestore.py
 COPY restaurar_respaldo.py /opt/migal/restaurar_respaldo.py

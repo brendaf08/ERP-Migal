@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_migal_ocr" model="ir.ui.view">
+        <field name="name">sale.order.form.migal.ocr</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header" position="inside">
+                <button name="action_migal_escanear_lista" type="object" string="Escanear lista"
+                        icon="fa-camera" class="btn-secondary"
+                        invisible="not id or state not in ('draft', 'sent')"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
