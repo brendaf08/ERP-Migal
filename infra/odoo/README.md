@@ -11,10 +11,9 @@ Windows 11 con Docker Desktop iniciado (contenedores Linux, WSL2), Docker Compos
 ## Inicio en Windows (PowerShell)
 
 ```powershell
+git config --global core.longpaths true
 git clone https://github.com/brendaf08/ERP-Migal.git
-cd ERP-Migal
-git switch feature/pc3-agente-docker
-cd infra/odoo
+cd ERP-Migal/infra/odoo
 Copy-Item .env.example .env
 notepad .env
 # Cambie DB_PASSWORD y ADMIN_PASSWD por valores propios.

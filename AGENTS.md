@@ -1,6 +1,6 @@
 # AGENTS.md — instrucciones para asistentes de código
 
-Este archivo lo leen Codex, OpenCode, Cursor, Jules, Copilot y otros asistentes de código. `CLAUDE.md` y `GEMINI.md` remiten aquí. Si eres una persona del equipo, empieza por la [guía del equipo](producto/agentes/README.md).
+Este archivo lo leen directamente Codex, OpenCode, Cursor y Jules. `CLAUDE.md` (Claude Code) y `GEMINI.md` (Gemini CLI) lo importan con `@AGENTS.md`, y `.github/copilot-instructions.md` (GitHub Copilot) resume sus reglas y remite aquí. Si eres una persona del equipo, empieza por la [guía del equipo](producto/agentes/README.md).
 
 ## Proyecto
 

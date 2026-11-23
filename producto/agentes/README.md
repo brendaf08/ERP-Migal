@@ -44,7 +44,8 @@ Prompt sugerido:
 
 ## 4. Ahorrar créditos de IA
 
-- Abre el asistente **dentro de tu módulo** y nómbrale solo los archivos necesarios; no le pidas leer todo el repositorio.
+- Abre el asistente desde la raíz del repositorio: carga solo las reglas (`AGENTS.md` en Codex, OpenCode, Cursor y Jules; `CLAUDE.md` en Claude Code; `GEMINI.md` en Gemini CLI; `.github/copilot-instructions.md` en Copilot). Luego nómbrale tu ficha y tu módulo.
+- Trabaja **dentro de tu módulo** y nómbrale solo los archivos necesarios; no le pidas leer todo el repositorio.
 - Una tarea pequeña por conversación; empieza una nueva al terminar cada herramienta.
 - Pide primero el plan en tres líneas y después el código.
 - Corre tú las pruebas en Docker y pégale solo el error, no el registro completo.
