@@ -271,18 +271,13 @@ class SaleOrder(models.Model):
         cotización durante el procedimiento coordinado de revisión.
 
         Método privado (nombre con guion bajo): no invocable por RPC.
-        La autorización se verifica en action_coordinated_revision() antes
-        de invocarlo. Establece ambos campos de forma coherente vía SQL
-        directa para evitar la restricción de write() que protege estos
-        campos.
+        Defensa en profundidad (R-07): valida coordinador y compañía antes de escribir.
         """
         self.ensure_one()
-        # Escritura vía ORM (super().write()) para respetar la caché y
-        # recomputaciones de Odoo. Este super() salta el override de write()
-        # de esta clase y va directamente al padre (sale.order), por lo que
-        # el bloqueo de sale_request_applicable/sale_request_subject no se aplica aquí.
-        # La autorización se verifica en el llamante público
-        # (action_coordinated_revision) antes de invocar este método.
+        if not self.env.user.has_group("sale_order_request.group_sale_order_request_coordinator"):
+            raise UserError("Solo un coordinador autorizado puede marcar la cotización como sujeta.")
+        if self.company_id and self.company_id.id not in set(self.env.user.company_ids.ids):
+            raise UserError("No tiene acceso a la compañía de la cotización.")
         super(SaleOrder, self).write({"sale_request_subject": True, "sale_request_applicable": True})
 
     # ------------------------------------------------------------------
@@ -343,17 +338,16 @@ class SaleOrder(models.Model):
         """Ruta interna del procedimiento coordinado: crea la revisión OCA
         preservando Tier saltando el bloqueo público de create_revision().
 
-        Llama directamente a copy_revision_with_context() de base.revision
-        (método subyacente que create_revision() usa internamente), pasando
-        el contexto preserve_tier_reviews_on_revision para evitar la eliminación
-        de revisiones Tier durante el archivado de la orden anterior.
-
-        Usa sudo() porque el coordinador ya ha sido autorizado en
-        action_coordinated_revision() pero puede no tener lectura directa
-        sobre el registro sale.origin. No es invocable por RPC (nombre con
-        guion bajo).
+        Defensa en profundidad (R-07): valida coordinador, compañía y sujeto.
+        No invocable por RPC (nombre con guion bajo).
         """
         self.ensure_one()
+        if not self.env.user.has_group("sale_order_request.group_sale_order_request_coordinator"):
+            raise UserError("Solo un coordinador autorizado puede crear revisiones coordinadas.")
+        if self.company_id and self.company_id.id not in set(self.env.user.company_ids.ids):
+            raise UserError("No tiene acceso a la compañía de la cotización.")
+        if not self.sale_request_subject:
+            raise UserError("La cotización no está sujeta a solicitud de orden de venta.")
         new_revision = self.sudo().with_context(
             skip_validation_check=True,
             preserve_tier_reviews_on_revision=True,

@@ -29,3 +29,20 @@ class ResConfigSettings(models.TransientModel):
     migal_pago_bbva_cci = fields.Char(string="BBVA - CCI", config_parameter="migal_agente.pago_bbva_cci")
     migal_llm_model = fields.Char(string="Modelo del chat", config_parameter="migal_agente.llm_model",
                                   help="Vacío: gemini-3.6-flash con Gemini, claude-opus-5-5 con Claude.")
+
+    # OCR IA - control independiente del agente (R-05/P2.1)
+    migal_ocr_llm_enabled = fields.Boolean(
+        string="Usar IA en OCR (escaneo de listas)", config_parameter="migal_ocr.llm_enabled",
+        help="Habilita el envío de fotos/PDF al proveedor de IA para transcribir listas. "
+             "Es independiente del chat del agente: debe habilitarse explícitamente aunque el agente ya tenga IA activa.")
+    migal_ocr_llm_data_ack = fields.Boolean(
+        string="Autorizo enviar documentos OCR al proveedor de IA",
+        config_parameter="migal_ocr.llm_data_ack",
+        help="Consentimiento propio del OCR. Necesario para OCR con IA: la imagen/PDF de la lista se envía al proveedor configurado. "
+             "No se hereda del consentimiento del agente; requiere aprobación responsable explícita.")
+    migal_ocr_llm_api_key = fields.Char(
+        string="Clave de API OCR", config_parameter="migal_ocr.llm_api_key",
+        help="Vacía: usa la clave del Agente MIGAL cuando el proveedor es Gemini, solo si OCR está habilitado y con consentimiento OCR explícito.")
+    migal_ocr_gemini_modelos = fields.Char(
+        string="Modelos Gemini OCR", config_parameter="migal_ocr.gemini_modelos",
+        help="Modelos separados por coma, en orden de preferencia. Vacío usa el valor por defecto del OCR.")

@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -50,7 +50,10 @@ class MigalAgenteWhatsappWizard(models.TransientModel):
         res = agente.ejecutar_herramienta("registrar_envio_whatsapp", {"cotizacion": self.order_id.name}, traza=traza)
         # El mensaje editado por VEN se guarda en el registro de envío.
         if res.get("ok") and res["datos"].get("envio_id"):
-            self.env["migal.agente.whatsapp.envio"].browse(res["datos"]["envio_id"]).sudo().mensaje = self.mensaje
+            envio = self.env["migal.agente.whatsapp.envio"].browse(res["datos"]["envio_id"]).sudo().exists()
+            if not envio or envio.order_id != self.order_id:
+                raise UserError(_("No se pudo validar el registro de envío de WhatsApp."))
+            envio.mensaje = self.mensaje
         agente._registrar("[botón] Registrar envío WhatsApp %s" % self.order_id.name, "boton", "reglas", traza,
                           agente.render_resultado(res), resultado="ok" if res.get("ok") else "bloqueado",
                           reglas=res.get("reglas"), res_model="sale.order", res_id=self.order_id.id)

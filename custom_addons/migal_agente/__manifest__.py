@@ -48,6 +48,7 @@ registro de envíos de WhatsApp confirmados por VEN.
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/ir_rule.xml",
         "data/agente_data.xml",
         "data/agente_cron.xml",
         "report/estado_cuenta_report.xml",

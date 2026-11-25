@@ -293,6 +293,7 @@ class MigalAgenteToolEstadoCuenta(models.AbstractModel):
             datos={
                 "cliente": partner.display_name, "cliente_id": partner.id, "documento_identidad": partner.vat or "",
                 "moneda": currency.name, "simbolo": currency.symbol,
+                "company_id": company.id, "company_name": company.name,
                 "fecha_desde": fields.Date.to_string(desde), "fecha_hasta": fields.Date.to_string(hasta),
                 "fecha_consulta": fields.Date.to_string(hoy),
                 "fecha_desde_txt": self._fmt(desde), "fecha_hasta_txt": self._fmt(hasta), "fecha_consulta_txt": self._fmt(hoy),
@@ -315,12 +316,24 @@ class MigalAgenteToolEstadoCuenta(models.AbstractModel):
             return res
         d = res["datos"]
         partner = self.env["res.partner"].browse(d["cliente_id"])
-        pub = self.env["migal.agente.estado.cuenta.publicacion"].sudo().create({
+        company = self.env["res.company"].browse(d.get("company_id") or self.env.company.id).exists()
+        if not company:
+            return self._resultado(False, "error", "Compañía no disponible",
+                                   "No se pudo determinar la compañía del estado de cuenta.")
+        if company.id not in self.env.companies.ids and not self.env.is_superuser():
+            return self._resultado(False, "sin_permiso", "Compañía no autorizada",
+                                   "No tiene acceso a la compañía del estado de cuenta.")
+        pub_model = self.env["migal.agente.estado.cuenta.publicacion"]
+        vals_pub = {
             "partner_id": partner.id, "user_id": self.env.uid,
+            "company_id": company.id, "currency_id": company.currency_id.id,
             "fecha_desde": d["fecha_desde"], "fecha_hasta": d["fecha_hasta"],
             "total_pendiente": d["total_pendiente"],
             "datos_json": json.dumps(d, ensure_ascii=False, default=str),
-        })
+        }
+        # P3-REV-01: validación de compañía del usuario original antes de elevar privilegios,
+        # y creación por ruta interna controlada (no sudo().create() genérico).
+        pub = pub_model._create_validated(vals_pub, user=self.env.user)
         wa = self.env["migal.agente.tool.whatsapp"]
         url = "%s/migal/estado-cuenta/%s" % (wa._base_publica(partner), pub.token)
         png = self.env["ir.actions.report"].barcode("QR", url, width=320, height=320, quiet=1)

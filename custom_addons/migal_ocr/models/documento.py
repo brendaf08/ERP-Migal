@@ -67,16 +67,39 @@ class MigalOcrDocumento(models.Model):
         return super().create(vals_list)
 
     # ------------------------------------------------------------------
-    # Configuración de IA (compartida con el Agente MIGAL)
+    # Configuración de IA OCR (independiente del agente, R-05)
     # ------------------------------------------------------------------
+    OCR_PROVEEDORES_PERMITIDOS = {"gemini"}
+
+    def _param_bool(self, key):
+        return self.env["ir.config_parameter"].sudo().get_param(key) in ("True", "1", True)
+
+    def _ocr_modelos_permitidos(self, modelos):
+        permitidos = []
+        for modelo in [m.strip() for m in (modelos or "").split(",") if m.strip()]:
+            if re.fullmatch(r"[a-zA-Z0-9._-]+", modelo) and modelo.startswith("gemini-"):
+                permitidos.append(modelo)
+        return permitidos
+
     def _config_ia(self):
         icp = self.env["ir.config_parameter"].sudo()
-        proveedor = icp.get_param("migal_agente.llm_proveedor") or "gemini"
-        clave = icp.get_param("migal_agente.llm_api_key") if proveedor == "gemini" else ""
+        enabled = self._param_bool("migal_ocr.llm_enabled")
+        ack = self._param_bool("migal_ocr.llm_data_ack")
+        proveedor = "gemini"  # OCR actualmente soporta solo Gemini
+        clave = (icp.get_param("migal_ocr.llm_api_key") or "").strip()
+        if not clave:
+            # Compatibilidad controlada: reutiliza clave del agente solo si proveedor agente es Gemini.
+            if (icp.get_param("migal_agente.llm_proveedor") or "gemini") == "gemini":
+                clave = (icp.get_param("migal_agente.llm_api_key") or "").strip()
+        modelos_raw = (icp.get_param("migal_ocr.gemini_modelos") or lectura.MODELOS_POR_DEFECTO).strip()
+        modelos = self._ocr_modelos_permitidos(modelos_raw)
         return {
+            "enabled": enabled,
             "api_key": clave,
-            "modelos": icp.get_param("migal_ocr.gemini_modelos") or lectura.MODELOS_POR_DEFECTO,
-            "consentimiento": icp.get_param("migal_agente.llm_data_ack") in ("True", "1"),
+            "proveedor": proveedor,
+            "modelos": ",".join(modelos),
+            "modelos_validos": bool(modelos),
+            "consentimiento": ack,
         }
 
     def _jerga(self):
@@ -102,13 +125,21 @@ class MigalOcrDocumento(models.Model):
                 contenido = base64.b64decode(self.archivo)
                 tipo = self._tipo_mime(contenido)
                 cfg = self._config_ia()
-                if not cfg["api_key"]:
+                if not cfg["enabled"]:
                     raise lectura.LecturaError(
-                        _("Para leer fotos configure la clave de Gemini en Ajustes › Agente MIGAL. "
-                          "Mientras tanto puede pegar la lista como texto."))
+                        _("El OCR con IA está deshabilitado. Habilítelo en Ajustes › Agente MIGAL › OCR, "
+                          "o pegue la lista como texto."))
+                if cfg["proveedor"] not in self.OCR_PROVEEDORES_PERMITIDOS:
+                    raise lectura.LecturaError(_("El proveedor de IA configurado para OCR no está permitido."))
                 if not cfg["consentimiento"]:
                     raise lectura.LecturaError(
-                        _("Falta autorizar el envío de datos al proveedor de IA (Ajustes › Agente MIGAL)."))
+                        _("Falta autorizar el envío de documentos OCR al proveedor de IA (Ajustes › Agente MIGAL)."))
+                if not cfg["api_key"]:
+                    raise lectura.LecturaError(
+                        _("Falta la clave de API para OCR con IA. Configúrela en Ajustes › Agente MIGAL. "
+                          "Mientras tanto puede pegar la lista como texto."))
+                if not cfg["modelos_validos"]:
+                    raise lectura.LecturaError(_("La configuración de modelos OCR no es válida."))
                 modelo, filas = lectura.leer_con_gemini(contenido, tipo, cfg["api_key"], cfg["modelos"])
                 self.write({"origen": "ia", "modelo_ia": modelo,
                             "hash_archivo": hashlib.sha256(contenido).hexdigest()})

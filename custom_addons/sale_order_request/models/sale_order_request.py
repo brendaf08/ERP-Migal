@@ -195,28 +195,6 @@ class SaleOrderRequest(models.Model):
                 % (self.company_id.name or self.company_id.id)
             )
 
-    def _check_company_consistency(self):
-        """A3.3: Verifica que la compañía de la solicitud sea accesible por
-        el usuario actual.
-
-        Esta validación se aplica en servidor y no se puede eludir mediante
-        contexto RPC ni manipulando company_ids. Solo verifica el campo
-        company_id de la solicitud (que ya se derivó de la cotización al
-        crear), sin acceder a registros relacionados que el usuario podría
-        no tener permiso de leer.
-        """
-        self.ensure_one()
-        user_company_ids = set(self.env.user.company_ids.ids)
-
-        # La solicitud debe pertenecer a una compañía a la que el usuario
-        # tiene acceso. Si company_ids está vacío (usuario sin compañías
-        # asignadas), se deniega el acceso (fail-closed).
-        if not user_company_ids or self.company_id.id not in user_company_ids:
-            raise UserError(
-                "No tiene acceso a la compañía de esta solicitud (%s)."
-                % (self.company_id.name or self.company_id.id)
-            )
-
     def check_access_rule(self, operation):
         """A3.3: Verificar que el usuario tenga acceso a la compañía del
         registro antes de permitir cualquier operación. Complementa a
@@ -1012,20 +990,14 @@ class SaleOrderRequest(models.Model):
         )
 
     def _mark_superseded_coordinated(self):
-        """Marca esta solicitud como superseded. Solo invocable desde
-        action_coordinated_revision()."""
+        """Marca esta solicitud como superseded. Ruta interna coordinada (R-07).
+
+        Defensa en profundidad: siempre ejecuta validaciones completas antes de sudo.
+        No acepta bypass por parámetro booleano.
+        """
         self.ensure_one()
-        # A3.3: Validar consistencia de compañía.
-        self._check_company_consistency()
-        # Guardia de transición de estado (A3.2).
-        if not self._state_transition_allowed("superseded"):
-            raise UserError(
-                "No se puede marcar como reemplazada la solicitud desde el "
-                "estado actual: %s." % self.state
-            )
-        # Usar sudo() porque el coordinador ya fue autorizado en
-        # action_coordinated_revision() pero puede no tener write access
-        # directo sobre sale.order.request (solo Abastecimiento lo tiene).
+        self._check_coordinated_revision_access()
+        # sudo limitado al write de estado ya autorizado/validado
         self.sudo().with_context(
             skip_validation_check=True,
         )._set_request_state("superseded")
@@ -1175,6 +1147,64 @@ class SaleOrderRequest(models.Model):
             "Utilice el procedimiento coordinado de revisión."
         )
 
+    def _check_coordinated_revision_access(self, new_revision=None):
+        """Autorización centralizada para revisión coordinada (R-07).
+
+        Debe ejecutarse antes de cualquier operación privilegiada/sudo.
+        Las lecturas de sale.order se hacen con sudo() limitado para validar
+        coherencia, tras verificar grupo coordinador y compañía de la solicitud.
+        """
+        self.ensure_one()
+        if not self.env.user.has_group(
+            "sale_order_request.group_sale_order_request_coordinator"
+        ):
+            raise UserError(
+                "Solo un coordinador autorizado puede ejecutar la revisión "
+                "coordinada de cotización."
+            )
+        self._check_company_consistency()
+
+        sale_order = self.sale_order_id.sudo()
+        revision = self.sale_order_revision_id.sudo()
+        if not sale_order or not revision:
+            raise UserError("La solicitud no tiene cotización/revisión vinculada.")
+        if sale_order.company_id != self.company_id:
+            raise UserError("La cotización no pertenece a la compañía de la solicitud.")
+        if revision.company_id != self.company_id:
+            raise UserError("La revisión no pertenece a la compañía de la solicitud.")
+        if revision.unrevisioned_name != self.unrevisioned_name:
+            raise UserError("La revisión no pertenece a la familia de la solicitud.")
+        if sale_order.unrevisioned_name != self.unrevisioned_name:
+            raise UserError("La cotización no pertenece a la familia de la solicitud.")
+
+        solicitud_activa = self.env["sale.order.request"].sudo().search(
+            [
+                ("id", "=", self.id),
+                ("sale_order_revision_id", "=", revision.id),
+                ("state", "in", ("approved", "accepted", "confirmed")),
+                ("company_id", "=", self.company_id.id),
+            ],
+            limit=1,
+        )
+        if not solicitud_activa:
+            raise UserError(
+                "No existe una solicitud aceptada o confirmada vinculada "
+                "a esta revisión de cotización."
+            )
+        if not self._state_transition_allowed("superseded"):
+            raise UserError(
+                "No se puede marcar como reemplazada la solicitud desde el "
+                "estado actual: %s." % self.state
+            )
+
+        if new_revision:
+            new_rev = new_revision.sudo()
+            if new_rev.company_id != self.company_id:
+                raise UserError("La revisión destino no pertenece a la compañía de la solicitud.")
+            if new_rev.unrevisioned_name != self.unrevisioned_name:
+                raise UserError("La revisión destino no pertenece a la familia de la solicitud.")
+        return True
+
     def action_coordinated_revision(self):
         """Procedimiento coordinado de revisión de cotización sujeta a solicitud de orden de venta.
 
@@ -1184,51 +1214,18 @@ class SaleOrderRequest(models.Model):
         3. Marcar la solicitud anterior como superseded.
         4. Crear y vincular la nueva solicitud a la nueva revisión.
         5. Retornar la acción para abrir la nueva solicitud.
-
-        Autorización: requiere grupo group_sale_order_request_coordinator (pendiente
-        asignación de usuarios, D-AUD-5).
         """
         self.ensure_one()
-        # A3.3: Validar consistencia de compañía.
-        self._check_company_consistency()
-        # Autorización: solo miembros del grupo coordinador.
-        if not self.env.user.has_group(
-            "sale_order_request.group_sale_order_request_coordinator"
-        ):
-            raise UserError(
-                "Solo un coordinador autorizado puede ejecutar la revisión "
-                "coordinada de cotización."
-            )
-        # Verificar que exista una solicitud activa aceptada/confirmada
-        # (o aprobada, para casos de stock insuficiente donde accept se
-        # bloquea por B-08) para esta revisión y compañía.
-        solicitud_activa = self.env["sale.order.request"].search(
-            [
-                ("sale_order_revision_id", "=", self.sale_order_revision_id.id),
-                ("state", "in", ("approved", "accepted", "confirmed")),
-                ("company_id", "=", self.company_id.id),
-            ],
-            limit=1,
-        )
-        if not solicitud_activa:
-            raise UserError(
-                "No existe una solicitud  aceptada o confirmada vinculada "
-                "a esta revisión de cotización."
-            )
-        # 1. Crear la nueva revisión OCA preservando Tier.
+        self._check_coordinated_revision_access()
+
         revision_anterior = self.sale_order_revision_id
-        nueva_revision = revision_anterior._sale_request_create_revision_preserving_tier_coordinated()
-        # 2. Marcar la nueva cotización como .
-        nueva_revision._sale_request_mark_subject_coordinated()
-        # 3. Marcar la solicitud anterior como superseded.
+        # sudo limitado a la operación de revisión coordinada ya autorizada
+        nueva_revision = revision_anterior.sudo()._sale_request_create_revision_preserving_tier_coordinated()
+        self._check_coordinated_revision_access(new_revision=nueva_revision)
+        nueva_revision.sudo()._sale_request_mark_subject_coordinated()
+
         self._mark_superseded_coordinated()
-        # 4. Crear y vincular la nueva solicitud a la nueva revisión.
-        # Usar sudo() porque el coordinador ya fue autorizado pero puede no
-        # tener create access sobre sale.order.request (solo Vendedor lo tiene).
-        nueva_solicitud = self.sudo()._create_new_request_for_revision(
-            nueva_revision
-        )
-        # 5. Retornar la acción para abrir la nueva solicitud.
+        nueva_solicitud = self.sudo()._create_new_request_for_revision(nueva_revision)
         return {
             "type": "ir.actions.act_window",
             "res_model": "sale.order.request",
