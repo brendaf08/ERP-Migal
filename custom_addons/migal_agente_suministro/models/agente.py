@@ -31,6 +31,19 @@ class AgenteSuministro(models.AbstractModel):
     # ------------------------------------------------------------------
     def _herramientas(self):
         return {
+            "consultar_disponibilidad_producto": {
+                "description": "Muestra existencia, reservas y cantidad libre por ubicación.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {"producto": {"type": "string", "minLength": 1}},
+                    "required": ["producto"],
+                    "additionalProperties": False,
+                },
+                "roles": ["VEN", "ALM", "CMP", "GER"],
+                "escritura": "Ninguna (solo bitácora).",
+                "reglas": ["RN-015"],
+                "metodo": "consultar_disponibilidad_producto",
+            },
             "evaluar_cobertura_preliminar": {
                 "description": (
                     "Revisa por producto y cantidad si una cotización vigente puede cubrirse con el stock "
@@ -67,6 +80,12 @@ class AgenteSuministro(models.AbstractModel):
         return {"EV-018": "_al_confirmarse_venta"}
 
     def _reconocer(self, texto):
+        m = re.fullmatch(
+            r"(?:disponibilidad de|cuanto stock hay de)\s+(.+)",
+            texto.rstrip(" ?"),
+        )
+        if m:
+            return "consultar_disponibilidad_producto", {"producto": m.group(1).strip()}
         m = re.search(r"\b(recepcion|recibido|llego)\b.*\b(p\d{5})\b", texto)
         if m:
             return "consultar_recepcion", {"orden_compra": m.group(2).upper()}
@@ -90,6 +109,59 @@ class AgenteSuministro(models.AbstractModel):
     # ------------------------------------------------------------------
     def evaluar_cobertura_preliminar(self, cotizacion, fecha_requerida=None):
         return self.env["migal.agente.tool.cobertura"].evaluar(cotizacion, fecha_requerida)
+
+    def consultar_disponibilidad_producto(self, producto):
+        titulo = "Disponibilidad por ubicación"
+        consulta = producto.strip()
+        if not consulta:
+            return self._resultado(False, "error", titulo, "Escribe el nombre o la referencia del producto.")
+
+        compania = self.env.company
+        Producto = self.env["product.product"]
+        dominio = [("is_storable", "=", True), ("company_id", "in", [False, compania.id])]
+        patron = consulta.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        coincidencias = Producto.search(dominio + [("default_code", "=ilike", patron)], limit=10)
+        if not coincidencias:
+            coincidencias = Producto.search(dominio + [("name", "ilike", patron)], limit=10)
+
+        if not coincidencias:
+            return self._resultado(False, "error", titulo, f"No encontré un producto inventariable para «{consulta}».")
+
+        if len(coincidencias) > 1:
+            return self._resultado(
+                False, "ambiguo", titulo,
+                "Hay varias coincidencias. Repite la consulta con una referencia o un nombre más específico.",
+                datos={"tabla": {
+                    "columnas": ["Producto", "Referencia"],
+                    "filas": [[p.name, p.default_code or ""] for p in coincidencias],
+                }},
+            )
+
+        articulo = coincidencias
+        grupos = self.env["stock.quant"]._read_group(
+            [
+                ("product_id", "=", articulo.id),
+                ("company_id", "=", compania.id),
+                ("location_id.usage", "=", "internal"),
+            ],
+            groupby=["location_id"],
+            aggregates=["quantity:sum", "reserved_quantity:sum"],
+        )
+        filas = [
+            [ubicacion.complete_name, f"{existencia:g}", f"{reservada:g}", f"{existencia - reservada:g}"]
+            for ubicacion, existencia, reservada in sorted(grupos, key=lambda grupo: grupo[0].complete_name)
+        ]
+        mensaje = f"{articulo.display_name} · Unidad: {articulo.uom_id.name}."
+        if not filas:
+            mensaje += " No hay existencias registradas en las ubicaciones internas consultadas."
+
+        return self._resultado(
+            True, "ok", titulo, mensaje, reglas=["RN-015"],
+            datos={"tabla": {
+                "columnas": ["Ubicación", "Existencia", "Reservada", "Libre"],
+                "filas": filas,
+            }},
+        )
 
     def listar_compras_pendientes(self):
         hoy = self._hoy()
