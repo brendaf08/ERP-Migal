@@ -10,7 +10,7 @@ from odoo.tests import HttpCase, TransactionCase, tagged
 
 @tagged("post_install", "-at_install", "p2_r04")
 class TestEstadoCuentaPublicoR04(HttpCase):
-    """R-04: rate limiting y preservación de comportamiento del endpoint público."""
+    """Pruebas del límite de solicitudes y del comportamiento del endpoint público."""
 
     @classmethod
     def setUpClass(cls):
@@ -118,7 +118,7 @@ class TestEstadoCuentaPublicoR04(HttpCase):
 
 
     # ------------------------------------------------------------------
-    # P2.1 - refuerzos R-04
+    # Pruebas adicionales del límite de solicitudes
     # ------------------------------------------------------------------
     def test_404_persists_counter_across_requests(self):
         self._clear_rate_limits()

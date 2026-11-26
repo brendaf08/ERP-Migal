@@ -213,7 +213,7 @@ class MigalAgenteEstadoCuentaPublicacion(models.Model):
         self.write({"activo": False})
 
     def _registrar_vista(self, ip=None):
-        """Incrementa vistas con deduplicación para reducir escrituras (R-04)."""
+        """Incrementa vistas con deduplicación para reducir escrituras."""
         self.ensure_one()
         cutoff = fields.Datetime.now() - timedelta(minutes=5)
         now = fields.Datetime.now()
@@ -230,5 +230,5 @@ class MigalAgenteEstadoCuentaPublicacion(models.Model):
 
     @api.autovacuum
     def _gc_caducadas(self):
-        """Borra las copias caducadas hace más de 30 días (minimiza datos conservadas)."""
+        """Borra las copias caducadas hace más de 30 días para minimizar los datos conservados."""
         self.sudo().search([("expira", "<", fields.Datetime.now() - timedelta(days=30))]).unlink()

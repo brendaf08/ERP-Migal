@@ -30,7 +30,7 @@ class ResConfigSettings(models.TransientModel):
     migal_llm_model = fields.Char(string="Modelo del chat", config_parameter="migal_agente.llm_model",
                                   help="Vacío: gemini-3.6-flash con Gemini, claude-opus-5-5 con Claude.")
 
-    # OCR IA - control independiente del agente (R-05/P2.1)
+    # Control de IA para OCR, independiente del agente.
     migal_ocr_llm_enabled = fields.Boolean(
         string="Usar IA en OCR (escaneo de listas)", config_parameter="migal_ocr.llm_enabled",
         help="Habilita el envío de fotos/PDF al proveedor de IA para transcribir listas. "

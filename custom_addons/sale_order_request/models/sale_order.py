@@ -271,7 +271,7 @@ class SaleOrder(models.Model):
         cotización durante el procedimiento coordinado de revisión.
 
         Método privado (nombre con guion bajo): no invocable por RPC.
-        Defensa en profundidad (R-07): valida coordinador y compañía antes de escribir.
+        Defensa en profundidad: valida el coordinador y la compañía antes de escribir.
         """
         self.ensure_one()
         if not self.env.user.has_group("sale_order_request.group_sale_order_request_coordinator"):
@@ -338,7 +338,7 @@ class SaleOrder(models.Model):
         """Ruta interna del procedimiento coordinado: crea la revisión OCA
         preservando Tier saltando el bloqueo público de create_revision().
 
-        Defensa en profundidad (R-07): valida coordinador, compañía y sujeto.
+        Defensa en profundidad: valida el coordinador, la compañía y el sujeto.
         No invocable por RPC (nombre con guion bajo).
         """
         self.ensure_one()

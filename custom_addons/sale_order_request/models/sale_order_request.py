@@ -990,9 +990,9 @@ class SaleOrderRequest(models.Model):
         )
 
     def _mark_superseded_coordinated(self):
-        """Marca esta solicitud como superseded. Ruta interna coordinada (R-07).
+        """Marca esta solicitud como sustituida mediante la ruta interna coordinada.
 
-        Defensa en profundidad: siempre ejecuta validaciones completas antes de sudo.
+        Defensa en profundidad: valida la autorización, la compañía, la familia y el estado antes de elevar privilegios para modificar la solicitud.
         No acepta bypass por parámetro booleano.
         """
         self.ensure_one()
@@ -1148,7 +1148,7 @@ class SaleOrderRequest(models.Model):
         )
 
     def _check_coordinated_revision_access(self, new_revision=None):
-        """Autorización centralizada para revisión coordinada (R-07).
+        """Autorización centralizada para la revisión coordinada.
 
         Debe ejecutarse antes de cualquier operación privilegiada/sudo.
         Las lecturas de sale.order se hacen con sudo() limitado para validar

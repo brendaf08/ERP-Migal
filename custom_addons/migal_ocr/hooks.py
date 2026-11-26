@@ -4,7 +4,7 @@ _logger = logging.getLogger(__name__)
 
 
 def post_init_hook(env):
-    """Inicializa controles OCR independientes (R-05/P2.1).
+    """Inicializa los controles de OCR de forma independiente.
 
     Decisión funcional: el consentimiento del agente NO equivale al consentimiento OCR.
     Para instalaciones existentes sin parámetros OCR, se inicializa OCR IA deshabilitado
@@ -29,5 +29,5 @@ def post_init_hook(env):
         )
 
     _logger.info(
-        "migal_ocr R-05: parámetros OCR inicializados deshabilitados y sin consentimiento explícito."
+        "migal_ocr: parámetros de OCR inicializados como deshabilitados y sin consentimiento explícito."
     )

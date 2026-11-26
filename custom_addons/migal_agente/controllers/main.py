@@ -5,7 +5,7 @@ from odoo.http import request
 
 _logger = logging.getLogger(__name__)
 
-# R-04: rate limiting conservador para endpoint público. Ventana fija por IP.
+# Límite conservador de solicitudes al endpoint público mediante una ventana fija por IP.
 ESTADO_CUENTA_RATE_LIMIT = 15
 ESTADO_CUENTA_RATE_WINDOW_SECONDS = 60
 

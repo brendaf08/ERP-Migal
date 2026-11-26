@@ -67,7 +67,7 @@ class MigalOcrDocumento(models.Model):
         return super().create(vals_list)
 
     # ------------------------------------------------------------------
-    # Configuración de IA OCR (independiente del agente, R-05)
+    # Configuración de IA para OCR, independiente del agente.
     # ------------------------------------------------------------------
     OCR_PROVEEDORES_PERMITIDOS = {"gemini"}
 

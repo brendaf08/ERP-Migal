@@ -86,7 +86,7 @@ class TestMigalOcrR05(TransactionCase):
 
 
     # ------------------------------------------------------------------
-    # P2.1 - consentimiento OCR explícito e independiente
+    # Verificación del consentimiento OCR explícito e independiente
     # ------------------------------------------------------------------
     def test_hook_upgrade_without_ocr_params_initializes_disabled_no_consent(self):
         """Upgrade sin params OCR: inicializa deshabilitado y sin consentimiento, sin copiar agente."""

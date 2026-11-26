@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 
 class MigalAgenteRateLimit(models.Model):
-    """Contador persistente para rate limiting de endpoints públicos (R-04).
+    """Contador persistente para limitar solicitudes a endpoints públicos.
 
     Compatible con multi-worker: usa PostgreSQL como almacén compartido y
     actualización atómica por clave/ventana.

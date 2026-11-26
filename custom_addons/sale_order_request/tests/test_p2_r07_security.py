@@ -112,7 +112,7 @@ class TestP2R07CoordinatedRevision(TransactionCase):
 
 
     # ------------------------------------------------------------------
-    # P2.1 - refuerzos R-07
+    # Pruebas adicionales de la revisión coordinada
     # ------------------------------------------------------------------
     def test_mark_superseded_helper_rejects_no_coordinator(self):
         """Helper interno no puede omitir autorización de coordinador."""
@@ -153,7 +153,7 @@ class TestP2R07CoordinatedRevision(TransactionCase):
         self.assertEqual(req.state, "approved")
 
     def test_mark_superseded_no_authorized_bypass_param(self):
-        """P2.1: no existe bypass booleano authorized=True."""
+        """No existe un parámetro booleano authorized=True que permita omitir las validaciones."""
         req = self._new_approved_request("R07-HLP-BYPASS")
         with self.assertRaises(TypeError):
             req.with_user(self.user_coord)._mark_superseded_coordinated(authorized=True)
