@@ -6,9 +6,10 @@ simulador), sugerir reposición con las reglas de stock mínimo, borrador de ord
 proveedores, despachos pendientes y recepción con OCR de la guía.
 """
 import logging
+from datetime import timedelta
 import re
 
-from odoo import models
+from odoo import fields, models
 from odoo.tools import format_date
 
 from odoo.addons.migal_agente.agent.contracts import DATE, ORDER_REF
@@ -61,6 +62,19 @@ class AgenteSuministro(models.AbstractModel):
                 "reglas": ["RN-013"],
                 "metodo": "consultar_recepcion",
             },
+            "consultar_baja_rotacion": {
+                "description": "Productos con existencias y sin salidas de venta validadas en los últimos días.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {"dias": {"type": "integer", "minimum": 1, "maximum": 730}},
+                    "required": [],
+                    "additionalProperties": False,
+                },
+                "roles": ["VEN", "GER", "ALM"],
+                "escritura": "Ninguna (solo bitácora).",
+                "reglas": ["RN-022"],
+                "metodo": "consultar_baja_rotacion",
+            },
         }
 
     def _eventos_escuchados(self):
@@ -72,6 +86,10 @@ class AgenteSuministro(models.AbstractModel):
             return "consultar_recepcion", {"orden_compra": m.group(2).upper()}
         if re.search(r"\b(compras? pendientes?|ordenes? de compra|que falta recibir|por recibir|oc pendientes?)\b", texto):
             return "listar_compras_pendientes", {}
+        m = re.fullmatch(r"inventario sin ventas(?: (?:en )?(\d+) dias)?", texto.rstrip(" ?"))
+        if m:
+            dias = {"dias": int(m.group(1))} if m.group(1) else {}
+            return "consultar_baja_rotacion", dias
         return None
 
     def _acciones_widget(self, record):
@@ -137,7 +155,61 @@ class AgenteSuministro(models.AbstractModel):
                                              "filas": [["%s" % p["producto"], "{:g}".format(p["pedido"]),
                                                         "{:g}".format(p["recibido"]), "{:g}".format(p["pendiente"])]
                                                        for p in productos]}})
-
+    def consultar_baja_rotacion(self, dias=90):
+        compania = self.env.company
+        existencias = self.env["stock.quant"]._read_group(
+            [
+                ("company_id", "=", compania.id),
+                ("location_id.usage", "=", "internal"),
+                ("product_id.active", "=", True),
+                ("product_id.is_storable", "=", True),
+            ],
+            groupby=["product_id"],
+            aggregates=["quantity:sum"],
+            having=[("quantity:sum", ">", 0)],
+        )
+        ahora = fields.Datetime.now()
+        salidas = self.env["stock.move"]._read_group(
+            [
+                ("company_id", "=", compania.id),
+                ("state", "=", "done"),
+                ("date", ">=", ahora - timedelta(days=dias)),
+                ("date", "<=", ahora),
+                ("quantity", ">", 0),
+                ("product_id", "in", [producto.id for producto, _stock in existencias]),
+                ("location_id.usage", "in", ["internal", "transit"]),
+                ("location_dest_id.usage", "=", "customer"),
+                "|",
+                ("sale_line_id", "!=", False),
+                ("picking_id.pos_session_id", "!=", False),
+            ],
+            groupby=["product_id"],
+        )
+        con_salidas = {producto.id for (producto,) in salidas}
+        productos = [
+            {
+                "producto": producto.display_name,
+                "stock": stock,
+                "vendido": 0,
+                "unidad": producto.uom_id.name,
+            }
+            for producto, stock in existencias
+            if producto.id not in con_salidas
+        ]
+        productos.sort(key=lambda producto: producto["producto"])
+        return self._resultado(
+            True, "ok", "Inventario sin ventas",
+            f"{len(productos)} productos con existencias y sin salidas de venta validadas en {dias} días.",
+            reglas=["RN-022"],
+            datos={
+                "dias": dias,
+                "productos": productos,
+                "tabla": {
+                    "columnas": ["Producto", "Stock", "Unidad", "Vendido"],
+                    "filas": [[p["producto"], f"{p['stock']:g}", p["unidad"], p["vendido"]] for p in productos],
+                },
+            },
+        )
     # ------------------------------------------------------------------
     # Eventos
     # ------------------------------------------------------------------
