@@ -437,6 +437,32 @@ class MigalAgente(models.AbstractModel):
     # ------------------------------------------------------------------
     # Bitácora y escalamiento
     # ------------------------------------------------------------------
+    ALLOWED_ESCALATION_MODELS = frozenset({"sale.order", "res.partner"})
+
+    def _puede_escalar_a(self, res_model, res_id):
+        """Valida destino antes de escalar con sudo()."""
+        if not (res_model and res_id):
+            return False, "sin destino"
+        if res_model not in self.ALLOWED_ESCALATION_MODELS:
+            return False, "modelo no permitido"
+        try:
+            model = self.env[res_model]
+        except KeyError:
+            return False, "modelo inválido"
+        try:
+            record = model.browse(int(res_id)).exists()
+            if not record:
+                return False, "registro inexistente"
+            record.check_access("read")
+            if "company_id" in record._fields and record.company_id:
+                if record.company_id not in self.env.companies:
+                    return False, "compañía no autorizada"
+        except Exception:
+            return False, "sin autorización"
+        if not hasattr(record, "message_post"):
+            return False, "sin chatter"
+        return True, record
+
     def _registrar(self, texto, canal, modo, traza, html, *, resultado, reglas=None, escalar=None,
                    session_id=None, res_model=None, res_id=None, agente=None):
         reglas = list(reglas or [])
@@ -461,12 +487,19 @@ class MigalAgente(models.AbstractModel):
             "res_id": res_id or 0,
         })
         if escalar and res_model and res_id:
-            record = self.env[res_model].sudo().browse(res_id).exists()
-            if record and hasattr(record, "message_post"):
-                record.message_post(
-                    body=Markup("Agente MIGAL: escalamiento a <b>%s</b> (reglas %s) solicitado por %s.") % (
-                        ", ".join(escalar), ", ".join(reglas) or "-", self.env.user.name),
-                    author_id=self.agente_partner().id, message_type="comment", subtype_xmlid="mail.mt_note")
+            autorizado, info = self._puede_escalar_a(res_model, res_id)
+            if autorizado:
+                record = self.env[res_model].sudo().browse(int(res_id)).exists()
+                if record and hasattr(record, "message_post"):
+                    record.message_post(
+                        body=Markup("Agente MIGAL: escalamiento a <b>%s</b> (reglas %s) solicitado por %s.") % (
+                            ", ".join(escalar), ", ".join(reglas) or "-", self.env.user.name),
+                        author_id=self.agente_partner().id, message_type="comment", subtype_xmlid="mail.mt_note")
+            else:
+                _logger.warning(
+                    "Agente MIGAL: escalamiento bloqueado modelo=%s res_id=%s uid=%s motivo=%s",
+                    res_model, res_id, self.env.user.id, info,
+                )
         return log
 
     @staticmethod

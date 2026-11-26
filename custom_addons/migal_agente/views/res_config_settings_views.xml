@@ -23,14 +23,14 @@
                             <div class="mt-2"><label for="migal_pago_bbva_cci" string="BBVA CCI"/><field name="migal_pago_bbva_cci"/></div>
                         </setting>
                     </block>
-                    <block title="Inteligencia artificial">
-                        <setting help="El agente entiende mensajes escritos con libertad y redacta sus respuestas.">
+                    <block title="Inteligencia artificial - Agente">
+                        <setting help="El agente entiende mensajes escritos con libertad y redacta sus respuestas. Independiente del OCR.">
                             <field name="migal_llm_enabled"/>
                         </setting>
-                        <setting help="El texto de las consultas o la foto de la lista escaneada se envían al proveedor elegido. Requiere aprobación de GER.">
+                        <setting help="El texto de las consultas del agente se envía al proveedor elegido. Requiere aprobación de GER.">
                             <field name="migal_llm_data_ack"/>
                         </setting>
-                        <setting string="Proveedor y clave" help="Con Google Gemini la misma clave sirve para el chat y para escanear listas.">
+                        <setting string="Proveedor y clave del agente" help="Configuración del chat del agente. El OCR tiene su propio control independiente más abajo.">
                             <div class="mt-2">
                                 <label for="migal_llm_proveedor" string="Proveedor"/>
                                 <field name="migal_llm_proveedor"/>
@@ -42,6 +42,24 @@
                             <div class="mt-2">
                                 <label for="migal_llm_model" string="Modelo"/>
                                 <field name="migal_llm_model"/>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Inteligencia artificial - OCR (escaneo de listas)">
+                        <setting help="Habilita OCR con IA para transcribir fotos/PDF de listas. Control independiente del chat del agente: debe habilitarse explícitamente, incluso si el agente ya tiene IA/consentimiento.">
+                            <field name="migal_ocr_llm_enabled"/>
+                        </setting>
+                        <setting help="Consentimiento propio del OCR. La imagen/PDF de la lista se envía al proveedor configurado. No se hereda del consentimiento del agente; requiere aprobación responsable explícita.">
+                            <field name="migal_ocr_llm_data_ack"/>
+                        </setting>
+                        <setting string="Configuración OCR" help="Si la clave OCR está vacía, se usa la clave del agente cuando el proveedor es Gemini, solo con OCR habilitado y consentimiento OCR explícito.">
+                            <div class="mt-2">
+                                <label for="migal_ocr_llm_api_key" string="Clave de API OCR"/>
+                                <field name="migal_ocr_llm_api_key" password="True"/>
+                            </div>
+                            <div class="mt-2">
+                                <label for="migal_ocr_gemini_modelos" string="Modelos Gemini (coma)"/>
+                                <field name="migal_ocr_gemini_modelos" placeholder="gemini-3.5-flash-lite,gemini-3.1-flash-lite,gemini-3.6-flash"/>
                             </div>
                         </setting>
                     </block>

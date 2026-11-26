@@ -24,6 +24,7 @@ Origen: OCR y fuzzy matching de MIGAL SmartOps (ADR-011/ADR-012).
     "depends": ["sale_management", "stock", "migal_agente"],
     "data": [
         "security/ir.model.access.csv",
+        "security/ir_rule.xml",
         "data/sinonimos.xml",
         "data/catalogo_fierros.xml",
         "views/documento_views.xml",
@@ -34,6 +35,7 @@ Origen: OCR y fuzzy matching de MIGAL SmartOps (ADR-011/ADR-012).
     "assets": {
         "web.assets_backend": ["migal_ocr/static/src/archivo_lista_field.js"],
     },
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
     "auto_install": False,

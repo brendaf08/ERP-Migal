@@ -11,4 +11,6 @@ from . import test_fx_revaluation
 from . import test_reports
 from . import test_report_xlsx
 from . import test_partner_statement
+from . import test_xlsx_controller_security
+from . import test_import_bank_statement_security
 from . import test_misc

@@ -49,3 +49,31 @@ class TestVendorStatement(AccountKitCommon):
         vendor = self.env['res.partner'].create({'name': 'No Bills Vendor'})
         with self.assertRaises(ValidationError):
             vendor.action_vendor_print_pdf()
+
+
+@tagged('post_install', '-at_install')
+class TestCustomerStatement(AccountKitCommon):
+
+    def _post_invoice(self, amount=500.0):
+        self.init_invoice('out_invoice', partner=self.partner_a,
+                          invoice_date='2020-02-01', amounts=[amount],
+                          taxes=[], post=True)
+
+    def test_customer_print_xlsx_returns_xlsx_action(self):
+        """Customer action returns a legitimate xlsx action for res.partner."""
+        self._post_invoice()
+        action = self.partner_a.action_print_xlsx()
+        self.assertEqual(action['report_type'], 'xlsx')
+        self.assertEqual(action['data']['model'], 'res.partner')
+        self.assertEqual(action['data']['output_format'], 'xlsx')
+        self.assertTrue(action['data']['report_name'])
+
+    def test_customer_statement_workbook_builds(self):
+        """get_xlsx_report produces a valid workbook from customer data."""
+        self._post_invoice()
+        data = self.partner_a._statement_data('out_invoice')
+        buf = io.BytesIO()
+        response = type('R', (object,), {'stream': buf})()
+        self.partner_a.get_xlsx_report(data, response)
+        self.assertTrue(buf.getvalue().startswith(b'PK'),
+                        "A valid xlsx workbook is produced")

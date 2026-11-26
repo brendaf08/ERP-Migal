@@ -261,7 +261,9 @@ class MigalAgenteWidget(models.AbstractModel):
         res = self._ejecutar("registrar_envio_whatsapp", {"cotizacion": order.name},
                              "[asistente] Registrar envío WhatsApp %s" % order.name)
         if res.get("ok") and params.get("mensaje") and res["datos"].get("envio_id"):
-            self.env["migal.agente.whatsapp.envio"].browse(res["datos"]["envio_id"]).sudo().mensaje = params["mensaje"]
+            envio = self.env["migal.agente.whatsapp.envio"].browse(res["datos"]["envio_id"]).sudo().exists()
+            if envio and envio.order_id == order:
+                envio.mensaje = params["mensaje"]
         paso = _paso("Registrando el envío en Odoo", res.get("mensaje"), "ok" if res.get("ok") else "error")
         return {"ok": bool(res.get("ok")), "pasos": [paso], "final": res.get("mensaje"), "registrado": bool(res.get("ok"))}
 

@@ -28,7 +28,7 @@ import io
 from datetime import datetime
 from io import BytesIO
 from odoo import fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import AccessError, ValidationError
 from ofxparse import OfxParser
 from qifparse.parser import QifParser
 
@@ -98,6 +98,16 @@ class ImportBankStatement(models.TransientModel):
 
     def action_statement_import(self):
         """Function to import csv, xlsx, ofx and qif file format"""
+        if not self.env.user.has_group('account.group_account_basic'):
+            raise AccessError(_("No tiene permisos para importar extractos bancarios."))
+        if not self.journal_id:
+            raise ValidationError(_("Seleccione un diario bancario."))
+        journal = self.journal_id
+        if journal.type not in ('bank', 'cash'):
+            raise ValidationError(_("El diario seleccionado debe ser de tipo Banco o Caja."))
+        if journal.company_id not in self.env.companies:
+            raise AccessError(_("No tiene acceso al diario seleccionado."))
+        journal.check_access('read')
         split_tup = os.path.splitext(self.file_name)
         if split_tup[1] == '.csv' or split_tup[1] == '.xlsx' or split_tup[
             1] == '.ofx' or split_tup[1] == '.qif':
