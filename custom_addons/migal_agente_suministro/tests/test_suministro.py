@@ -22,6 +22,66 @@ class TestAgenteSuministro(TransactionCase):
     def _agente(self, user):
         return self.env["migal.agente"].with_user(user)
 
+    def test_baja_rotacion_excluye_salida_pos(self):
+        almacen = self.po.picking_type_id.warehouse_id
+        ubicacion = almacen.lot_stock_id
+        productos = self.env["product.product"].create([
+            {"name": "[PRUEBA] Sin ventas", "is_storable": True},
+            {"name": "[PRUEBA] Vendido por POS", "is_storable": True},
+            {"name": "[PRUEBA] Sin existencias", "is_storable": True},
+        ])
+        sin_ventas, vendido_pos, sin_stock = productos
+        quant = self.env["stock.quant"]
+        quant._update_available_quantity(sin_ventas, ubicacion, 10)
+        quant._update_available_quantity(vendido_pos, ubicacion, 10)
+
+        caja = self.env["pos.config"].create({"name": "[PRUEBA] Caja baja rotación"})
+        sesion = self.env["pos.session"].create({"config_id": caja.id})
+        destino = self.env.ref("stock.stock_location_customers")
+        picking = self.env["stock.picking"].create({
+            "picking_type_id": almacen.out_type_id.id,
+            "location_id": ubicacion.id,
+            "location_dest_id": destino.id,
+            "pos_session_id": sesion.id,
+        })
+        movimiento = self.env["stock.move"].create({
+            "product_id": vendido_pos.id,
+            "product_uom_qty": 2,
+            "product_uom": vendido_pos.uom_id.id,
+            "location_id": ubicacion.id,
+            "location_dest_id": destino.id,
+            "picking_id": picking.id,
+        })
+        picking.action_confirm()
+        picking.action_assign()
+        movimiento.quantity = 2
+        movimiento.picked = True
+        picking._action_done()
+        self.assertEqual(movimiento.state, "done")
+        self.assertEqual(vendido_pos.qty_available, 8)
+
+        resultado = self._agente(self.ven).consultar("marketing", "consultar_baja_rotacion", {})
+        self.assertTrue(resultado["ok"], resultado["mensaje"])
+        self.assertFalse(resultado.get("simulado"))
+        self.assertEqual(resultado["datos"]["dias"], 90)
+        filas = {p["producto"]: p for p in resultado["datos"]["productos"]}
+        self.assertEqual(filas[sin_ventas.display_name]["stock"], 10)
+        self.assertEqual(filas[sin_ventas.display_name]["vendido"], 0)
+        self.assertNotIn(vendido_pos.display_name, filas)
+        self.assertNotIn(sin_stock.display_name, filas)
+
+    def test_baja_rotacion_chat_con_ventana(self):
+        html, log = self._agente(self.ven).procesar_mensaje("inventario sin ventas en 30 días", canal="prueba")
+        self.assertIn("en 30 días", html)
+        self.assertIn("consultar_baja_rotacion", log.tools_invoked)
+        self.assertEqual(log.agente, "suministro")
+
+    def test_baja_rotacion_restringe_rol(self):
+        usuario = new_test_user(self.env, login="sin_rol_rotacion", groups="base.group_user")
+        resultado = self._agente(usuario).ejecutar_herramienta("consultar_baja_rotacion", {})
+        self.assertEqual(resultado["estado"], "sin_permiso")
+
+
     def test_registro_y_herramientas(self):
         self.assertIn("suministro", self.env["migal.agente"]._agentes())
         spec = self.env["migal.agente"]._spec("evaluar_cobertura_preliminar")
