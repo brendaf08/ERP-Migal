@@ -1,5 +1,7 @@
 """Pruebas del agente de cadena de suministro (caso normal, borde, permiso y evento)."""
-from odoo import Command
+from datetime import timedelta
+
+from odoo import Command, fields
 from odoo.tests import TransactionCase, new_test_user, tagged
 
 
@@ -46,6 +48,131 @@ class TestAgenteSuministro(TransactionCase):
         log = self.env["migal.agente.log"].sudo().search([("canal", "=", "evento"), ("input_prompt", "like", "EV-027")],
                                                           order="id desc", limit=1)
         self.assertTrue(log, "La recepción validada emite EV-027")
+
+    def test_diagnostico_faltantes_separa_ubicaciones_y_fecha(self):
+        almacen = self.po.picking_type_id.warehouse_id
+        origen = almacen.lot_stock_id
+        auxiliar = self.env["stock.location"].create({
+            "name": "[PRUEBA] Auxiliar diagnóstico",
+            "usage": "internal",
+            "location_id": origen.id,
+            "company_id": origen.company_id.id,
+        })
+        producto = self.env["product.product"].create({
+            "name": "[PRUEBA] Bolsas diagnóstico <demo>",
+            "is_storable": True,
+            "purchase_ok": True,
+        })
+        quant = self.env["stock.quant"]
+        quant._update_available_quantity(producto, origen, 40)
+        quant._update_available_quantity(producto, auxiliar, 30)
+
+        orden = self.env["sale.order"].create({
+            "partner_id": self.proveedor.id,
+            "warehouse_id": almacen.id,
+            "user_id": self.ven.id,
+            "order_line": [Command.create({"product_id": producto.id, "product_uom_qty": 100})],
+        })
+        llegada = fields.Datetime.now() + timedelta(days=2)
+        compra = self.env["purchase.order"].create({
+            "partner_id": self.proveedor.id,
+            "picking_type_id": almacen.in_type_id.id,
+            "order_line": [Command.create({
+                "product_id": producto.id, "product_qty": 50, "date_planned": llegada,
+            })],
+        })
+        compra.button_confirm()
+        self.assertEqual(compra.state, "purchase")
+        self.assertTrue(compra.picking_ids.move_ids)
+
+        vendedor = self._agente(self.ven)
+        fecha = fields.Date.context_today(vendedor) + timedelta(days=1)
+        args = {"cotizacion": orden.name, "fecha_requerida": fields.Date.to_string(fecha)}
+        resultado = vendedor.ejecutar_herramienta("diagnosticar_faltantes", args)
+        self.assertTrue(resultado["ok"], resultado["mensaje"])
+        linea = resultado["datos"]["detalle_faltantes"][0]
+        self.assertEqual(linea["libre_origen"], 40)
+        self.assertEqual(linea["recepcion_en_plazo"], 0)
+        self.assertEqual(linea["saldo_sin_traslado"], 60)
+        self.assertEqual(linea["traslados"], [{"ubicacion": auxiliar.complete_name, "cantidad": 30}])
+        self.assertEqual(linea["saldo_si_traslado"], 30)
+
+        args["fecha_requerida"] = fields.Date.to_string(fecha + timedelta(days=1))
+        posterior = vendedor.ejecutar_herramienta("diagnosticar_faltantes", args)
+        self.assertTrue(posterior["ok"], posterior["mensaje"])
+        linea_posterior = posterior["datos"]["detalle_faltantes"][0]
+        self.assertEqual(linea_posterior["recepcion_en_plazo"], 50)
+        self.assertEqual(linea_posterior["saldo_sin_traslado"], 10)
+        self.assertEqual(linea_posterior["traslados"][0]["cantidad"], 10)
+        self.assertEqual(linea_posterior["saldo_si_traslado"], 0)
+
+        html, log = vendedor.procesar_mensaje(f"diagnóstico de {orden.name} para {fecha}", canal="prueba")
+        self.assertIn("Diagnóstico de faltantes", html)
+        self.assertEqual(html.count("<th>"), 1)
+        self.assertIn("Bolsas diagnóstico &lt;demo&gt;", html)
+        self.assertIn("<strong>Traslado posible</strong> 30 desde", html)
+        self.assertIn("<strong>Saldo si se traslada</strong> 30", html)
+        self.assertIn("diagnosticar_faltantes", log.tools_invoked)
+        self.assertEqual(log.agente, "suministro")
+
+    def test_diagnostico_faltantes_restringe_rol(self):
+        usuario = new_test_user(self.env, login="sin_rol_diagnostico", groups="base.group_user")
+        resultado = self._agente(usuario).ejecutar_herramienta(
+            "diagnosticar_faltantes", {"cotizacion": "S00001", "fecha_requerida": "2099-01-01"},
+        )
+        self.assertEqual(resultado["estado"], "sin_permiso")
+
+    def test_reposicion_minimos_considera_recepcion_pendiente(self):
+        almacen = self.po.picking_type_id.warehouse_id
+        ubicacion = almacen.lot_stock_id
+        producto = self.env["product.product"].create({
+            "name": "[PRUEBA] Reposición mínima",
+            "default_code": "PRUEBA-MIN-SUM",
+            "is_storable": True,
+            "purchase_ok": True,
+        })
+        self.env["stock.quant"]._update_available_quantity(producto, ubicacion, 40)
+        self.env["stock.warehouse.orderpoint"].create({
+            "product_id": producto.id,
+            "warehouse_id": almacen.id,
+            "location_id": ubicacion.id,
+            "product_min_qty": 100,
+            "product_max_qty": 200,
+            "trigger": "manual",
+        })
+
+        agente = self._agente(self.cmp)
+        args = {"producto": "prueba-min-sum"}
+        resultado = agente.ejecutar_herramienta("sugerir_reposicion_minimos", args)
+        self.assertTrue(resultado["ok"], resultado["mensaje"])
+        sugerencias = resultado["datos"]["sugerencias"]
+        self.assertEqual(len(sugerencias), 1)
+        self.assertEqual(sugerencias[0]["previsto"], 40)
+        self.assertEqual(sugerencias[0]["sugerido"], 160)
+
+        html, log = agente.procesar_mensaje("reposición por mínimos de PRUEBA-MIN-SUM", canal="prueba")
+        self.assertIn("Sugerencia de reposición", html)
+        self.assertIn("sugerir_reposicion_minimos", log.tools_invoked)
+        self.assertEqual(log.agente, "suministro")
+        self.assertFalse(self.env["purchase.order.line"].search_count([("product_id", "=", producto.id)]))
+
+        compra = self.env["purchase.order"].create({
+            "partner_id": self.proveedor.id,
+            "picking_type_id": almacen.in_type_id.id,
+            "order_line": [Command.create({
+                "product_id": producto.id,
+                "product_qty": 80,
+                "date_planned": fields.Datetime.now(),
+            })],
+        })
+        compra.button_confirm()
+        resultado = agente.ejecutar_herramienta("sugerir_reposicion_minimos", args)
+        self.assertTrue(resultado["ok"], resultado["mensaje"])
+        self.assertFalse(resultado["datos"]["sugerencias"])
+
+    def test_reposicion_minimos_restringe_rol(self):
+        resultado = self._agente(self.ven).ejecutar_herramienta("sugerir_reposicion_minimos", {})
+        self.assertEqual(resultado["estado"], "sin_permiso")
 
     def test_permiso_por_rol(self):
         res = self._agente(self.ven).ejecutar_herramienta("listar_compras_pendientes", {})
