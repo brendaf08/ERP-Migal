@@ -122,6 +122,58 @@ class TestAgenteSuministro(TransactionCase):
         )
         self.assertEqual(resultado["estado"], "sin_permiso")
 
+    def test_reposicion_minimos_considera_recepcion_pendiente(self):
+        almacen = self.po.picking_type_id.warehouse_id
+        ubicacion = almacen.lot_stock_id
+        producto = self.env["product.product"].create({
+            "name": "[PRUEBA] Reposición mínima",
+            "default_code": "PRUEBA-MIN-SUM",
+            "is_storable": True,
+            "purchase_ok": True,
+        })
+        self.env["stock.quant"]._update_available_quantity(producto, ubicacion, 40)
+        self.env["stock.warehouse.orderpoint"].create({
+            "product_id": producto.id,
+            "warehouse_id": almacen.id,
+            "location_id": ubicacion.id,
+            "product_min_qty": 100,
+            "product_max_qty": 200,
+            "trigger": "manual",
+        })
+
+        agente = self._agente(self.cmp)
+        args = {"producto": "prueba-min-sum"}
+        resultado = agente.ejecutar_herramienta("sugerir_reposicion_minimos", args)
+        self.assertTrue(resultado["ok"], resultado["mensaje"])
+        sugerencias = resultado["datos"]["sugerencias"]
+        self.assertEqual(len(sugerencias), 1)
+        self.assertEqual(sugerencias[0]["previsto"], 40)
+        self.assertEqual(sugerencias[0]["sugerido"], 160)
+
+        html, log = agente.procesar_mensaje("reposición por mínimos de PRUEBA-MIN-SUM", canal="prueba")
+        self.assertIn("Sugerencia de reposición", html)
+        self.assertIn("sugerir_reposicion_minimos", log.tools_invoked)
+        self.assertEqual(log.agente, "suministro")
+        self.assertFalse(self.env["purchase.order.line"].search_count([("product_id", "=", producto.id)]))
+
+        compra = self.env["purchase.order"].create({
+            "partner_id": self.proveedor.id,
+            "picking_type_id": almacen.in_type_id.id,
+            "order_line": [Command.create({
+                "product_id": producto.id,
+                "product_qty": 80,
+                "date_planned": fields.Datetime.now(),
+            })],
+        })
+        compra.button_confirm()
+        resultado = agente.ejecutar_herramienta("sugerir_reposicion_minimos", args)
+        self.assertTrue(resultado["ok"], resultado["mensaje"])
+        self.assertFalse(resultado["datos"]["sugerencias"])
+
+    def test_reposicion_minimos_restringe_rol(self):
+        resultado = self._agente(self.ven).ejecutar_herramienta("sugerir_reposicion_minimos", {})
+        self.assertEqual(resultado["estado"], "sin_permiso")
+
     def test_permiso_por_rol(self):
         res = self._agente(self.ven).ejecutar_herramienta("listar_compras_pendientes", {})
         self.assertEqual(res["estado"], "sin_permiso")

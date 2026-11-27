@@ -13,7 +13,7 @@ from markupsafe import Markup
 
 from odoo import fields, models
 from odoo.tools import format_date
-from odoo.tools.float_utils import float_round
+from odoo.tools.float_utils import float_compare, float_round
 
 from odoo.addons.migal_agente.agent.contracts import DATE, ORDER_REF
 
@@ -69,6 +69,19 @@ class AgenteSuministro(models.AbstractModel):
                 "reglas": ["RN-012"],
                 "metodo": "listar_compras_pendientes",
             },
+            "sugerir_reposicion_minimos": {
+                "description": "Muestra las sugerencias de Odoo para reglas manuales bajo el mínimo previsto.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {"producto": {"type": "string", "minLength": 1, "maxLength": 120}},
+                    "required": [],
+                    "additionalProperties": False,
+                },
+                "roles": ["ALM", "CMP", "GER"],
+                "escritura": "Ninguna (solo bitácora).",
+                "reglas": ["RN-011"],
+                "metodo": "sugerir_reposicion_minimos",
+            },
             "consultar_recepcion": {
                 "description": "Cantidades pedidas, recibidas y pendientes de una orden de compra.",
                 "input_schema": {"type": "object", "properties": {"orden_compra": OC_REF},
@@ -87,6 +100,13 @@ class AgenteSuministro(models.AbstractModel):
         m = re.search(r"\b(recepcion|recibido|llego)\b.*\b(p\d{5})\b", texto)
         if m:
             return "consultar_recepcion", {"orden_compra": m.group(2).upper()}
+        m = re.fullmatch(
+            r"(?:reposicion por minimos|sugerir reposicion)(?: de (.+))?",
+            texto.rstrip(" ?"),
+        )
+        if m:
+            args = {"producto": m.group(1)} if m.group(1) else {}
+            return "sugerir_reposicion_minimos", args
         m = re.fullmatch(
             r"diagnostico de ([a-z]{1,4}\d{3,}(?:-\d+)?) para (\d{4}-\d{2}-\d{2})",
             texto.rstrip(" ?"),
@@ -253,13 +273,7 @@ class AgenteSuministro(models.AbstractModel):
                 ("Traslado posible", alternativas),
                 ("Saldo si se traslada", f"{saldo:g}"),
             ]
-            detalle = Markup("").join(
-                Markup("<div><strong>%s</strong> %s</div>") % dato for dato in datos_producto
-            )
-            filas.append([
-                Markup('<div class="text-break" style="overflow-wrap: anywhere"><strong>%s</strong>%s</div>')
-                % (producto.display_name, detalle),
-            ])
+            filas.append(self._fila_vertical(producto.display_name, datos_producto))
 
         return self._resultado(
             True, "alerta" if any(l["saldo_sin_traslado"] > 0 for l in lineas) else "ok",
@@ -276,6 +290,80 @@ class AgenteSuministro(models.AbstractModel):
                 "tabla": {"columnas": ["Producto"], "filas": filas},
             },
         )
+
+    def sugerir_reposicion_minimos(self, producto=None):
+        titulo = "Reposición por mínimos"
+        OrdenMinima = self.env["stock.warehouse.orderpoint"]
+        dominio = [
+            ("company_id", "=", self.env.company.id),
+            ("trigger", "=", "manual"),
+        ]
+        if producto:
+            patron = producto.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            reglas = OrdenMinima.search(dominio + [("product_id.default_code", "=ilike", patron)])
+            if not reglas:
+                reglas = OrdenMinima.search(dominio + [("product_id.name", "ilike", patron)])
+        else:
+            reglas = OrdenMinima.search(dominio)
+
+        bajo_minimo = reglas.filtered(lambda r: float_compare(
+            r.qty_forecast, r.product_min_qty, precision_rounding=r.product_uom.rounding,
+        ) < 0)
+        en_curso = bajo_minimo._quantity_in_progress() if bajo_minimo else {}
+        sugerencias, filas = [], []
+        for regla in bajo_minimo:
+            cantidad = regla.qty_to_order_manual or regla._get_qty_to_order(
+                qty_in_progress_by_orderpoint=en_curso,
+            )
+            if float_compare(cantidad, 0, precision_rounding=regla.product_uom.rounding) <= 0:
+                continue
+
+            nombre = regla.product_id.display_name
+            ubicacion = regla.location_id.complete_name
+            unidad = regla.product_uom.name
+            sugerencias.append({
+                "producto": nombre,
+                "ubicacion": ubicacion,
+                "unidad": unidad,
+                "existencia": regla.qty_on_hand,
+                "previsto": regla.qty_forecast,
+                "minimo": regla.product_min_qty,
+                "maximo": regla.product_max_qty,
+                "sugerido": cantidad,
+                "cantidad_manual": bool(regla.qty_to_order_manual),
+            })
+            campos = [
+                ("Ubicación", ubicacion),
+                ("Existencia actual", f"{regla.qty_on_hand:g} {unidad}"),
+                ("Stock previsto", f"{regla.qty_forecast:g} {unidad}"),
+                ("Mínimo y máximo", f"{regla.product_min_qty:g} / {regla.product_max_qty:g} {unidad}"),
+                ("Sugerencia de reposición", f"{cantidad:g} {unidad}"),
+            ]
+            if regla.qty_to_order_manual:
+                campos.append(("Origen de la cantidad", "Ajuste manual registrado en Odoo"))
+            filas.append(self._fila_vertical(nombre, campos))
+
+        if sugerencias:
+            mensaje = f"Hay propuestas de reposición en {len(sugerencias)} de las reglas manuales consultadas."
+        elif reglas:
+            mensaje = "Las reglas consultadas no tienen una reposición pendiente de sugerir."
+        else:
+            mensaje = "No encontré reglas manuales de stock mínimo para la consulta."
+
+        return self._resultado(
+            True, "alerta" if sugerencias else "ok", titulo, mensaje, reglas=["RN-011"],
+            datos={"sugerencias": sugerencias, "tabla": {"columnas": ["Producto"], "filas": filas}},
+        )
+
+    @staticmethod
+    def _fila_vertical(encabezado, campos):
+        detalle = Markup("").join(
+            Markup("<div><strong>%s</strong> %s</div>") % campo for campo in campos
+        )
+        return [
+            Markup('<div class="text-break" style="overflow-wrap: anywhere"><strong>%s</strong>%s</div>')
+            % (encabezado, detalle),
+        ]
 
     def consultar_recepcion(self, orden_compra):
         po = self.env["purchase.order"].search([("name", "=", orden_compra.upper())], limit=1)
