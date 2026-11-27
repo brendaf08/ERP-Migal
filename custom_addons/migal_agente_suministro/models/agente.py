@@ -5,11 +5,15 @@ Por hacer (ficha producto/agentes/suministro.md): consultar_baja_rotacion (la us
 simulador), sugerir reposición con las reglas de stock mínimo, borrador de orden de compra, comparar
 proveedores, despachos pendientes y recepción con OCR de la guía.
 """
+from collections import defaultdict
 import logging
 import re
 
-from odoo import models
+from markupsafe import Markup
+
+from odoo import fields, models
 from odoo.tools import format_date
+from odoo.tools.float_utils import float_round
 
 from odoo.addons.migal_agente.agent.contracts import DATE, ORDER_REF
 
@@ -44,6 +48,19 @@ class AgenteSuministro(models.AbstractModel):
                 "reglas": ["RN-011", "RN-015"],
                 "metodo": "evaluar_cobertura_preliminar",
             },
+            "diagnosticar_faltantes": {
+                "description": "Evalúa faltantes de una cotización abierta para una fecha y propone traslados.",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {"cotizacion": ORDER_REF, "fecha_requerida": DATE},
+                    "required": ["cotizacion", "fecha_requerida"],
+                    "additionalProperties": False,
+                },
+                "roles": ["VEN", "ALM", "CMP", "GER"],
+                "escritura": "Ninguna (solo bitácora).",
+                "reglas": ["RN-011", "RN-015", "RN-016"],
+                "metodo": "diagnosticar_faltantes",
+            },
             "listar_compras_pendientes": {
                 "description": "Órdenes de compra por aprobar, por recibir y atrasadas.",
                 "input_schema": {"type": "object", "properties": {}, "required": [], "additionalProperties": False},
@@ -70,6 +87,12 @@ class AgenteSuministro(models.AbstractModel):
         m = re.search(r"\b(recepcion|recibido|llego)\b.*\b(p\d{5})\b", texto)
         if m:
             return "consultar_recepcion", {"orden_compra": m.group(2).upper()}
+        m = re.fullmatch(
+            r"diagnostico de ([a-z]{1,4}\d{3,}(?:-\d+)?) para (\d{4}-\d{2}-\d{2})",
+            texto.rstrip(" ?"),
+        )
+        if m:
+            return "diagnosticar_faltantes", {"cotizacion": m.group(1).upper(), "fecha_requerida": m.group(2)}
         if re.search(r"\b(compras? pendientes?|ordenes? de compra|que falta recibir|por recibir|oc pendientes?)\b", texto):
             return "listar_compras_pendientes", {}
         return None
@@ -114,6 +137,145 @@ class AgenteSuministro(models.AbstractModel):
             "por_aprobar": por_aprobar.mapped("name"), "por_recibir": por_recibir.mapped("name"),
             "atrasadas": atrasadas.mapped("name"),
             "tabla": {"columnas": ["Orden", "Proveedor", "Estado", "Fecha prevista", "Total"], "filas": filas}})
+
+    def diagnosticar_faltantes(self, cotizacion, fecha_requerida):
+        titulo = "Diagnóstico de faltantes"
+        try:
+            fecha = fields.Date.to_date(fecha_requerida)
+        except ValueError:
+            return self._resultado(False, "error", titulo, "Indica una fecha válida en formato AAAA-MM-DD.")
+
+        hoy = self._hoy()
+        if not fecha or fecha < hoy:
+            return self._resultado(False, "error", titulo, "Indica una fecha requerida igual o posterior a hoy.")
+
+        orden, vigente, error = self._buscar_cotizacion(cotizacion)
+        if error:
+            return self._resultado(False, "error", titulo, error)
+
+        revision_valida, detalle = self._control_version(orden, vigente)
+        if not revision_valida:
+            return self._resultado(False, "bloqueado", titulo, detalle)
+        if not orden.active or orden.state not in ("draft", "sent") or (
+            orden.validity_date and orden.validity_date < hoy
+        ):
+            return self._resultado(False, "bloqueado", titulo, "Indica una cotización abierta y vigente.")
+
+        origen = orden.warehouse_id.lot_stock_id
+        if not origen:
+            return self._resultado(False, "error", titulo, "La cotización necesita un almacén de atención.")
+
+        requeridos = defaultdict(float)
+        for linea in orden.order_line:
+            producto = linea.product_id
+            if producto.is_storable and not linea.display_type and linea.product_uom_qty > 0:
+                requeridos[producto] += linea.product_uom_id._compute_quantity(
+                    linea.product_uom_qty, producto.uom_id, round=False,
+                )
+        if not requeridos:
+            return self._resultado(
+                False, "error", titulo,
+                "Agrega un producto del catálogo con inventario y cantidad positiva, y guarda la cotización.",
+            )
+
+        compania = orden.company_id
+        almacenes = self.env["stock.warehouse"].search([("company_id", "=", compania.id)])
+        ubicaciones = self.env["stock.location"].search([
+            ("id", "child_of", almacenes.lot_stock_id.ids),
+            ("company_id", "=", compania.id),
+            ("usage", "=", "internal"),
+        ])
+        ids_productos = [p.id for p in requeridos]
+        libres = defaultdict(dict)
+        for producto, ubicacion, stock, reservada in self.env["stock.quant"]._read_group(
+            [
+                ("company_id", "=", compania.id),
+                ("product_id", "in", ids_productos),
+                ("location_id", "in", ubicaciones.ids),
+                ("owner_id", "=", False),
+            ],
+            groupby=["product_id", "location_id"],
+            aggregates=["quantity:sum", "reserved_quantity:sum"],
+        ):
+            libres[producto][ubicacion] = max(stock - reservada, 0.0)
+
+        limite = self.env["migal.agente.tool.cobertura"]._fin_dia_utc(fecha)
+        recepciones = dict(self.env["stock.move"]._read_group(
+            [
+                ("company_id", "=", compania.id),
+                ("product_id", "in", ids_productos),
+                ("location_id.usage", "=", "supplier"),
+                ("location_dest_id", "=", origen.id),
+                ("purchase_line_id", "!=", False),
+                ("state", "in", ("waiting", "confirmed", "assigned", "partially_available")),
+                ("date", ">=", fields.Datetime.now()),
+                ("date", "<=", limite),
+            ],
+            groupby=["product_id"],
+            aggregates=["product_qty:sum"],
+        ))
+
+        lineas, filas = [], []
+        for producto, pedido in requeridos.items():
+            precision = producto.uom_id.rounding
+            libre = libres[producto].get(origen, 0.0)
+            previsto = recepciones.get(producto, 0.0)
+            sin_traslado = float_round(
+                max(pedido - libre - previsto, 0.0), precision_rounding=precision,
+            )
+
+            saldo = sin_traslado
+            traslados = []
+            otras = sorted(libres[producto].items(), key=lambda item: item[0].complete_name)
+            for ubicacion, stock in otras:
+                if ubicacion == origen or stock <= 0 or saldo <= 0:
+                    continue
+                cantidad = min(stock, saldo)
+                traslados.append({"ubicacion": ubicacion.complete_name, "cantidad": cantidad})
+                saldo = float_round(max(saldo - cantidad, 0.0), precision_rounding=precision)
+
+            lineas.append({
+                "producto": producto.display_name,
+                "unidad": producto.uom_id.name,
+                "pedido": pedido,
+                "libre_origen": libre,
+                "recepcion_en_plazo": previsto,
+                "saldo_sin_traslado": sin_traslado,
+                "traslados": traslados,
+                "saldo_si_traslado": saldo,
+            })
+            alternativas = ", ".join(f"{t['cantidad']:g} desde {t['ubicacion']}" for t in traslados) or "—"
+            datos_producto = [
+                ("Pedido", f"{pedido:g} {producto.uom_id.name}"),
+                ("Libre en origen", f"{libre:g}"),
+                ("Recepción en plazo", f"{previsto:g}"),
+                ("Saldo sin traslado", f"{sin_traslado:g}"),
+                ("Traslado posible", alternativas),
+                ("Saldo si se traslada", f"{saldo:g}"),
+            ]
+            detalle = Markup("").join(
+                Markup("<div><strong>%s</strong> %s</div>") % dato for dato in datos_producto
+            )
+            filas.append([
+                Markup('<div class="text-break" style="overflow-wrap: anywhere"><strong>%s</strong>%s</div>')
+                % (producto.display_name, detalle),
+            ])
+
+        return self._resultado(
+            True, "alerta" if any(l["saldo_sin_traslado"] > 0 for l in lineas) else "ok",
+            titulo, f"{orden.name} · Fecha requerida {format_date(self.env, fecha)} · Origen {origen.complete_name}.",
+            reglas=["RN-011", "RN-015", "RN-016"], res=orden,
+            avisos=[
+                "El stock libre refleja las reservas registradas. Confirma las recepciones y traslados antes de comprometer la fecha.",
+            ],
+            datos={
+                "cotizacion": orden.name,
+                "fecha_requerida": fields.Date.to_string(fecha),
+                "ubicacion_origen": origen.complete_name,
+                "detalle_faltantes": lineas,
+                "tabla": {"columnas": ["Producto"], "filas": filas},
+            },
+        )
 
     def consultar_recepcion(self, orden_compra):
         po = self.env["purchase.order"].search([("name", "=", orden_compra.upper())], limit=1)
